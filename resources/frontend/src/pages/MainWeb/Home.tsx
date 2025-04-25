@@ -3,6 +3,7 @@ import HeroSection from './Component/HeroSection';
 import Footer from './Footer/Footer';
 import Profile from './Component/Profile';
 import Benefits from './Component/Benefits';
+import Trusted from './Component/Trusted';
 
 const Home = () => {
     return (
@@ -12,6 +13,7 @@ const Home = () => {
                 <HeroSection />
                 <Profile />
                 <Benefits />
+                <Trusted />
             </main>
             <Footer />
         </div>
