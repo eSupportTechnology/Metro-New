@@ -1,6 +1,7 @@
 import Header from './NavBar/Header';
 import HeroSection from './Component/HeroSection';
 import Footer from './Footer/Footer';
+import Profile from './Component/Profile';
 
 const Home = () => {
     return (
@@ -8,6 +9,8 @@ const Home = () => {
             <Header />
             <main>
                 <HeroSection />
+
+                <Profile />
             </main>
             <Footer />
         </div>
