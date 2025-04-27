@@ -1,5 +1,6 @@
 import { Heart, Menu, X, User, Phone, HelpCircle, DollarSign, FileText, BookOpen, Bookmark, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -104,30 +105,27 @@ const Header = () => {
                         </div>
 
                         <nav className="hidden md:flex space-x-8">
-                            <a href="#" className="text-gray-700 hover:text-yellow-600 font-medium">
+                            <Link to="/" className="text-gray-700 hover:text-yellow-600 font-medium">
                                 Home
-                            </a>
-                            <a href="#" className="text-gray-700 hover:text-yellow-600 font-medium">
-                                Search
-                            </a>
-                            <a href="#" className="text-gray-700 hover:text-yellow-600 font-medium">
+                            </Link>
+                            <Link to="/success-stories" className="text-gray-700 hover:text-yellow-600 font-medium">
                                 Success Stories
-                            </a>
-                            <a href="#" className="text-gray-700 hover:text-yellow-600 font-medium">
+                            </Link>
+                            <Link to="/about" className="text-gray-700 hover:text-yellow-600 font-medium">
                                 About Us
-                            </a>
-                            <a href="#" className="text-gray-700 hover:text-yellow-600 font-medium">
+                            </Link>
+                            <Link to="/contact" className="text-gray-700 hover:text-yellow-600 font-medium">
                                 Contact
-                            </a>
+                            </Link>
                         </nav>
 
                         <div className="hidden md:flex items-center space-x-4">
-                            <a href="#" className="text-gray-800 hover:text-yellow-600 font-medium">
+                            <Link to="/signin" className="text-gray-800 hover:text-yellow-600 font-medium">
                                 Sign In
-                            </a>
-                            <a href="#" className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md transition duration-300 shadow-md">
+                            </Link>
+                            <Link to="/register" className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md transition duration-300 shadow-md">
                                 Register Free
-                            </a>
+                            </Link>
                             <button className="p-2 rounded-full bg-yellow-100 text-yellow-700 hover:bg-yellow-200" onClick={toggleDrawer}>
                                 <Menu className="h-6 w-6" />
                             </button>
@@ -142,28 +140,25 @@ const Header = () => {
                 {isMenuOpen && (
                     <div className="md:hidden absolute top-full left-0 right-0 bg-yellow-50 shadow-lg py-3 px-4 border-t border-yellow-100 animate-fade-in overflow-y-auto max-h-96">
                         <nav className="flex flex-col space-y-3">
-                            <a href="#" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
+                            <Link to="/" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
                                 Home
-                            </a>
-                            <a href="#" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
-                                Search
-                            </a>
-                            <a href="#" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
+                            </Link>
+                            <Link to="/success-stories" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
                                 Success Stories
-                            </a>
-                            <a href="#" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
+                            </Link>
+                            <Link to="/about" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
                                 About Us
-                            </a>
-                            <a href="#" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
+                            </Link>
+                            <Link to="/contact" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
                                 Contact
-                            </a>
+                            </Link>
                             <div className="border-t border-yellow-200 my-2"></div>
-                            <a href="#" className="px-4 py-2 text-yellow-800 font-medium">
+                            <Link to="/signin" className="px-4 py-2 text-yellow-800 font-medium">
                                 Sign In
-                            </a>
-                            <a href="#" className="px-4 py-2 bg-yellow-600 text-white rounded-md text-center font-medium hover:bg-yellow-700 transition">
+                            </Link>
+                            <Link to="/register" className="px-4 py-2 bg-yellow-600 text-white rounded-md text-center font-medium hover:bg-yellow-700 transition">
                                 Register Free
-                            </a>
+                            </Link>
                         </nav>
                     </div>
                 )}
