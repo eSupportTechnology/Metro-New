@@ -56,44 +56,4 @@ class User extends Authenticatable
     {
         return $this->morphMany(PersonalAccessToken::class, 'tokenable');
     }
-
-    /**
-     * Get the matrimony profile associated with the user.
-     */
-    public function matrimony(): HasOne
-    {
-        return $this->hasOne(Matrimony::class);
-    }
-
-    /**
-     * Get the father details associated with the user.
-     */
-    public function father(): HasOne
-    {
-        return $this->hasOne(Father::class);
-    }
-
-    /**
-     * Get the mother details associated with the user.
-     */
-    public function mother(): HasOne
-    {
-        return $this->hasOne(Mother::class);
-    }
-
-    /**
-     * Get the horoscope details associated with the user.
-     */
-    public function horoscopeDetail(): HasOne
-    {
-        return $this->hasOne(HoroscopeDetail::class);
-    }
-
-    /**
-     * Get the picture associated with the user.
-     */
-    public function picture(): HasOne
-    {
-        return $this->hasOne(Picture::class);
-    }
 }

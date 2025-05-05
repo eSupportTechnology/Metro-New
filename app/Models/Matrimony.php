@@ -35,44 +35,4 @@ class Matrimony extends Model
         'food_preference',
         'smoking',
     ];
-
-    /**
-     * Get the user that owns the matrimony profile.
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get the father details associated with the matrimony profile.
-     */
-    public function father(): HasOne
-    {
-        return $this->hasOne(Father::class, 'user_id', 'user_id');
-    }
-
-    /**
-     * Get the mother details associated with the matrimony profile.
-     */
-    public function mother(): HasOne
-    {
-        return $this->hasOne(Mother::class, 'user_id', 'user_id');
-    }
-
-    /**
-     * Get the horoscope details associated with the matrimony profile.
-     */
-    public function horoscopeDetail(): HasOne
-    {
-        return $this->hasOne(HoroscopeDetail::class, 'user_id', 'user_id');
-    }
-
-    /**
-     * Get the picture associated with the matrimony profile.
-     */
-    public function picture(): HasOne
-    {
-        return $this->hasOne(Picture::class, 'user_id', 'user_id');
-    }
 }

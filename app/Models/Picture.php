@@ -17,12 +17,4 @@ class Picture extends Model
         'user_id',
         'image_path',
     ];
-
-    /**
-     * Get the user that owns the picture.
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 }

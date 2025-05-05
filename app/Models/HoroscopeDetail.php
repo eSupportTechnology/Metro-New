@@ -21,22 +21,4 @@ class HoroscopeDetail extends Model
         'birth_city',
         'birth_time',
     ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'birthdate' => 'date',
-        'horoscope_matching_required' => 'boolean',
-    ];
-
-    /**
-     * Get the user that owns the horoscope details.
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 }

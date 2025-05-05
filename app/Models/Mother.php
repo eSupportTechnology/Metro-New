@@ -22,12 +22,4 @@ class Mother extends Model
         'profession',
         'additional_info',
     ];
-
-    /**
-     * Get the user that owns the mother details.
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 }

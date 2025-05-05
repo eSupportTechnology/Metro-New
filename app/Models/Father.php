@@ -22,12 +22,4 @@ class Father extends Model
         'profession',
         'additional_info',
     ];
-
-    /**
-     * Get the user that owns the father details.
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 }
