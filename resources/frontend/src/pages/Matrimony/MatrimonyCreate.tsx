@@ -11,9 +11,20 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+const progressAnimation = `
+  @keyframes progress {
+    0% { width: 0%; }
+    100% { width: 100%; }
+  }
+  .animate-progress {
+    animation: progress 3s linear forwards;
+  }
+`;
+
 const MatrimonyCreate: React.FC = () => {
     const [currentStep, setCurrentStep] = useState<number>(1);
     const totalSteps = 4;
+    const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
     const [formData, setFormData] = useState<MatrimonyFormData>({
         first_name: '',
@@ -66,6 +77,7 @@ const MatrimonyCreate: React.FC = () => {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
+    const [redirectCountdown, setRedirectCountdown] = useState<number>(3);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -165,8 +177,20 @@ const MatrimonyCreate: React.FC = () => {
 
             setIsLoading(false);
 
-            if (response.data.success) {
+            if (response.data.status === 200 && response.data.message) {
+                setIsSuccess(true);
                 toast.success('Profile created successfully! Your profile will be reviewed and published soon.');
+
+                let countdownValue = 3;
+                const countdownInterval = setInterval(() => {
+                    countdownValue -= 1;
+                    setRedirectCountdown(countdownValue);
+
+                    if (countdownValue <= 0) {
+                        clearInterval(countdownInterval);
+                        window.location.href = '/';
+                    }
+                }, 1000);
             } else {
                 toast.warning(response.data.message || 'Something went wrong. Please try again.');
             }
@@ -262,11 +286,40 @@ const MatrimonyCreate: React.FC = () => {
         }
     };
 
+    const SuccessOverlay = () => (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+                <div className="text-center">
+                    <div className="inline-flex rounded-full bg-green-100 p-4">
+                        <div className="rounded-full bg-green-200 p-4">
+                            <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                    </div>
+                    <h2 className="mt-4 text-2xl font-bold text-gray-800">Profile Created Successfully!</h2>
+                    <p className="mt-2 text-gray-600">Your matrimony profile has been created and will be reviewed shortly.</p>
+                    <div className="mt-6">
+                        <div className="relative">
+                            <div className="h-2 bg-green-200 rounded-full">
+                                <div className="h-2 bg-green-500 rounded-full animate-progress"></div>
+                            </div>
+                        </div>
+                        <p className="mt-2 text-sm text-gray-500">Redirecting in {redirectCountdown} seconds...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <div className="font-sans bg-gradient-to-b from-yellow-50 to-white min-h-screen">
+            <style>{progressAnimation}</style>
             <Header />
 
             <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+
+            {isSuccess && <SuccessOverlay />}
 
             <main className="pt-24 pb-16 px-4">
                 <div className="max-w-4xl mx-auto">
@@ -278,7 +331,12 @@ const MatrimonyCreate: React.FC = () => {
 
                     <div className="mt-6 flex justify-between">
                         {currentStep > 1 && (
-                            <button type="button" onClick={prevStep} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-md transition duration-300 flex items-center">
+                            <button
+                                type="button"
+                                onClick={prevStep}
+                                className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-md transition duration-300 flex items-center"
+                                disabled={isSuccess}
+                            >
                                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
                             </button>
                         )}
@@ -288,6 +346,7 @@ const MatrimonyCreate: React.FC = () => {
                                 type="button"
                                 onClick={nextStep}
                                 className="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium py-2 px-6 rounded-md transition duration-300 flex items-center ml-auto"
+                                disabled={isSuccess}
                             >
                                 Next <ArrowRight className="ml-2 h-4 w-4" />
                             </button>
