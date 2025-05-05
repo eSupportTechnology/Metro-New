@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import Home from '../pages/MainWeb/Home';
 import SignIn from '../pages/MainWeb/Auth/SignIn';
 import MatrimonyRegistration from '../pages/Matrimony/MatrimonyRegistration';
+import MatrimonyCreate from '../pages/Matrimony/MatrimonyCreate';
 const Index = lazy(() => import('../pages/Index'));
 
 const routes = [
@@ -17,7 +18,7 @@ const routes = [
     },
     {
         path: '/create-add',
-        element: <MatrimonyRegistration />,
+        element: <MatrimonyCreate />,
         layout: 'blank',
     },
     {
