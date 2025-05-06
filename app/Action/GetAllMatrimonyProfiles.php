@@ -32,7 +32,8 @@ class GetAllMatrimonyProfiles
                     'horoscope_details.horoscope_matching_required as horoscope_matching_required',
                     'horoscope_details.birth_city as horoscope_birth_city',
                     'horoscope_details.birth_time as horoscope_birth_time',
-                    'pictures.image_path as profile_picture'
+                    'pictures.image_path as profile_picture',
+                    'matrimonies.created_at as matrimony_created_at'
                 )
                 ->get();
 
@@ -55,7 +56,7 @@ class GetAllMatrimonyProfiles
             if (!isset($groupedProfiles[$userId])) {
                 $profilePictureData = null;
                 if ($profile->profile_picture) {
-                    $profilePictureData = $this->getImageUrl($profile->profile_picture);
+                    $profilePictureData = $this->getImageData($profile->profile_picture);
                 }
 
                 $groupedProfiles[$userId] = [
@@ -82,6 +83,7 @@ class GetAllMatrimonyProfiles
                         'drinking' => $profile->drinking,
                         'food_preference' => $profile->food_preference,
                         'smoking' => $profile->smoking,
+                        'created_at' => $profile->matrimony_created_at,
                     ],
                     'father' => [
                         'ethnicity' => $profile->father_ethnicity ?? '',
@@ -114,16 +116,28 @@ class GetAllMatrimonyProfiles
         return array_values($groupedProfiles);
     }
 
-    private function getImageUrl(string $imagePath): ?string
+    private function getImageData(string $imagePath): ?string
     {
         try {
-            if (Storage::disk('public')->exists($imagePath)) {
-                return Storage::disk('public')->url($imagePath);
-            } else {
-                return null;
+            $storagePath = str_replace('storage/', 'public/', $imagePath);
+
+            if (Storage::exists($storagePath)) {
+                $binaryData = Storage::get($storagePath);
+
+                $mimeType = Storage::mimeType($storagePath);
+                return 'data:' . $mimeType . ';base64,' . base64_encode($binaryData);
             }
+
+            if (Storage::disk('public')->exists($imagePath)) {
+                $binaryData = Storage::disk('public')->get($imagePath);
+                $mimeType = Storage::disk('public')->mimeType($imagePath);
+
+                return 'data:' . $mimeType . ';base64,' . base64_encode($binaryData);
+            }
+            Log::warning("Image not found: {$imagePath} or {$storagePath}");
+            return null;
         } catch (\Exception $e) {
-            Log::error('Error getting image URL: ' . $e->getMessage());
+            Log::error('Error getting image data: ' . $e->getMessage());
             return null;
         }
     }
