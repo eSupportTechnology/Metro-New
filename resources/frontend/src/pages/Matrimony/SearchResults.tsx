@@ -100,6 +100,7 @@ interface Profile {
     food_preference?: string;
     smoking?: string;
     created_at?: string;
+    boot_post?: number;
 }
 
 interface FilterOption {
@@ -165,7 +166,9 @@ const getCountryFlag = (country: string): string => {
 const ProfileCard = ({ profile, index }: { profile: Profile; index: number }) => {
     const age = calculateAge(profile.birthdate || profile.matrimony?.birthdate || '');
     const isVerified = index % 3 === 1; // Just for demonstration
-    const isBoost = profile.matrimony?.boot_post === 1 || index % 2 === 0; // Use real data if available
+
+    // Check specifically for boot_post value of 1
+    const isBoost = profile.boot_post === 1 || profile.matrimony?.boot_post === 1;
 
     // Combine profile and matrimony data
     const displayData = {
@@ -193,9 +196,9 @@ const ProfileCard = ({ profile, index }: { profile: Profile; index: number }) =>
                                             : profile.picture?.image_path?.startsWith('data:')
                                               ? profile.picture.image_path
                                               : profile.profile_picture
-                                                ? `http://127.0.0.1:8000/${profile.profile_picture}`
+                                                ? `${profile.profile_picture}`
                                                 : profile.picture?.image_path
-                                                  ? `http://127.0.0.1:8000/${profile.picture.image_path}`
+                                                  ? `${profile.picture.image_path}`
                                                   : '/api/placeholder/80/80'
                                     }
                                     alt={displayData.display_name || 'Profile'}
@@ -371,10 +374,8 @@ const SearchResults = () => {
     // Dynamic filter options state
     const [filterOptions, setFilterOptions] = useState<FilterOption[]>([]);
 
-    // Active filters state (initialized with just Age)
-    const [activeFilters, setActiveFilters] = useState<Record<string, any>>({
-        Age: 25,
-    });
+    // Active filters state - initialize with empty object
+    const [activeFilters, setActiveFilters] = useState<Record<string, any>>({});
 
     // Sort options
     const sortOptions = ['Latest First', 'Oldest First', 'Age: Low to High', 'Age: High to Low', 'Name: A to Z', 'Name: Z to A'];
@@ -441,40 +442,57 @@ const SearchResults = () => {
             // Helper function to extract value safely
             const getValue = (key: string): string => {
                 const convertedKey = key.toLowerCase().replace(/\s+/g, '_');
-                return (profile[convertedKey as keyof Profile] || profile.matrimony?.[convertedKey as keyof Matrimony] || '') as string;
+                const value = profile[convertedKey as keyof Profile] || profile.matrimony?.[convertedKey as keyof Matrimony] || '';
+                return value as string;
             };
 
             // Populate sets with unique values
             Object.keys(uniqueValues).forEach((key) => {
-                const value = key === 'Region / District' ? profile.state_district || profile.matrimony?.state_district || '' : getValue(key);
+                let value = '';
 
-                if (value) {
+                if (key === 'Region / District') {
+                    value = profile.state_district || profile.matrimony?.state_district || '';
+                } else if (key === 'Education Level') {
+                    value = profile.education_level || profile.matrimony?.education_level || '';
+                } else {
+                    value = getValue(key);
+                }
+
+                if (value && typeof value === 'string') {
                     uniqueValues[key].add(value);
                 }
             });
         });
+
+        // Find minimum and maximum ages from the data
+        const ages = profilesData.map((profile) => calculateAge(profile.birthdate || profile.matrimony?.birthdate || '')).filter((age) => age > 0);
+
+        const minAge = ages.length > 0 ? Math.min(...ages) : 18;
+        const maxAge = ages.length > 0 ? Math.max(...ages) : 70;
 
         // Convert unique value sets to arrays for each filter and update filter options
         const dynamicFilterOptions: FilterOption[] = [
             {
                 name: 'Age',
                 icon: <Calendar className="h-4 w-4 text-gray-500" />,
-                min: 18,
-                max: 70,
+                min: minAge,
+                max: maxAge,
             },
-            ...Object.entries(uniqueValues).map(([name, values]) => ({
-                name,
-                icon: getIconForFilter(name),
-                options: Array.from(values).sort(),
-            })),
+            ...Object.entries(uniqueValues)
+                .filter(([_, values]) => values.size > 0) // Only include filters with values
+                .map(([name, values]) => ({
+                    name,
+                    icon: getIconForFilter(name),
+                    options: Array.from(values).sort(),
+                })),
         ];
 
         // Update filter options state
         setFilterOptions(dynamicFilterOptions);
 
-        // Initialize active filters with empty values
+        // Initialize active filters with default values
         const initialActiveFilters: Record<string, any> = {
-            // Age: 25,
+            Age: maxAge, // Set age slider to maximum by default
         };
 
         // Add empty values for all other filters
@@ -543,17 +561,17 @@ const SearchResults = () => {
     const appliedFilters = useMemo(() => {
         const newAppliedFilters: string[] = [];
         Object.entries(activeFilters).forEach(([key, value]) => {
-            if (value !== '') {
+            if (value !== '' && !(key === 'Age' && filterOptions.length > 0 && value === filterOptions[0]?.max)) {
                 newAppliedFilters.push(`${key}: ${value}`);
             }
         });
         return newAppliedFilters;
-    }, [activeFilters]);
+    }, [activeFilters, filterOptions]);
 
     // Use useMemo for filtering and sorting profiles - this is the core optimization
     const filteredProfiles = useMemo(() => {
-        // If profiles aren't loaded yet, return empty array
-        if (!profiles.length) return [];
+        // If profiles aren't loaded yet or activeFilters isn't initialized, return all profiles
+        if (!profiles.length || Object.keys(activeFilters).length === 0) return profiles;
 
         let result = [...profiles];
 
@@ -565,8 +583,8 @@ const SearchResults = () => {
 
         // Apply other active filters
         Object.entries(activeFilters).forEach(([key, value]) => {
-            if (value !== '') {
-                // Skip empty values
+            if (value !== '' && !(key === 'Age' && filterOptions.length > 0 && value === filterOptions[0]?.max)) {
+                // Skip empty values and max age (which means "show all")
                 const filterKey = key.toLowerCase().replace(/\s+/g, '_');
 
                 switch (key) {
@@ -581,15 +599,19 @@ const SearchResults = () => {
                     case 'Ethnicity':
                     case 'Civil Status':
                     case 'Profession':
-                    case 'Education Level':
                     case 'Height':
                     case 'Food Preference':
                     case 'Drinking':
                     case 'Smoking':
                     case 'Account Created by':
                         result = result.filter((profile) => {
-                            const profileKey = key === 'Education Level' ? 'education_level' : filterKey;
-                            const profileValue = (profile[profileKey as keyof Profile] || profile.matrimony?.[profileKey as keyof Matrimony] || '') as string;
+                            const profileValue = (profile[filterKey as keyof Profile] || profile.matrimony?.[filterKey as keyof Matrimony] || '') as string;
+                            return profileValue.toLowerCase() === value.toLowerCase();
+                        });
+                        break;
+                    case 'Education Level':
+                        result = result.filter((profile) => {
+                            const profileValue = (profile.education_level || profile.matrimony?.education_level || '') as string;
                             return profileValue.toLowerCase() === value.toLowerCase();
                         });
                         break;
@@ -598,9 +620,6 @@ const SearchResults = () => {
                             const district = profile.state_district || profile.matrimony?.state_district || '';
                             return district.toLowerCase() === value.toLowerCase();
                         });
-                        break;
-                    case 'Differently Abled':
-                        // Would need a field for this in the actual data
                         break;
                 }
             }
@@ -653,23 +672,33 @@ const SearchResults = () => {
         }
 
         return result;
-    }, [profiles, selectedGender, activeFilters, sortBy]);
+    }, [profiles, selectedGender, activeFilters, sortBy, filterOptions]);
 
     // Remove a specific filter
     const removeFilter = (filterName: string) => {
         const [name] = filterName.split(':');
         setActiveFilters((prev) => ({
             ...prev,
-            [name.trim()]: '',
+            [name.trim()]: name.trim() === 'Age' && filterOptions.length > 0 ? filterOptions[0].max : '',
         }));
     };
 
     // Clear all filters
     const clearAllFilters = () => {
+        if (filterOptions.length === 0) return;
+
         const resetFilters: Record<string, any> = {};
-        Object.keys(activeFilters).forEach((key) => {
-            resetFilters[key] = key === 'Age' ? 25 : '';
+
+        // Reset age to maximum value from filter options
+        resetFilters['Age'] = filterOptions[0].max || 70;
+
+        // Reset all other filters to empty string
+        filterOptions.forEach((filter) => {
+            if (filter.name !== 'Age') {
+                resetFilters[filter.name] = '';
+            }
         });
+
         setActiveFilters(resetFilters);
     };
 
@@ -784,7 +813,10 @@ const SearchResults = () => {
                             {filterOptions.length > 0 ? (
                                 filterOptions.map((filter) => <FilterSection key={filter.name} filter={filter} activeFilters={activeFilters} setActiveFilters={setActiveFilters} />)
                             ) : (
-                                <div className="text-center text-gray-500 italic">Loading filters...</div>
+                                <div className="text-center py-8">
+                                    <div className="animate-spin mx-auto h-6 w-6 border-2 border-yellow-500 rounded-full border-t-transparent mb-2"></div>
+                                    <p className="text-gray-500 text-sm">Loading filters...</p>
+                                </div>
                             )}
 
                             <div className="mt-6">
