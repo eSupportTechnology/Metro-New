@@ -25,7 +25,6 @@ class CreateMatrimonyProfile
                             $validatedData[$field] = $decoded;
                         }
                     }
-
                 } else {
                     $validatedData[$field] = [];
                 }
@@ -43,7 +42,7 @@ class CreateMatrimonyProfile
                     'last_name' => $validatedData['last_name'],
                     'email' => $validatedData['email'],
                     'password' => Hash::make('12345678'),
-                    'role_as' => 2
+                    'role_as' => 2,
                 ]);
             }
 
@@ -68,6 +67,8 @@ class CreateMatrimonyProfile
                     'drinking' => $validatedData['drinking'] ?? '',
                     'food_preference' => $validatedData['food_preference'] ?? '',
                     'smoking' => $validatedData['smoking'] ?? '',
+                    'package_number' => $validatedData['package_number'] ?? 1,
+                    'boot_post' => $validatedData['boot_post'] ?? 0,
                 ]
             );
 
@@ -124,9 +125,9 @@ class CreateMatrimonyProfile
                     ['image_path' => $publicPath]
                 );
             }
-
             return CommonResponse::sendSuccessResponse('Matrimony profile created successfully.');
         } catch (\Exception $e) {
+            Log::error('Error creating matrimony profile: ' . $e->getMessage());
             return CommonResponse::sendBadRequestResponse('Something went wrong while creating the profile: ' . $e->getMessage());
         }
     }

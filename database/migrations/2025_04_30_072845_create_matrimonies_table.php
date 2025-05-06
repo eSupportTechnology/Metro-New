@@ -32,6 +32,8 @@ return new class extends Migration
             $table->string('drinking')->nullable();
             $table->string('food_preference')->nullable();
             $table->string('smoking')->nullable();
+            $table->integer('package_number')->default(1);
+            $table->boolean('boot_post')->default(0);
             $table->timestamps();
         });
     }

@@ -5,19 +5,11 @@ namespace App\Http\Controllers;
 use App\Action\CreateMatrimonyProfile;
 use App\Action\GetAllMatrimonyProfiles;
 use App\Action\MatrimonyDelete;
-use App\Models\Father;
-use App\Models\HoroscopeDetail;
-use App\Models\Matrimony;
-use App\Models\Mother;
-use App\Models\Picture;
-use App\Services\Response\CommonResponse;
-use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Action\UpdateBootPost;
+use App\Action\UpdatePackageNumber;
+use Illuminate\Http\Client\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\StoreMatrimonyRequest;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class MatrimonyController extends Controller
 {
@@ -39,5 +31,23 @@ class MatrimonyController extends Controller
         }
 
         return response()->json([]);
+    }
+
+    public function updateBootPost(Request $request, string $matrimonyId, UpdateBootPost $action): JsonResponse
+    {
+        $validated = $request->validate([
+            'boot_post' => 'required|boolean',
+        ]);
+
+        return response()->json($action($matrimonyId, $validated['boot_post']));
+    }
+
+    public function updatePackageNumber(Request $request, string $matrimonyId, UpdatePackageNumber $action): JsonResponse
+    {
+        $validated = $request->validate([
+            'package_number' => 'required|integer|in:1,2,3',
+        ]);
+
+        return response()->json($action($matrimonyId, $validated['package_number']));
     }
 }

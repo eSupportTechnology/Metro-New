@@ -61,6 +61,9 @@ class StoreMatrimonyRequest extends FormRequest
             'horoscope.birth_time' => 'nullable|string',
 
             'image' => 'nullable|image|max:2048',
+
+            'package_number' => 'nullable|integer|in:1,2,3',
+            'boot_post' => 'nullable|boolean',
         ];
     }
 

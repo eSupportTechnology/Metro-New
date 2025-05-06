@@ -34,5 +34,7 @@ class Matrimony extends Model
         'drinking',
         'food_preference',
         'smoking',
+        'package_number',
+        'boot_post',
     ];
 }

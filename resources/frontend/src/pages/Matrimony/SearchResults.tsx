@@ -49,6 +49,7 @@ const SearchResults = () => {
 
     // Format relative time for publication
     const formatRelativeTime = (dateString) => {
+        if (!dateString) return '';
         const date = new Date(dateString);
         const now = new Date();
         const diffInSeconds = Math.floor((now - date) / 1000);
@@ -76,9 +77,36 @@ const SearchResults = () => {
             setIsLoading(true);
             try {
                 const response = await axios.get('http://127.0.0.1:8000/api/get-matrimony');
-                if (response.data.status === 200) {
-                    setProfiles(response.data['Matrimony profiles retrieved successfully']);
-                    setTotalResults(response.data['Matrimony profiles retrieved successfully'].length);
+
+                // Check if the response has the expected structure
+                if (response.data && (response.data.status === 200 || response.data.status === 'success')) {
+                    // Handle the different possible response structures
+                    let profileData;
+
+                    if (response.data['Matrimony profiles retrieved successfully']) {
+                        profileData = response.data['Matrimony profiles retrieved successfully'];
+                    } else if (response.data.data) {
+                        profileData = response.data.data;
+                    } else {
+                        throw new Error('Unexpected response format');
+                    }
+
+                    // Extract matrimony data from the profiles
+                    const formattedProfiles = profileData.map((profile) => {
+                        // If profile has matrimony data as a nested object, merge it with the profile
+                        if (profile.matrimony) {
+                            return {
+                                id: profile.user_id,
+                                ...profile,
+                                ...profile.matrimony,
+                                picture: profile.profile_picture ? { image_path: profile.profile_picture } : null,
+                            };
+                        }
+                        return profile;
+                    });
+
+                    setProfiles(formattedProfiles);
+                    setTotalResults(formattedProfiles.length);
                 } else {
                     throw new Error('Failed to fetch profiles');
                 }
@@ -245,7 +273,7 @@ const SearchResults = () => {
                                 const isBoost = index % 2 === 0; // Just for demonstration
 
                                 return (
-                                    <div key={profile.id} className={`bg-white rounded-lg shadow-md mb-4 overflow-hidden ${isBoost ? 'border-l-4 border-yellow-400' : ''}`}>
+                                    <div key={profile.user_id || index} className={`bg-white rounded-lg shadow-md mb-4 overflow-hidden ${isBoost ? 'border-l-4 border-yellow-400' : ''}`}>
                                         <div className="p-4">
                                             {isBoost && (
                                                 <div className="inline-flex items-center bg-yellow-400 text-xs font-medium text-gray-800 px-2 py-1 rounded mb-2">
@@ -256,9 +284,11 @@ const SearchResults = () => {
                                             <div className="flex items-start">
                                                 <div className="relative mr-4">
                                                     <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
-                                                        {profile.picture ? (
+                                                        {profile.picture && profile.picture.image_path ? (
                                                             <img
-                                                                src={`http://127.0.0.1:8000/${profile.picture.image_path}`}
+                                                                src={
+                                                                    profile.picture.image_path.startsWith('data:') ? profile.picture.image_path : `http://127.0.0.1:8000/${profile.picture.image_path}`
+                                                                }
                                                                 alt={profile.display_name}
                                                                 className="w-20 h-20 rounded-full object-cover"
                                                                 onError={(e) => {
@@ -284,7 +314,7 @@ const SearchResults = () => {
                                                     <div className="flex items-center text-sm text-gray-600 mb-2">
                                                         <MapPin className="h-3 w-3 mr-1" />
                                                         <span>
-                                                            {profile.city}, {profile.state_district}, {profile.country_of_residence}
+                                                            {profile.city || 'City'}, {profile.state_district || 'District'}, {profile.country_of_residence || 'Country'}
                                                         </span>
                                                     </div>
 
@@ -299,11 +329,11 @@ const SearchResults = () => {
                                                         </div>
                                                         <div className="flex items-center text-sm">
                                                             <User className="h-3 w-3 mr-1 text-gray-600" />
-                                                            <span>{profile.ethnicity}</span>
+                                                            <span>{profile.ethnicity || 'Not specified'}</span>
                                                         </div>
                                                         <div className="flex items-center text-sm">
                                                             <UserCheck className="h-3 w-3 mr-1 text-gray-600" />
-                                                            <span>{profile.religion}</span>
+                                                            <span>{profile.religion || 'Not specified'}</span>
                                                         </div>
                                                         <div className="flex items-center text-sm">
                                                             <Briefcase className="h-3 w-3 mr-1 text-gray-600" />
@@ -311,7 +341,7 @@ const SearchResults = () => {
                                                         </div>
                                                         <div className="flex items-center text-sm">
                                                             <GraduationCap className="h-3 w-3 mr-1 text-gray-600" />
-                                                            <span>{profile.education_level}</span>
+                                                            <span>{profile.education_level || 'Not specified'}</span>
                                                         </div>
                                                     </div>
                                                 </div>

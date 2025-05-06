@@ -9,3 +9,5 @@ Route::post('sign-in', [UserController::class, 'userSignIn']);
 Route::post('/matrimony-create', [MatrimonyController::class, 'Create']);
 Route::get('/get-matrimony', [MatrimonyController::class, 'getAllMatrimony']);
 Route::delete('/delete-matrimony-profile/{userId}', [MatrimonyController::class, 'deleteMatrimonyProfile']);
+Route::post('matrimony/{matrimonyId}/update-boot-post', [MatrimonyController::class, 'updateBootPost']);
+Route::post('matrimony/{matrimonyId}/update-package-number', [MatrimonyController::class, 'updatePackageNumber']);
