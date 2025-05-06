@@ -1,117 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import {
-    ChevronDown,
-    ArrowLeft,
-    Phone,
-    Shield,
-    UserCheck,
-    DollarSign,
-    Headphones,
-    Heart,
-    Check,
-    Filter,
-    Bell,
-    User,
-    MapPin,
-    Calendar,
-    Briefcase,
-    GraduationCap,
-    Ruler,
-    Coffee,
-    Clock,
-    Search,
-    AlertTriangle,
-    X,
-} from 'lucide-react';
+import { ChevronDown, ArrowLeft, UserCheck, Heart, Check, Filter, User, MapPin, Calendar, Briefcase, GraduationCap, Ruler, Coffee, Clock, Search, AlertTriangle, X } from 'lucide-react';
+import { FilterOption, Matrimony, Profile } from '../../utilities/types/Matrimony/IMatrimonyView';
 
-// Type definitions
-interface Matrimony {
-    display_name: string;
-    account_created_by: string;
-    birthdate: string;
-    gender: string;
-    ethnicity: string;
-    religion: string;
-    caste: string;
-    height: string;
-    civil_status: string;
-    country_of_residence: string;
-    state_district: string;
-    city: string;
-    visa_type: string;
-    education_level: string;
-    profession: string;
-    drinking: string;
-    food_preference: string;
-    smoking: string;
-    created_at: string;
-    boot_post?: number;
-}
-
-interface Parent {
-    ethnicity: string;
-    religion: string;
-    caste: string;
-    country_of_residence: string;
-    profession: string;
-    additional_info: string;
-}
-
-interface Horoscope {
-    birthdate: string;
-    birth_country: string;
-    horoscope_matching_required: boolean;
-    birth_city: string;
-    birth_time: string;
-}
-
-interface Picture {
-    image_path: string;
-}
-
-interface Profile {
-    user_id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    matrimony: Matrimony;
-    father?: Parent;
-    mother?: Parent;
-    horoscope?: Horoscope;
-    profile_picture: string | null;
-    picture?: Picture;
-    display_name?: string;
-    account_created_by?: string;
-    birthdate?: string;
-    gender?: string;
-    ethnicity?: string;
-    religion?: string;
-    caste?: string;
-    height?: string;
-    civil_status?: string;
-    country_of_residence?: string;
-    state_district?: string;
-    city?: string;
-    visa_type?: string;
-    education_level?: string;
-    profession?: string;
-    drinking?: string;
-    food_preference?: string;
-    smoking?: string;
-    created_at?: string;
-    boot_post?: number;
-}
-
-interface FilterOption {
-    name: string;
-    icon: React.ReactNode;
-    options?: string[];
-    min?: number;
-    max?: number;
-}
-
-// Utility functions
 const calculateAge = (birthdate: string): number => {
     if (!birthdate) return 0;
     const today = new Date();
@@ -179,12 +70,7 @@ const ProfileCard = ({ profile, index }: { profile: Profile; index: number }) =>
     return (
         <div className={`bg-white rounded-lg shadow-md mb-4 overflow-hidden ${isBoost ? 'border-l-4 border-yellow-400' : ''}`}>
             <div className="p-4">
-                {isBoost && (
-                    <div className="inline-flex items-center bg-yellow-400 text-xs font-medium text-gray-800 px-2 py-1 rounded mb-2">
-                        <DollarSign className="h-3 w-3 mr-1" />
-                        Boost Ad
-                    </div>
-                )}
+                {isBoost && <div className="inline-flex items-center bg-yellow-400 text-xs font-medium text-gray-800 px-2 py-1 rounded mb-2">Boost Ad</div>}
                 <div className="flex items-start">
                     <div className="relative mr-4">
                         <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">

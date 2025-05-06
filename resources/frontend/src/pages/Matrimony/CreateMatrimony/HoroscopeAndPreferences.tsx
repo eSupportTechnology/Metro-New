@@ -1,5 +1,5 @@
 import React from 'react';
-import { HoroscopeAndPreferencesProps } from '../../../utilities/types/MatrimonyTypes';
+import { HoroscopeAndPreferencesProps } from '../../../utilities/types/Matrimony/MatrimonyTypes';
 
 export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange, handleCheckboxChange, errors, touched, handleBlur }: HoroscopeAndPreferencesProps) => {
     const showError = (fieldName: string): boolean => {

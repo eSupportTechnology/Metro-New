@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReviewAndSubmitProps } from '../../../utilities/types/MatrimonyTypes';
+import { ReviewAndSubmitProps } from '../../../utilities/types/Matrimony/MatrimonyTypes';
 
 export const renderReviewAndSubmitForm = ({ formData, previewUrl, isLoading, termsAccepted, setTermsAccepted, handleSubmit, errors }: ReviewAndSubmitProps) => {
     const hasErrors = Object.keys(errors).length > 0;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { PersonalInfoProps } from '../../../utilities/types/MatrimonyTypes';
+import { PersonalInfoProps } from '../../../utilities/types/Matrimony/MatrimonyTypes';
 
 export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImageChange, previewUrl, errors, touched, handleBlur }: PersonalInfoProps) => {
     const showError = (fieldName: string): boolean => {

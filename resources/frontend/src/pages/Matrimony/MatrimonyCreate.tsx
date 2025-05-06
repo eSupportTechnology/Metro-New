@@ -4,14 +4,14 @@ import { renderPersonalInfoForm } from './CreateMatrimony/PersonalInformation';
 import { renderParentsInfoForm } from './CreateMatrimony/ParentsInformation';
 import { renderHoroscopeAndPreferencesForm } from './CreateMatrimony/HoroscopeAndPreferences';
 import { renderReviewAndSubmitForm } from './CreateMatrimony/ReviewAndSubmit';
-import { MatrimonyFormData, ValidationSchemaSection } from '../../utilities/types/MatrimonyTypes';
+import { MatrimonyFormData, ValidationSchemaSection } from '../../utilities/types/Matrimony/MatrimonyTypes';
 import Header from '../MainWeb/NavBar/Header';
 import Footer from '../MainWeb/Footer/Footer';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import apiService from '../../utilities/apiService';
 import apiConfig from '../../utilities/apiConfig';
-import { getValidationRule, validationSchema } from '../../utilities/types/MatrimonyCreatevalidation';
+import { getValidationRule, validationSchema } from '../../utilities/types/Matrimony/MatrimonyCreatevalidation';
 
 const progressAnimation = `
   @keyframes progress {

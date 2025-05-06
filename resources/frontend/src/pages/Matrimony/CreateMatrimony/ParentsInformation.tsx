@@ -1,5 +1,5 @@
 import React from 'react';
-import { ParentsInfoProps } from '../../../utilities/types/MatrimonyTypes';
+import { ParentsInfoProps } from '../../../utilities/types/Matrimony/MatrimonyTypes';
 
 export const renderParentsInfoForm = ({ formData, handleInputChange, errors, touched, handleBlur }: ParentsInfoProps) => {
     const showError = (fieldName: string): boolean => {
