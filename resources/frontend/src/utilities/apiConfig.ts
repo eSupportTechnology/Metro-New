@@ -17,7 +17,7 @@ const apiConfig: ApiConfig = {
     endpoints: {
         matrimony: {
             create: `${baseURL}/matrimony-create`,
-            list: `${baseURL}/matrimony-list`,
+            list: `${baseURL}/get-matrimony`,
             detail: (id) => `${baseURL}/matrimony/${id}`,
             update: (id) => `${baseURL}/matrimony/${id}/update`,
             delete: (id) => `${baseURL}/matrimony/${id}/delete`,

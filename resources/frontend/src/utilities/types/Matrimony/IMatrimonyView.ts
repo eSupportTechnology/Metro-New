@@ -1,86 +1,75 @@
-import React from 'react';
+import { ReactNode } from 'react';
 
 export interface Matrimony {
-    display_name: string;
-    account_created_by: string;
-    birthdate: string;
-    gender: string;
-    ethnicity: string;
-    religion: string;
-    caste: string;
-    height: string;
-    civil_status: string;
-    country_of_residence: string;
-    state_district: string;
-    city: string;
-    visa_type: string;
-    education_level: string;
-    profession: string;
-    drinking: string;
-    food_preference: string;
-    smoking: string;
-    created_at: string;
-    boot_post?: number;
-}
-
-export interface Parent {
-    ethnicity: string;
-    religion: string;
-    caste: string;
-    country_of_residence: string;
-    profession: string;
-    additional_info: string;
-}
-
-export interface Horoscope {
-    birthdate: string;
-    birth_country: string;
-    horoscope_matching_required: boolean;
-    birth_city: string;
-    birth_time: string;
-}
-
-export interface Picture {
-    image_path: string;
-}
-
-export interface Profile {
-    user_id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    matrimony: Matrimony;
-    father?: Parent;
-    mother?: Parent;
-    horoscope?: Horoscope;
-    profile_picture: string | null;
-    picture?: Picture;
+    id?: number;
+    user_id?: number;
     display_name?: string;
-    account_created_by?: string;
-    birthdate?: string;
     gender?: string;
-    ethnicity?: string;
+    birthdate?: string;
     religion?: string;
-    caste?: string;
     height?: string;
-    civil_status?: string;
+    ethnicity?: string;
+    profession?: string;
+    education_level?: string;
     country_of_residence?: string;
     state_district?: string;
     city?: string;
-    visa_type?: string;
-    education_level?: string;
-    profession?: string;
-    drinking?: string;
-    food_preference?: string;
-    smoking?: string;
-    created_at?: string;
+    civil_status?: string;
     boot_post?: number;
+    food_preference?: string;
+    drinking?: string;
+    smoking?: string;
+    account_created_by?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface Picture {
+    id?: number;
+    user_id?: number;
+    image_path?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface Profile {
+    id?: number;
+    user_id?: number;
+    first_name?: string;
+    last_name?: string;
+    display_name?: string;
+    gender?: string;
+    birthdate?: string;
+    profile_picture?: string;
+    picture?: Picture;
+    religion?: string;
+    height?: string;
+    ethnicity?: string;
+    profession?: string;
+    education_level?: string;
+    country_of_residence?: string;
+    state_district?: string;
+    city?: string;
+    civil_status?: string;
+    boot_post?: number;
+    food_preference?: string;
+    drinking?: string;
+    smoking?: string;
+    account_created_by?: string;
+    created_at?: string;
+    updated_at?: string;
+    matrimony?: Matrimony;
 }
 
 export interface FilterOption {
     name: string;
-    icon: React.ReactNode;
+    icon: ReactNode;
     options?: string[];
     min?: number;
     max?: number;
+}
+
+export interface SortOption {
+    label: string;
+    value: string;
 }
