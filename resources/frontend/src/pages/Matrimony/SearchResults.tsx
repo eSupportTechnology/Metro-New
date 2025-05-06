@@ -216,7 +216,6 @@ const SearchResults = () => {
                                 { name: 'Smoking', icon: <Coffee className="h-4 w-4 text-gray-500" /> },
                                 { name: 'Differently Abled', icon: <UserCheck className="h-4 w-4 text-gray-500" /> },
                                 { name: 'Account Created by', icon: <User className="h-4 w-4 text-gray-500" /> },
-                                { name: 'ID Verified', icon: <Shield className="h-4 w-4 text-gray-500" /> },
                             ].map((filter) => (
                                 <div key={filter.name} className="border-t border-gray-200 py-3">
                                     <button onClick={() => toggleFilter(filter.name)} className="flex items-center justify-between w-full text-left">
