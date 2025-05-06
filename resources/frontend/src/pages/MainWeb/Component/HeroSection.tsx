@@ -1,8 +1,16 @@
-import { CheckCircle, ChevronRight, Heart, Search } from 'lucide-react';
+import { CheckCircle, ChevronRight, Heart } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 
 const HeroSection = () => {
     const [partnerType, setPartnerType] = useState<string | null>(null);
+    const navigate = useNavigate(); // Initialize useNavigate hook
+
+    const handleNavigation = (partner: string) => {
+        setPartnerType(partner);
+        // Navigate to the path with the partner type (e.g., '/view-add?partner=groom')
+        navigate(`/view-add?partner=${partner}`);
+    };
 
     return (
         <div>
@@ -33,7 +41,7 @@ const HeroSection = () => {
                                 <div className="flex justify-between gap-3">
                                     <div
                                         className={`flex-1 cursor-pointer transition-all duration-200 transform ${partnerType === 'groom' ? 'scale-105' : 'hover:scale-105'}`}
-                                        onClick={() => setPartnerType('groom')}
+                                        onClick={() => handleNavigation('groom')}
                                     >
                                         <div className={`rounded-lg p-1 ${partnerType === 'groom' ? 'bg-yellow-500 ring-2 ring-white' : 'bg-yellow-500/80'}`}>
                                             <img src="/Images/groom.png" alt="Groom" className="w-full h-28 object-cover rounded" />
@@ -43,7 +51,7 @@ const HeroSection = () => {
 
                                     <div
                                         className={`flex-1 cursor-pointer transition-all duration-200 transform ${partnerType === 'bride' ? 'scale-105' : 'hover:scale-105'}`}
-                                        onClick={() => setPartnerType('bride')}
+                                        onClick={() => handleNavigation('bride')}
                                     >
                                         <div className={`rounded-lg p-1 ${partnerType === 'bride' ? 'bg-yellow-500 ring-2 ring-white' : 'bg-yellow-500/80'}`}>
                                             <img src="/Images/bride.png" alt="Bride" className="w-full h-28 object-cover rounded" />
@@ -51,19 +59,6 @@ const HeroSection = () => {
                                         <p className="text-white text-center mt-2 font-medium">Bride</p>
                                     </div>
                                 </div>
-
-                                {partnerType && (
-                                    <div className="mt-4 animate-fade-in">
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                placeholder="Quick search by location..."
-                                                className="w-full py-2 px-4 pr-10 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                                            />
-                                            <Search className="absolute right-3 top-2 h-4 w-4 text-gray-400" />
-                                        </div>
-                                    </div>
-                                )}
                             </div>
 
                             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">

@@ -2,6 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { ChevronDown, ArrowLeft, UserCheck, Heart, Check, Filter, User, MapPin, Calendar, Briefcase, GraduationCap, Ruler, Coffee, Clock, Search, AlertTriangle, X } from 'lucide-react';
 import { FilterOption, Matrimony, Profile } from '../../utilities/types/Matrimony/IMatrimonyView';
+import Header from '../MainWeb/NavBar/Header';
+import Footer from '../MainWeb/Footer/Footer';
+import { Link } from 'react-router-dom';
 
 const calculateAge = (birthdate: string): number => {
     if (!birthdate) return 0;
@@ -150,10 +153,12 @@ const ProfileCard = ({ profile, index }: { profile: Profile; index: number }) =>
                         <Clock className="h-3 w-3 mr-1" />
                         {formatRelativeTime(displayData.created_at || '')}
                     </div>
-                    <button className="text-yellow-600 hover:text-yellow-700 font-medium text-sm flex items-center">
-                        More Details
-                        <ChevronDown className="h-3 w-3 ml-1" />
-                    </button>
+                    <Link to={`/profile/${profile.user_id}`}>
+                        <button className="text-yellow-600 hover:text-yellow-700 font-medium text-sm flex items-center">
+                            More Details
+                            <ChevronDown className="h-3 w-3 ml-1" />
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>
@@ -597,7 +602,8 @@ const SearchResults = () => {
 
     return (
         <div className="font-sans bg-gradient-to-b from-yellow-50 to-white min-h-screen">
-            <div className="max-w-7xl mx-auto pt-6 px-4">
+            <Header />
+            <div className="max-w-7xl mx-auto mt-14 pt-6 px-4">
                 {/* Search Results Header */}
                 <div className="bg-white rounded-lg shadow-md p-4 mb-4">
                     <div className="flex flex-col md:flex-row justify-between items-center">
@@ -799,6 +805,7 @@ const SearchResults = () => {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };
