@@ -17,28 +17,18 @@ class CreateMatrimonyProfile
     public function __invoke(array $validatedData): array
     {
         try {
-            if (isset($validatedData['father']) && is_string($validatedData['father'])) {
-                $validatedData['father'] = json_decode($validatedData['father'], true);
-            }
+            foreach (['father', 'mother', 'horoscope'] as $field) {
+                if (isset($validatedData[$field])) {
+                    if (is_string($validatedData[$field])) {
+                        $decoded = json_decode($validatedData[$field], true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $validatedData[$field] = $decoded;
+                        }
+                    }
 
-            if (isset($validatedData['mother']) && is_string($validatedData['mother'])) {
-                $validatedData['mother'] = json_decode($validatedData['mother'], true);
-            }
-
-            if (isset($validatedData['horoscope']) && is_string($validatedData['horoscope'])) {
-                $validatedData['horoscope'] = json_decode($validatedData['horoscope'], true);
-            }
-
-            if (!isset($validatedData['father']) || !is_array($validatedData['father'])) {
-                $validatedData['father'] = [];
-            }
-
-            if (!isset($validatedData['mother']) || !is_array($validatedData['mother'])) {
-                $validatedData['mother'] = [];
-            }
-
-            if (!isset($validatedData['horoscope']) || !is_array($validatedData['horoscope'])) {
-                $validatedData['horoscope'] = [];
+                } else {
+                    $validatedData[$field] = [];
+                }
             }
 
             $user = User::where('first_name', $validatedData['first_name'])
@@ -81,43 +71,49 @@ class CreateMatrimonyProfile
                 ]
             );
 
+            $fatherData = is_array($validatedData['father']) ? $validatedData['father'] : [];
+            $motherData = is_array($validatedData['mother']) ? $validatedData['mother'] : [];
+            $horoscopeData = is_array($validatedData['horoscope']) ? $validatedData['horoscope'] : [];
+
             Father::updateOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'ethnicity' => $validatedData['father']['ethnicity'] ?? '',
-                    'religion' => $validatedData['father']['religion'] ?? '',
-                    'caste' => $validatedData['father']['caste'] ?? '',
-                    'country_of_residence' => $validatedData['father']['country_of_residence'] ?? '',
-                    'profession' => $validatedData['father']['profession'] ?? '',
-                    'additional_info' => $validatedData['father']['additional_info'] ?? '',
-                ]
-            );
-            Mother::updateOrCreate(
-                ['user_id' => $user->id],
-                [
-                    'ethnicity' => $validatedData['mother']['ethnicity'] ?? '',
-                    'religion' => $validatedData['mother']['religion'] ?? '',
-                    'caste' => $validatedData['mother']['caste'] ?? '',
-                    'country_of_residence' => $validatedData['mother']['country_of_residence'] ?? '',
-                    'profession' => $validatedData['mother']['profession'] ?? '',
-                    'additional_info' => $validatedData['mother']['additional_info'] ?? '',
+                    'ethnicity' => $fatherData['ethnicity'] ?? '',
+                    'religion' => $fatherData['religion'] ?? '',
+                    'caste' => $fatherData['caste'] ?? '',
+                    'country_of_residence' => $fatherData['country_of_residence'] ?? '',
+                    'profession' => $fatherData['profession'] ?? '',
+                    'additional_info' => $fatherData['additional_info'] ?? '',
                 ]
             );
 
-            $horoscopeBirthdate = isset($validatedData['horoscope']['birthdate']) && $validatedData['horoscope']['birthdate']
-                ? $validatedData['horoscope']['birthdate']
+            Mother::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'ethnicity' => $motherData['ethnicity'] ?? '',
+                    'religion' => $motherData['religion'] ?? '',
+                    'caste' => $motherData['caste'] ?? '',
+                    'country_of_residence' => $motherData['country_of_residence'] ?? '',
+                    'profession' => $motherData['profession'] ?? '',
+                    'additional_info' => $motherData['additional_info'] ?? '',
+                ]
+            );
+
+            $horoscopeBirthdate = isset($horoscopeData['birthdate']) && $horoscopeData['birthdate']
+                ? $horoscopeData['birthdate']
                 : $validatedData['birthdate'];
 
             HoroscopeDetail::updateOrCreate(
                 ['user_id' => $user->id],
                 [
                     'birthdate' => $horoscopeBirthdate,
-                    'birth_country' => $validatedData['horoscope']['birth_country'] ?? '',
-                    'horoscope_matching_required' => $validatedData['horoscope']['horoscope_matching_required'] ?? false,
-                    'birth_city' => $validatedData['horoscope']['birth_city'] ?? '',
-                    'birth_time' => $validatedData['horoscope']['birth_time'] ?? '',
+                    'birth_country' => $horoscopeData['birth_country'] ?? '',
+                    'horoscope_matching_required' => $horoscopeData['horoscope_matching_required'] ?? false,
+                    'birth_city' => $horoscopeData['birth_city'] ?? '',
+                    'birth_time' => $horoscopeData['birth_time'] ?? '',
                 ]
             );
+
             if (isset($validatedData['image'])) {
                 $image = $validatedData['image'];
                 $path = $image->storeAs("public/matrimony/{$user->id}", $image->getClientOriginalName());
@@ -131,8 +127,7 @@ class CreateMatrimonyProfile
 
             return CommonResponse::sendSuccessResponse('Matrimony profile created successfully.');
         } catch (\Exception $e) {
-            Log::error('CreateMatrimonyProfile Error: ' . $e->getMessage());
-            return CommonResponse::sendBadRequestResponse('Something went wrong while creating the profile.');
+            return CommonResponse::sendBadRequestResponse('Something went wrong while creating the profile: ' . $e->getMessage());
         }
     }
 }

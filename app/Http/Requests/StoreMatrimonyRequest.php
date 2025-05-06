@@ -36,6 +36,10 @@ class StoreMatrimonyRequest extends FormRequest
             'food_preference' => 'nullable|string',
             'smoking' => 'nullable|string',
 
+            'father' => 'nullable',
+            'mother' => 'nullable',
+            'horoscope' => 'nullable',
+
             'father.ethnicity' => 'nullable|string',
             'father.religion' => 'nullable|string',
             'father.caste' => 'nullable|string',
@@ -58,5 +62,28 @@ class StoreMatrimonyRequest extends FormRequest
 
             'image' => 'nullable|image|max:2048',
         ];
+    }
+
+    public function validated($key = null, $default = null)
+    {
+        $validated = parent::validated($key, $default);
+
+        foreach (['father', 'mother', 'horoscope'] as $field) {
+            if ($this->has($field) && !isset($validated[$field])) {
+                $value = $this->input($field);
+                if (is_string($value)) {
+                    $decoded = json_decode($value, true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        $validated[$field] = $decoded;
+                    } else {
+                        $validated[$field] = $value;
+                    }
+                } else {
+                    $validated[$field] = $value;
+                }
+            }
+        }
+
+        return $validated;
     }
 }
