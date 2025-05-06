@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { renderPersonalInfoForm } from './CreateMatrimony/PersonalInformation';
 import { renderParentsInfoForm } from './CreateMatrimony/ParentsInformation';
 import { renderHoroscopeAndPreferencesForm } from './CreateMatrimony/HoroscopeAndPreferences';
 import { renderReviewAndSubmitForm } from './CreateMatrimony/ReviewAndSubmit';
-import { MatrimonyFormData } from '../../utilities/types/MatrimonyTypes';
+import { MatrimonyFormData, ValidationSchemaSection } from '../../utilities/types/MatrimonyTypes';
 import Header from '../MainWeb/NavBar/Header';
 import Footer from '../MainWeb/Footer/Footer';
-import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import apiService from '../../utilities/apiService';
+import apiConfig from '../../utilities/apiConfig';
+import { getValidationRule, validationSchema } from '../../utilities/types/MatrimonyCreatevalidation';
 
 const progressAnimation = `
   @keyframes progress {
@@ -22,11 +24,11 @@ const progressAnimation = `
 `;
 
 const MatrimonyCreate: React.FC = () => {
-    const [currentStep, setCurrentStep] = useState<number>(1);
-    const totalSteps = 4;
-    const [isSuccess, setIsSuccess] = useState<boolean>(false);
-
-    const [formData, setFormData] = useState<MatrimonyFormData>({
+    const [currentStep, setCurrentStep] = React.useState<number>(1);
+    const [isSuccess, setIsSuccess] = React.useState<boolean>(false);
+    const [errors, setErrors] = React.useState<Record<string, string>>({});
+    const [touched, setTouched] = React.useState<Record<string, boolean>>({});
+    const [formData, setFormData] = React.useState<MatrimonyFormData>({
         first_name: '',
         last_name: '',
         email: '',
@@ -73,14 +75,62 @@ const MatrimonyCreate: React.FC = () => {
         },
         image: null,
     });
+    const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [termsAccepted, setTermsAccepted] = React.useState<boolean>(false);
+    const [redirectCountdown, setRedirectCountdown] = React.useState<number>(3);
+    const totalSteps = 4;
 
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
-    const [redirectCountdown, setRedirectCountdown] = useState<number>(3);
+    const isValidEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+    const validateStep = (step: number): boolean => {
+        const newErrors: Record<string, string> = {};
+        let isValid = true;
+
+        const schemaToUse: ValidationSchemaSection = step === 1 ? validationSchema.step1 : step === 2 ? validationSchema.step2 : step === 3 ? validationSchema.step3 : {};
+
+        Object.entries(schemaToUse).forEach(([field, rules]) => {
+            if (field.includes('.')) {
+                const [parent, child] = field.split('.');
+                const parentObj = formData[parent as keyof MatrimonyFormData] as Record<string, any>;
+                const value = parentObj ? parentObj[child] : '';
+
+                if (rules.required && (!value || value.trim() === '')) {
+                    newErrors[field] = rules.message || `${field} is required`;
+                    isValid = false;
+                }
+            } else {
+                const value = formData[field as keyof MatrimonyFormData] as string;
+
+                if (rules.required && (!value || value.trim() === '')) {
+                    newErrors[field] = rules.message || `${field} is required`;
+                    isValid = false;
+                }
+
+                if (field === 'email' && value && !isValidEmail(value)) {
+                    newErrors[field] = 'Please enter a valid email address';
+                    isValid = false;
+                }
+
+                if (rules.max && value && value.length > rules.max) {
+                    newErrors[field] = `${field} must be less than ${rules.max} characters`;
+                    isValid = false;
+                }
+            }
+        });
+
+        setErrors(newErrors);
+        return isValid;
+    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+        setTouched((prev) => ({
+            ...prev,
+            [name]: true,
+        }));
 
         if (name.includes('.')) {
             const [parent, child] = name.split('.');
@@ -100,10 +150,39 @@ const MatrimonyCreate: React.FC = () => {
                 [name]: value,
             }));
         }
+        validateField(name, value);
+    };
+
+    const validateField = (name: string, value: string): void => {
+        const fieldSchema = getValidationRule(name);
+
+        if (!fieldSchema) return;
+
+        let fieldError = '';
+
+        if (fieldSchema.required && (!value || value.trim() === '')) {
+            fieldError = fieldSchema.message || `${name} is required`;
+        }
+
+        if (name === 'email' && value && !isValidEmail(value)) {
+            fieldError = 'Please enter a valid email address';
+        }
+
+        if (fieldSchema.max && value && value.length > fieldSchema.max) {
+            fieldError = `${name} must be less than ${fieldSchema.max} characters`;
+        }
+        setErrors((prev) => ({
+            ...prev,
+            [name]: fieldError,
+        }));
     };
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, checked } = e.target;
+        setTouched((prev) => ({
+            ...prev,
+            [name]: true,
+        }));
 
         if (name.includes('.')) {
             const [parent, child] = name.split('.');
@@ -143,11 +222,26 @@ const MatrimonyCreate: React.FC = () => {
         }
     };
 
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+
+        setTouched((prev) => ({
+            ...prev,
+            [name]: true,
+        }));
+
+        validateField(name, value);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!termsAccepted) {
-            toast.error('Please accept the terms and conditions to proceed.');
+        if (!validateStep(3) || !termsAccepted) {
+            if (!termsAccepted) {
+                toast.error('Please accept the terms and conditions to proceed.');
+            } else {
+                toast.error('Please fill in all required fields correctly before submitting.');
+            }
             return;
         }
 
@@ -169,15 +263,11 @@ const MatrimonyCreate: React.FC = () => {
                 }
             }
 
-            const response = await axios.post('http://127.0.0.1:8000/api/matrimony-create', matrimonyData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            const response = await apiService.postFormData(apiConfig.endpoints.matrimony.create, matrimonyData);
 
             setIsLoading(false);
 
-            if (response.data.status === 200 && response.data.message) {
+            if (response.status === 200 && response.message) {
                 setIsSuccess(true);
                 toast.success('Profile created successfully! Your profile will be reviewed and published soon.');
 
@@ -192,14 +282,21 @@ const MatrimonyCreate: React.FC = () => {
                     }
                 }, 1000);
             } else {
-                toast.warning(response.data.message || 'Something went wrong. Please try again.');
+                toast.warning(response.message || 'Something went wrong. Please try again.');
             }
         } catch (error: any) {
             setIsLoading(false);
-
-            if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 422 && error.response.data.errors) {
+            if (error.response) {
+                if (error.response.status === 422 && error.response.data?.errors) {
                     const validationErrors = error.response.data.errors;
+                    Object.keys(validationErrors).forEach((field) => {
+                        const errorMessage = validationErrors[field][0];
+                        setErrors((prev) => ({
+                            ...prev,
+                            [field]: errorMessage,
+                        }));
+                    });
+
                     const firstError = Object.values(validationErrors)[0];
                     toast.error(Array.isArray(firstError) ? firstError[0] : 'Validation failed');
                 } else {
@@ -214,9 +311,22 @@ const MatrimonyCreate: React.FC = () => {
     };
 
     const nextStep = () => {
-        if (currentStep < totalSteps) {
+        if (validateStep(currentStep)) {
             setCurrentStep(currentStep + 1);
             window.scrollTo(0, 0);
+        } else {
+            const stepSchema = currentStep === 1 ? validationSchema.step1 : currentStep === 2 ? validationSchema.step2 : validationSchema.step3;
+
+            const stepFields = Object.keys(stepSchema);
+            const newTouched: Record<string, boolean> = { ...touched };
+
+            stepFields.forEach((field) => {
+                newTouched[field] = true;
+            });
+
+            setTouched(newTouched);
+
+            toast.error('Please fill in all required fields correctly before proceeding.');
         }
     };
 
@@ -240,7 +350,7 @@ const MatrimonyCreate: React.FC = () => {
                             >
                                 {currentStep > index + 1 ? '✓' : index + 1}
                             </div>
-                            <span className="text-xs mt-1">{index === 0 ? 'Personal' : index === 1 ? 'Parents' : index === 2 ? 'Preferences' : 'Payment'}</span>
+                            <span className="text-xs mt-1">{index === 0 ? 'Personal' : index === 1 ? 'Parents' : index === 2 ? 'Preferences' : 'Review'}</span>
                         </div>
                     ))}
                 </div>
@@ -260,17 +370,26 @@ const MatrimonyCreate: React.FC = () => {
                     handleInputChange,
                     handleImageChange,
                     previewUrl,
+                    errors,
+                    touched,
+                    handleBlur,
                 });
             case 2:
                 return renderParentsInfoForm({
                     formData,
                     handleInputChange,
+                    errors,
+                    touched,
+                    handleBlur,
                 });
             case 3:
                 return renderHoroscopeAndPreferencesForm({
                     formData,
                     handleInputChange,
                     handleCheckboxChange,
+                    errors,
+                    touched,
+                    handleBlur,
                 });
             case 4:
                 return renderReviewAndSubmitForm({
@@ -280,6 +399,7 @@ const MatrimonyCreate: React.FC = () => {
                     termsAccepted,
                     setTermsAccepted,
                     handleSubmit,
+                    errors,
                 });
             default:
                 return null;

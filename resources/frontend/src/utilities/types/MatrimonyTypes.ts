@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface ParentInfo {
     ethnicity: string;
     religion: string;
@@ -41,4 +43,52 @@ export interface MatrimonyFormData {
     mother: ParentInfo;
     horoscope: Horoscope;
     image: File | null;
+}
+
+export interface ValidationRule {
+    required?: boolean;
+    max?: number;
+    email?: boolean;
+    date?: boolean;
+    message?: string;
+}
+
+export interface ValidationSchemaSection {
+    [field: string]: ValidationRule;
+}
+
+export interface HoroscopeAndPreferencesProps {
+    formData: MatrimonyFormData;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+    handleCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    errors: Record<string, string>;
+    touched: Record<string, boolean>;
+    handleBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+}
+export interface ParentsInfoProps {
+    formData: MatrimonyFormData;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+    errors: Record<string, string>;
+    touched: Record<string, boolean>;
+    handleBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+}
+
+export interface PersonalInfoProps {
+    formData: MatrimonyFormData;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+    handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    previewUrl: string | null;
+    errors: Record<string, string>;
+    touched: Record<string, boolean>;
+    handleBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+}
+
+export interface ReviewAndSubmitProps {
+    formData: MatrimonyFormData;
+    previewUrl: string | null;
+    isLoading: boolean;
+    termsAccepted: boolean;
+    setTermsAccepted: React.Dispatch<React.SetStateAction<boolean>>;
+    handleSubmit: (e: React.FormEvent) => Promise<void>;
+    errors: Record<string, string>;
 }

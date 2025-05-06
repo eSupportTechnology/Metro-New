@@ -1,14 +1,11 @@
 import React from 'react';
-import { MatrimonyFormData } from '../../../utilities/types/MatrimonyTypes';
+import { PersonalInfoProps } from '../../../utilities/types/MatrimonyTypes';
 
-interface PersonalInfoProps {
-    formData: MatrimonyFormData;
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-    handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    previewUrl: string | null;
-}
+export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImageChange, previewUrl, errors, touched, handleBlur }: PersonalInfoProps) => {
+    const showError = (fieldName: string): boolean => {
+        return !!(touched[fieldName] && errors[fieldName]);
+    };
 
-export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImageChange, previewUrl }: PersonalInfoProps) => {
     return (
         <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Basic Information</h3>
@@ -24,9 +21,11 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                         name="first_name"
                         value={formData.first_name}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                        onBlur={handleBlur}
+                        className={`w-full px-3 py-2 border ${showError('first_name') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                         required
                     />
+                    {showError('first_name') && <p className="text-red-500 text-xs mt-1">{errors.first_name}</p>}
                 </div>
 
                 <div>
@@ -39,9 +38,11 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                         name="last_name"
                         value={formData.last_name}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                        onBlur={handleBlur}
+                        className={`w-full px-3 py-2 border ${showError('last_name') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                         required
                     />
+                    {showError('last_name') && <p className="text-red-500 text-xs mt-1">{errors.last_name}</p>}
                 </div>
             </div>
 
@@ -55,9 +56,11 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    onBlur={handleBlur}
+                    className={`w-full px-3 py-2 border ${showError('email') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                     required
                 />
+                {showError('email') && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
 
             <div>
@@ -70,9 +73,11 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                     name="display_name"
                     value={formData.display_name}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    onBlur={handleBlur}
+                    className={`w-full px-3 py-2 border ${showError('display_name') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                     required
                 />
+                {showError('display_name') && <p className="text-red-500 text-xs mt-1">{errors.display_name}</p>}
                 <p className="text-xs text-gray-500 mt-1">Only the first name and first letter of the last name will be displayed with the ad.</p>
             </div>
 
@@ -85,7 +90,8 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                     name="account_created_by"
                     value={formData.account_created_by}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    onBlur={handleBlur}
+                    className={`w-full px-3 py-2 border ${showError('account_created_by') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                     required
                 >
                     <option value="Self">Self</option>
@@ -94,6 +100,7 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                     <option value="Relative">Relative</option>
                     <option value="Friend">Friend</option>
                 </select>
+                {showError('account_created_by') && <p className="text-red-500 text-xs mt-1">{errors.account_created_by}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -107,9 +114,11 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                         name="birthdate"
                         value={formData.birthdate}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                        onBlur={handleBlur}
+                        className={`w-full px-3 py-2 border ${showError('birthdate') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                         required
                     />
+                    {showError('birthdate') && <p className="text-red-500 text-xs mt-1">{errors.birthdate}</p>}
                 </div>
 
                 <div>
@@ -121,26 +130,30 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                         name="gender"
                         value={formData.gender}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                        onBlur={handleBlur}
+                        className={`w-full px-3 py-2 border ${showError('gender') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                         required
                     >
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                     </select>
+                    {showError('gender') && <p className="text-red-500 text-xs mt-1">{errors.gender}</p>}
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label htmlFor="ethnicity" className="block text-gray-700 mb-1">
-                        Ethnicity
+                        Ethnicity*
                     </label>
                     <select
                         id="ethnicity"
                         name="ethnicity"
                         value={formData.ethnicity}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                        onBlur={handleBlur}
+                        className={`w-full px-3 py-2 border ${showError('ethnicity') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                        required
                     >
                         <option value="">Select Ethnicity</option>
                         <option value="Sinhalese">Sinhalese</option>
@@ -150,18 +163,21 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                         <option value="Malay">Malay</option>
                         <option value="Other">Other</option>
                     </select>
+                    {showError('ethnicity') && <p className="text-red-500 text-xs mt-1">{errors.ethnicity}</p>}
                 </div>
 
                 <div>
                     <label htmlFor="religion" className="block text-gray-700 mb-1">
-                        Religion
+                        Religion*
                     </label>
                     <select
                         id="religion"
                         name="religion"
                         value={formData.religion}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                        onBlur={handleBlur}
+                        className={`w-full px-3 py-2 border ${showError('religion') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                        required
                     >
                         <option value="">Select Religion</option>
                         <option value="Buddhist">Buddhist</option>
@@ -170,6 +186,7 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                         <option value="Christian">Christian</option>
                         <option value="Other">Other</option>
                     </select>
+                    {showError('religion') && <p className="text-red-500 text-xs mt-1">{errors.religion}</p>}
                 </div>
             </div>
 
@@ -184,6 +201,7 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                         name="caste"
                         value={formData.caste}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     />
                 </div>
@@ -197,6 +215,7 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                         name="height"
                         value={formData.height}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     >
                         <option value="">Select Height</option>
@@ -232,6 +251,7 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                     name="civil_status"
                     value={formData.civil_status}
                     onChange={handleInputChange}
+                    onBlur={handleBlur}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 >
                     <option value="Never Married">Never Married</option>
@@ -250,7 +270,8 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                     name="country_of_residence"
                     value={formData.country_of_residence}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    onBlur={handleBlur}
+                    className={`w-full px-3 py-2 border ${showError('country_of_residence') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                     required
                 >
                     <option value="Sri Lanka">Sri Lanka</option>
@@ -260,12 +281,13 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                     <option value="United States">United States</option>
                     <option value="Other">Other</option>
                 </select>
+                {showError('country_of_residence') && <p className="text-red-500 text-xs mt-1">{errors.country_of_residence}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label htmlFor="state_district" className="block text-gray-700 mb-1">
-                        State/District
+                        State/District*
                     </label>
                     <input
                         type="text"
@@ -273,8 +295,11 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                         name="state_district"
                         value={formData.state_district}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                        onBlur={handleBlur}
+                        className={`w-full px-3 py-2 border ${showError('state_district') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                        required
                     />
+                    {showError('state_district') && <p className="text-red-500 text-xs mt-1">{errors.state_district}</p>}
                 </div>
 
                 <div>
@@ -287,6 +312,7 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                         name="city"
                         value={formData.city}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     />
                 </div>

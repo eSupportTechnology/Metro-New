@@ -1,13 +1,11 @@
 import React from 'react';
-import { MatrimonyFormData } from '../../utilities/types/MatrimonyTypes';
+import { HoroscopeAndPreferencesProps } from '../../../utilities/types/MatrimonyTypes';
 
-interface HoroscopeAndPreferencesProps {
-    formData: MatrimonyFormData;
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-    handleCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange, handleCheckboxChange, errors, touched, handleBlur }: HoroscopeAndPreferencesProps) => {
+    const showError = (fieldName: string): boolean => {
+        return !!(touched[fieldName] && errors[fieldName]);
+    };
 
-export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange, handleCheckboxChange }: HoroscopeAndPreferencesProps) => {
     return (
         <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Horoscope Information</h3>
@@ -39,6 +37,7 @@ export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange,
                         name="horoscope.birthdate"
                         value={formData.horoscope.birthdate}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     />
                 </div>
@@ -53,6 +52,7 @@ export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange,
                         name="horoscope.birth_time"
                         value={formData.horoscope.birth_time}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     />
                 </div>
@@ -68,6 +68,7 @@ export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange,
                         name="horoscope.birth_country"
                         value={formData.horoscope.birth_country}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     >
                         <option value="">Select Country</option>
@@ -90,6 +91,7 @@ export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange,
                         name="horoscope.birth_city"
                         value={formData.horoscope.birth_city}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     />
                 </div>
@@ -101,14 +103,16 @@ export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange,
 
             <div>
                 <label htmlFor="education_level" className="block text-gray-700 mb-1">
-                    Education Level
+                    Education Level*
                 </label>
                 <select
                     id="education_level"
                     name="education_level"
                     value={formData.education_level}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    onBlur={handleBlur}
+                    className={`w-full px-3 py-2 border ${showError('education_level') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                    required
                 >
                     <option value="">Select Education Level</option>
                     <option value="High School">High School</option>
@@ -118,11 +122,12 @@ export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange,
                     <option value="Doctorate">Doctorate</option>
                     <option value="Professional Qualification">Professional Qualification</option>
                 </select>
+                {showError('education_level') && <p className="text-red-500 text-xs mt-1">{errors.education_level}</p>}
             </div>
 
             <div>
                 <label htmlFor="profession" className="block text-gray-700 mb-1">
-                    Profession
+                    Profession*
                 </label>
                 <input
                     type="text"
@@ -130,9 +135,12 @@ export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange,
                     name="profession"
                     value={formData.profession}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    onBlur={handleBlur}
+                    className={`w-full px-3 py-2 border ${showError('profession') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                     placeholder="e.g. Doctor, Engineer, Teacher, etc."
+                    required
                 />
+                {showError('profession') && <p className="text-red-500 text-xs mt-1">{errors.profession}</p>}
             </div>
 
             <div>
@@ -145,6 +153,7 @@ export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange,
                     name="visa_type"
                     value={formData.visa_type}
                     onChange={handleInputChange}
+                    onBlur={handleBlur}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     placeholder="e.g. Permanent Resident, Student Visa, etc."
                 />
@@ -164,6 +173,7 @@ export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange,
                         name="drinking"
                         value={formData.drinking}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     >
                         <option value="No">No</option>
@@ -181,6 +191,7 @@ export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange,
                         name="smoking"
                         value={formData.smoking}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     >
                         <option value="No">No</option>
@@ -198,6 +209,7 @@ export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange,
                         name="food_preference"
                         value={formData.food_preference}
                         onChange={handleInputChange}
+                        onBlur={handleBlur}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     >
                         <option value="">Select Food Preference</option>
