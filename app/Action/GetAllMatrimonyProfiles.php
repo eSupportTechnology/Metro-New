@@ -33,7 +33,8 @@ class GetAllMatrimonyProfiles
                     'horoscope_details.birth_city as horoscope_birth_city',
                     'horoscope_details.birth_time as horoscope_birth_time',
                     'pictures.image_path as profile_picture',
-                    'matrimonies.created_at as matrimony_created_at'
+                    'matrimonies.created_at as matrimony_created_at',
+                    'matrimonies.boot_post',
                 )
                 ->get();
 
@@ -84,6 +85,7 @@ class GetAllMatrimonyProfiles
                         'food_preference' => $profile->food_preference,
                         'smoking' => $profile->smoking,
                         'created_at' => $profile->matrimony_created_at,
+                        'boot_post' => $profile->boot_post,
                     ],
                     'father' => [
                         'ethnicity' => $profile->father_ethnicity ?? '',
