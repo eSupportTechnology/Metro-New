@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import axios from 'axios';
 import {
     ChevronDown,
     ArrowLeft,
@@ -23,7 +24,6 @@ import {
     AlertTriangle,
     X,
 } from 'lucide-react';
-import axios from 'axios';
 
 // Type definitions
 interface Matrimony {
@@ -108,7 +108,6 @@ interface FilterOption {
     options?: string[];
     min?: number;
     max?: number;
-    isOpen?: boolean;
 }
 
 // Utility functions
@@ -306,6 +305,18 @@ const FilterSection = ({
                     {filter.options ? (
                         // For dropdown style filters
                         <div className="space-y-1 max-h-40 overflow-y-auto">
+                            <div key="empty" className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    id={`${filter.name}-empty`}
+                                    checked={activeFilters[filter.name] === ''}
+                                    onChange={() => handleFilterChange('')}
+                                    className="h-4 w-4 text-yellow-500 rounded"
+                                />
+                                <label htmlFor={`${filter.name}-empty`} className="ml-2 text-sm text-gray-700">
+                                    All
+                                </label>
+                            </div>
                             {filter.options.map((option) => (
                                 <div key={option} className="flex items-center">
                                     <input
@@ -348,7 +359,6 @@ const FilterSection = ({
 // Main component
 const SearchResults = () => {
     const [profiles, setProfiles] = useState<Profile[]>([]);
-    const [filteredProfiles, setFilteredProfiles] = useState<Profile[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState('Latest First');
@@ -358,117 +368,137 @@ const SearchResults = () => {
     const [selectedGender, setSelectedGender] = useState('Female'); // Default looking for females
     const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
-    // Active filters state
+    // Dynamic filter options state
+    const [filterOptions, setFilterOptions] = useState<FilterOption[]>([]);
+
+    // Active filters state (initialized with just Age)
     const [activeFilters, setActiveFilters] = useState<Record<string, any>>({
         Age: 25,
-        'Country of Residence': '',
-        'Region / District': '',
-        Ethnicity: '',
-        Religion: '',
-        'Civil Status': '',
-        Profession: '',
-        'Min Education Level': '',
-        Height: '',
-        'Food Preference': '',
-        Drinking: '',
-        Smoking: '',
-        'Differently Abled': '',
-        'Account Created by': '',
     });
-
-    // Applied filters
-    const [appliedFilters, setAppliedFilters] = useState<string[]>([]);
-
-    // Filter options configuration
-    const filterOptions: FilterOption[] = [
-        {
-            name: 'Age',
-            icon: <Calendar className="h-4 w-4 text-gray-500" />,
-            min: 18,
-            max: 70,
-        },
-        {
-            name: 'Country of Residence',
-            icon: <MapPin className="h-4 w-4 text-gray-500" />,
-            options: ['Sri Lanka', 'Australia', 'India', 'United States', 'United Kingdom', 'Canada', 'Georgia'],
-        },
-        {
-            name: 'Region / District',
-            icon: <MapPin className="h-4 w-4 text-gray-500" />,
-            options: ['Western Province', 'Central Province', 'North Western'],
-        },
-        {
-            name: 'Ethnicity',
-            icon: <User className="h-4 w-4 text-gray-500" />,
-            options: ['Sinhalese', 'Tamil', 'Muslim', 'Burgher', 'Other'],
-        },
-        {
-            name: 'Religion',
-            icon: <UserCheck className="h-4 w-4 text-gray-500" />,
-            options: ['Buddhist', 'Hindu', 'Islam', 'Christian', 'Other'],
-        },
-        {
-            name: 'Civil Status',
-            icon: <Heart className="h-4 w-4 text-gray-500" />,
-            options: ['Never Married', 'Divorced', 'Widowed', 'Separated'],
-        },
-        {
-            name: 'Profession',
-            icon: <Briefcase className="h-4 w-4 text-gray-500" />,
-            options: ['Doctor', 'Engineer', 'Teacher', 'Lawyer', 'Urban Planner', 'Other'],
-        },
-        {
-            name: 'Min Education Level',
-            icon: <GraduationCap className="h-4 w-4 text-gray-500" />,
-            options: ['High School', "Bachelor's Degree", "Master's Degree", 'Doctorate', 'Professional Degree'],
-        },
-        {
-            name: 'Height',
-            icon: <Ruler className="h-4 w-4 text-gray-500" />,
-            options: ['5ft', '5ft 2in', '5ft 4in', '5ft 6in', '5ft 8in', '5ft 10in', '6ft', 'Above 6ft'],
-        },
-        {
-            name: 'Food Preference',
-            icon: <Coffee className="h-4 w-4 text-gray-500" />,
-            options: ['Vegetarian', 'Non-Vegetarian', 'Vegan', 'Pescatarian'],
-        },
-        {
-            name: 'Drinking',
-            icon: <Coffee className="h-4 w-4 text-gray-500" />,
-            options: ['Yes', 'No', 'Occasionally'],
-        },
-        {
-            name: 'Smoking',
-            icon: <Coffee className="h-4 w-4 text-gray-500" />,
-            options: ['Yes', 'No', 'Occasionally'],
-        },
-        {
-            name: 'Differently Abled',
-            icon: <UserCheck className="h-4 w-4 text-gray-500" />,
-            options: ['Yes', 'No'],
-        },
-        {
-            name: 'Account Created by',
-            icon: <User className="h-4 w-4 text-gray-500" />,
-            options: ['Self', 'Parent', 'Sibling', 'Relative', 'Friend'],
-        },
-    ];
 
     // Sort options
     const sortOptions = ['Latest First', 'Oldest First', 'Age: Low to High', 'Age: High to Low', 'Name: A to Z', 'Name: Z to A'];
+
+    // Helper function to get icon for a filter
+    const getIconForFilter = (filterName: string): React.ReactNode => {
+        switch (filterName) {
+            case 'Age':
+                return <Calendar className="h-4 w-4 text-gray-500" />;
+            case 'Country of Residence':
+            case 'Region / District':
+                return <MapPin className="h-4 w-4 text-gray-500" />;
+            case 'Ethnicity':
+            case 'Account Created by':
+                return <User className="h-4 w-4 text-gray-500" />;
+            case 'Religion':
+            case 'Differently Abled':
+                return <UserCheck className="h-4 w-4 text-gray-500" />;
+            case 'Civil Status':
+                return <Heart className="h-4 w-4 text-gray-500" />;
+            case 'Profession':
+                return <Briefcase className="h-4 w-4 text-gray-500" />;
+            case 'Min Education Level':
+            case 'Education Level':
+                return <GraduationCap className="h-4 w-4 text-gray-500" />;
+            case 'Height':
+                return <Ruler className="h-4 w-4 text-gray-500" />;
+            case 'Food Preference':
+            case 'Drinking':
+            case 'Smoking':
+                return <Coffee className="h-4 w-4 text-gray-500" />;
+            default:
+                return <Filter className="h-4 w-4 text-gray-500" />;
+        }
+    };
+
+    // Function to generate filter options dynamically from the data
+    const generateFilterOptions = (profilesData: Profile[]) => {
+        // Create sets to collect unique values for each filter category
+        const filterCategories = [
+            'Country of Residence',
+            'Region / District',
+            'Ethnicity',
+            'Religion',
+            'Civil Status',
+            'Profession',
+            'Education Level',
+            'Height',
+            'Food Preference',
+            'Drinking',
+            'Smoking',
+            'Account Created by',
+        ];
+
+        const uniqueValues: Record<string, Set<string>> = {};
+
+        // Initialize sets for each filter category
+        filterCategories.forEach((category) => {
+            uniqueValues[category] = new Set<string>();
+        });
+
+        // Collect all unique values from profiles
+        profilesData.forEach((profile) => {
+            // Helper function to extract value safely
+            const getValue = (key: string): string => {
+                const convertedKey = key.toLowerCase().replace(/\s+/g, '_');
+                return (profile[convertedKey as keyof Profile] || profile.matrimony?.[convertedKey as keyof Matrimony] || '') as string;
+            };
+
+            // Populate sets with unique values
+            Object.keys(uniqueValues).forEach((key) => {
+                const value = key === 'Region / District' ? profile.state_district || profile.matrimony?.state_district || '' : getValue(key);
+
+                if (value) {
+                    uniqueValues[key].add(value);
+                }
+            });
+        });
+
+        // Convert unique value sets to arrays for each filter and update filter options
+        const dynamicFilterOptions: FilterOption[] = [
+            {
+                name: 'Age',
+                icon: <Calendar className="h-4 w-4 text-gray-500" />,
+                min: 18,
+                max: 70,
+            },
+            ...Object.entries(uniqueValues).map(([name, values]) => ({
+                name,
+                icon: getIconForFilter(name),
+                options: Array.from(values).sort(),
+            })),
+        ];
+
+        // Update filter options state
+        setFilterOptions(dynamicFilterOptions);
+
+        // Initialize active filters with empty values
+        const initialActiveFilters: Record<string, any> = {
+            // Age: 25,
+        };
+
+        // Add empty values for all other filters
+        dynamicFilterOptions.forEach((filter) => {
+            if (filter.name !== 'Age') {
+                initialActiveFilters[filter.name] = '';
+            }
+        });
+
+        setActiveFilters(initialActiveFilters);
+    };
 
     // Fetch profiles from API
     useEffect(() => {
         const fetchProfiles = async () => {
             setIsLoading(true);
             try {
+                // Make the API call to fetch matrimony profiles - don't change this endpoint
                 const response = await axios.get('http://127.0.0.1:8000/api/get-matrimony');
 
-                // Check if the response has the expected structure
-                if (response.data && (response.data.status === 200 || response.data.status === 'success')) {
-                    // Handle the different possible response structures
-                    let profileData;
+                // Handle the different possible response structures
+                let profileData;
 
+                if (response.data && (response.data.status === 200 || response.data.status === 'success')) {
                     if (response.data['Matrimony profiles retrieved successfully']) {
                         profileData = response.data['Matrimony profiles retrieved successfully'];
                     } else if (response.data.data) {
@@ -478,11 +508,10 @@ const SearchResults = () => {
                     }
 
                     // Extract matrimony data from the profiles
-                    const formattedProfiles = profileData.map((profile) => {
+                    const formattedProfiles = profileData.map((profile: any) => {
                         // If profile has matrimony data as a nested object, merge it with the profile
                         if (profile.matrimony) {
                             return {
-                                id: profile.user_id,
                                 ...profile,
                                 ...profile.matrimony,
                                 picture: profile.profile_picture ? { image_path: profile.profile_picture } : null,
@@ -493,11 +522,14 @@ const SearchResults = () => {
 
                     setProfiles(formattedProfiles);
                     setTotalResults(formattedProfiles.length);
+
+                    // Generate dynamic filter options
+                    generateFilterOptions(formattedProfiles);
                 } else {
                     throw new Error('Failed to fetch profiles');
                 }
             } catch (err) {
-                setError(err.message || 'Failed to fetch profiles');
+                setError(err instanceof Error ? err.message : 'Failed to fetch profiles');
                 console.error('Error fetching profiles:', err);
             } finally {
                 setIsLoading(false);
@@ -507,8 +539,22 @@ const SearchResults = () => {
         fetchProfiles();
     }, []);
 
-    // Apply filters and sorting
-    useEffect(() => {
+    // Use useMemo for applied filters
+    const appliedFilters = useMemo(() => {
+        const newAppliedFilters: string[] = [];
+        Object.entries(activeFilters).forEach(([key, value]) => {
+            if (value !== '') {
+                newAppliedFilters.push(`${key}: ${value}`);
+            }
+        });
+        return newAppliedFilters;
+    }, [activeFilters]);
+
+    // Use useMemo for filtering and sorting profiles - this is the core optimization
+    const filteredProfiles = useMemo(() => {
+        // If profiles aren't loaded yet, return empty array
+        if (!profiles.length) return [];
+
         let result = [...profiles];
 
         // Filter by gender
@@ -519,7 +565,7 @@ const SearchResults = () => {
 
         // Apply other active filters
         Object.entries(activeFilters).forEach(([key, value]) => {
-            if (value) {
+            if (value !== '') {
                 // Skip empty values
                 const filterKey = key.toLowerCase().replace(/\s+/g, '_');
 
@@ -535,14 +581,15 @@ const SearchResults = () => {
                     case 'Ethnicity':
                     case 'Civil Status':
                     case 'Profession':
-                    case 'Min Education Level':
+                    case 'Education Level':
                     case 'Height':
                     case 'Food Preference':
                     case 'Drinking':
                     case 'Smoking':
                     case 'Account Created by':
                         result = result.filter((profile) => {
-                            const profileValue = (profile[filterKey as keyof Profile] || profile.matrimony?.[filterKey as keyof Matrimony] || '') as string;
+                            const profileKey = key === 'Education Level' ? 'education_level' : filterKey;
+                            const profileValue = (profile[profileKey as keyof Profile] || profile.matrimony?.[profileKey as keyof Matrimony] || '') as string;
                             return profileValue.toLowerCase() === value.toLowerCase();
                         });
                         break;
@@ -605,16 +652,7 @@ const SearchResults = () => {
                 break;
         }
 
-        setFilteredProfiles(result);
-
-        // Generate applied filters list for display
-        const newAppliedFilters: string[] = [];
-        Object.entries(activeFilters).forEach(([key, value]) => {
-            if (value) {
-                newAppliedFilters.push(`${key}: ${value}`);
-            }
-        });
-        setAppliedFilters(newAppliedFilters);
+        return result;
     }, [profiles, selectedGender, activeFilters, sortBy]);
 
     // Remove a specific filter
@@ -743,9 +781,11 @@ const SearchResults = () => {
                             </div>
 
                             {/* Filter Sections */}
-                            {filterOptions.map((filter) => (
-                                <FilterSection key={filter.name} filter={filter} activeFilters={activeFilters} setActiveFilters={setActiveFilters} />
-                            ))}
+                            {filterOptions.length > 0 ? (
+                                filterOptions.map((filter) => <FilterSection key={filter.name} filter={filter} activeFilters={activeFilters} setActiveFilters={setActiveFilters} />)
+                            ) : (
+                                <div className="text-center text-gray-500 italic">Loading filters...</div>
+                            )}
 
                             <div className="mt-6">
                                 <div className="text-sm text-gray-700 mb-3">Save this search as your preferred search criteria?</div>
@@ -775,7 +815,7 @@ const SearchResults = () => {
                                     Try Again
                                 </button>
                             </div>
-                        ) : currentProfiles.length === 0 ? (
+                        ) : filteredProfiles.length === 0 ? (
                             <div className="bg-yellow-50 p-6 rounded-lg text-yellow-800 flex flex-col items-center">
                                 <Search className="h-12 w-12 text-yellow-500 mb-4" />
                                 <p className="text-center">No profiles match your search criteria.</p>
