@@ -28,7 +28,7 @@ const HeroSection = () => {
                             <div className="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium mb-6">Sri Lanka's #1 Matrimony Service</div>
 
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                                ශ්‍රී ලංකීය <span className="text-yellow-600">මංගල යෝජනා</span>
+                                ශ්‍රී ලංකීය <span className="text-yellow-600">මංගල යෝඡනා</span>
                             </h1>
 
                             <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-lg mx-auto md:mx-0">

@@ -9,7 +9,7 @@ const Footer = () => {
                         <div>
                             <div className="flex items-center mb-4">
                                 <Heart className="h-8 w-8 text-yellow-500" fill="#eab308" />
-                                <span className="ml-2 text-xl font-bold">ශ්‍රී ලංකාවේ මංගල යොඡනා</span>
+                                <span className="ml-2 text-xl font-bold">ශ්‍රී ලංකාවේ මංගල යෝඡනා</span>
                             </div>
                             <p className="text-gray-400 mb-4">Sri Lanka's most trusted matrimony service with thousands of success stories. Find your perfect match today.</p>
                             <div className="flex space-x-4">

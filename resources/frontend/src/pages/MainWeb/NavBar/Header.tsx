@@ -100,7 +100,7 @@ const Header = () => {
                         <div className="flex items-center">
                             <Heart className="h-8 w-8 text-yellow-600" fill="#ca8a04" />
                             <span className="ml-2 text-2xl font-bold text-gray-800">
-                                ශ්‍රී ලංකාවේ<span className="text-yellow-600">මංගල යොඡනා</span>
+                                ශ්‍රී ලංකාවේ<span className="text-yellow-600">මංගල යෝඡනා</span>
                             </span>
                         </div>
 
