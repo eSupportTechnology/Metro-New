@@ -1,11 +1,14 @@
 import { Heart, Menu, X, User, Phone, HelpCircle, DollarSign, FileText, BookOpen, Bookmark, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const location = useLocation();
+    const hideMenuPaths = ['/', '/success-stories', '/contact'];
+    const shouldHideMenu = hideMenuPaths.includes(location.pathname);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -105,13 +108,14 @@ const Header = () => {
             <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                            <Heart className="h-8 w-8 text-yellow-600" fill="#ca8a04" />
-                            <span className="ml-2 text-2xl font-bold text-gray-800">
-                                ශ්‍රී ලංකාවේ<span className="text-yellow-600">මංගල යෝඡනා</span>
-                            </span>
-                        </div>
-
+                        <Link to="/">
+                            <div className="flex items-center">
+                                <Heart className="h-8 w-8 text-yellow-600" fill="#ca8a04" />
+                                <span className="ml-2 text-2xl font-bold text-gray-800">
+                                    ශ්‍රී ලංකාවේ<span className="text-yellow-600">මංගල යෝඡනා</span>
+                                </span>
+                            </div>
+                        </Link>
                         <nav className="hidden md:flex space-x-8">
                             <Link to="/" className="text-gray-700 hover:text-yellow-600 font-medium">
                                 Home
@@ -134,14 +138,18 @@ const Header = () => {
                             <Link to="/signin" className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md transition duration-300 shadow-md">
                                 Register Free
                             </Link>
-                            <button className="p-2 rounded-full bg-yellow-100 text-yellow-700 hover:bg-yellow-200" onClick={toggleDrawer}>
-                                <Menu className="h-6 w-6" />
-                            </button>
+                            {!shouldHideMenu && (
+                                <button className="p-2 rounded-full bg-yellow-100 text-yellow-700 hover:bg-yellow-200" onClick={toggleDrawer}>
+                                    <Menu className="h-6 w-6" />
+                                </button>
+                            )}
                         </div>
 
-                        <button className="md:hidden p-2 rounded-full bg-yellow-100 text-yellow-700 hover:bg-yellow-200" onClick={toggleDrawer}>
-                            <Menu className="h-6 w-6" />
-                        </button>
+                        {!shouldHideMenu && (
+                            <button className="md:hidden p-2 rounded-full bg-yellow-100 text-yellow-700 hover:bg-yellow-200" onClick={toggleDrawer}>
+                                <Menu className="h-6 w-6" />
+                            </button>
+                        )}
                     </div>
                 </div>
 
