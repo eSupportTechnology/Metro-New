@@ -28,7 +28,7 @@ const routes = [
         layout: 'blank',
     },
     {
-        path: '//profile/:profileId',
+        path: '/profile/:profileId',
         element: <ProfileDetailsPage />,
         layout: 'blank',
     },

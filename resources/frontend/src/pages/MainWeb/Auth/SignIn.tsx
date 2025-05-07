@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChevronDown, ArrowLeft, Phone, Shield, UserCheck, DollarSign, Headphones, Heart } from 'lucide-react';
 import Header from '../NavBar/Header';
 import Footer from '../Footer/Footer';
+import { useNavigate } from 'react-router-dom';
 
 const SignIn: React.FC = () => {
     const [phoneNumber, setPhoneNumber] = useState<string>('');
@@ -9,6 +10,8 @@ const SignIn: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [password, setPassword] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
+    const navigate = useNavigate();
 
     const handleContinue = (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,9 +26,15 @@ const SignIn: React.FC = () => {
     const handlePasswordLogin = (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+        setError('');
 
         setTimeout(() => {
-            console.log(`Signing in with password for: ${countryCode}${phoneNumber}`);
+            if (password === '12345678') {
+                console.log(`Signing in with password for: ${countryCode}${phoneNumber}`);
+                navigate('/create-add');
+            } else {
+                setError('Invalid credentials. Please try again.');
+            }
             setIsLoading(false);
         }, 1500);
     };
@@ -37,6 +46,7 @@ const SignIn: React.FC = () => {
 
     const togglePasswordLogin = () => {
         setShowPassword(!showPassword);
+        setError('');
     };
 
     return (
@@ -48,6 +58,8 @@ const SignIn: React.FC = () => {
                     <div className="w-full max-w-md mx-auto">
                         <div className="bg-white rounded-lg shadow-md p-8">
                             <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">{showPassword ? 'Sign In with Password' : 'Continue with Phone'}</h2>
+
+                            {error && <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md text-sm">{error}</div>}
 
                             {!showPassword ? (
                                 <form onSubmit={handleContinue}>
