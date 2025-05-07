@@ -1,5 +1,6 @@
 import { ChevronRight, Heart } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Profile = () => {
     const [activeTab, setActiveTab] = useState('all');
@@ -61,10 +62,10 @@ const Profile = () => {
                     </div>
 
                     <div className="text-center mt-10">
-                        <a href="#" className="inline-flex items-center px-5 py-3 border border-yellow-600 text-yellow-600 font-medium rounded-md hover:bg-yellow-50 transition">
+                        <Link to="/view-add" className="inline-flex items-center px-5 py-3 border border-yellow-600 text-yellow-600 font-medium rounded-md hover:bg-yellow-50 transition">
                             View More Profiles
                             <ChevronRight className="ml-2 h-5 w-5" />
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </section>

@@ -8,5 +8,8 @@ export interface ApiConfig {
             update: (id: number | string) => string;
             delete: (id: number | string) => string;
         };
+        profile: {
+            get: (id: number | string) => string;
+        };
     };
 }

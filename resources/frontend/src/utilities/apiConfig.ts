@@ -22,6 +22,9 @@ const apiConfig: ApiConfig = {
             update: (id) => `${baseURL}/matrimony/${id}/update`,
             delete: (id) => `${baseURL}/matrimony/${id}/delete`,
         },
+        profile: {
+            get: (id) => `${baseURL}/get-profile/${id}`,
+        },
     },
 };
 
