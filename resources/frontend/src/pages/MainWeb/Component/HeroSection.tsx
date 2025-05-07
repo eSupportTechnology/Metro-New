@@ -1,14 +1,15 @@
 import { CheckCircle, ChevronRight, Heart } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import { Link, useNavigate } from 'react-router-dom';
+import groomImage from '../../../assets/Image/Groom.svg';
+import brideImage from '../../../assets/Image/Bride.svg';
 
 const HeroSection = () => {
     const [partnerType, setPartnerType] = useState<string | null>(null);
-    const navigate = useNavigate(); // Initialize useNavigate hook
+    const navigate = useNavigate();
 
     const handleNavigation = (partner: string) => {
         setPartnerType(partner);
-        // Navigate to the path with the partner type (e.g., '/view-add?partner=groom')
         navigate(`/view-add?partner=${partner}`);
     };
 
@@ -44,7 +45,7 @@ const HeroSection = () => {
                                         onClick={() => handleNavigation('groom')}
                                     >
                                         <div className={`rounded-lg p-1 ${partnerType === 'groom' ? 'bg-yellow-500 ring-2 ring-white' : 'bg-yellow-500/80'}`}>
-                                            <img src="/Images/groom.png" alt="Groom" className="w-full h-28 object-cover rounded" />
+                                            <img src={groomImage} alt="Groom" className="w-full h-28 object-cover rounded" />
                                         </div>
                                         <p className="text-white text-center mt-2 font-medium">Groom</p>
                                     </div>
@@ -54,7 +55,7 @@ const HeroSection = () => {
                                         onClick={() => handleNavigation('bride')}
                                     >
                                         <div className={`rounded-lg p-1 ${partnerType === 'bride' ? 'bg-yellow-500 ring-2 ring-white' : 'bg-yellow-500/80'}`}>
-                                            <img src="/Images/bride.png" alt="Bride" className="w-full h-28 object-cover rounded" />
+                                            <img src={brideImage} alt="Bride" className="w-full h-28 object-cover rounded" />
                                         </div>
                                         <p className="text-white text-center mt-2 font-medium">Bride</p>
                                     </div>
@@ -62,19 +63,19 @@ const HeroSection = () => {
                             </div>
 
                             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">
-                                <a
-                                    href="#register"
+                                <Link
+                                    to="/signin"
                                     className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-md font-medium transition duration-300 shadow-md flex items-center justify-center"
                                 >
                                     <span>Register Free</span>
                                     <ChevronRight className="ml-1 h-5 w-5" />
-                                </a>
-                                <a
-                                    href="#learn"
+                                </Link>
+                                <Link
+                                    to="/learn"
                                     className="border border-yellow-600 text-yellow-600 hover:bg-yellow-50 px-6 py-3 rounded-md font-medium transition duration-300 flex items-center justify-center"
                                 >
                                     <span>Learn More</span>
-                                </a>
+                                </Link>
                             </div>
                         </div>
 

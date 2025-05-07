@@ -40,25 +40,33 @@ const Header = () => {
                     </button>
 
                     <div className="mt-12 flex gap-4">
-                        <div className="flex-1 border border-yellow-300 rounded-md p-4 flex flex-col items-center justify-center hover:bg-yellow-100 cursor-pointer">
-                            <User className="h-6 w-6 mb-2 text-yellow-600" />
-                            <span className="text-center text-sm text-yellow-800">Create an account</span>
-                        </div>
-                        <div className="flex-1 border border-yellow-300 rounded-md p-4 flex flex-col items-center justify-center hover:bg-yellow-100 cursor-pointer">
-                            <Phone className="h-6 w-6 mb-2 text-yellow-600" />
-                            <span className="text-center text-sm text-yellow-800">Call us to create your account</span>
-                        </div>
+                        <Link to="/signin">
+                            <div className="flex-1 border border-yellow-300 rounded-md p-4 flex flex-col items-center justify-center hover:bg-yellow-100 cursor-pointer">
+                                <User className="h-6 w-6 mb-2 text-yellow-600" />
+                                <span className="text-center text-sm text-yellow-800">Create an account</span>
+                            </div>
+                        </Link>
+                        <Link to="/contact">
+                            <div className="flex-1 border border-yellow-300 rounded-md p-4 flex flex-col items-center justify-center hover:bg-yellow-100 cursor-pointer">
+                                <Phone className="h-6 w-6 mb-2 text-yellow-600" />
+                                <span className="text-center text-sm text-yellow-800">Call us to create your account</span>
+                            </div>
+                        </Link>
                     </div>
 
                     <div className="mt-8">
-                        <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
-                            <FileText className="h-5 w-5 text-yellow-600" />
-                            <span className="text-yellow-800">All Ads</span>
-                        </div>
-                        <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
-                            <User className="h-5 w-5 text-yellow-600" />
-                            <span className="text-yellow-800">Login</span>
-                        </div>
+                        <Link to="/view-add">
+                            <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
+                                <FileText className="h-5 w-5 text-yellow-600" />
+                                <span className="text-yellow-800">All Ads</span>
+                            </div>
+                        </Link>
+                        <Link to="/signin">
+                            <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
+                                <User className="h-5 w-5 text-yellow-600" />
+                                <span className="text-yellow-800">Login</span>
+                            </div>
+                        </Link>
                         <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
                             <HelpCircle className="h-5 w-5 text-yellow-600" />
                             <span className="text-yellow-800">Help</span>
@@ -123,7 +131,7 @@ const Header = () => {
                             <Link to="/signin" className="text-gray-800 hover:text-yellow-600 font-medium">
                                 Sign In
                             </Link>
-                            <Link to="/register" className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md transition duration-300 shadow-md">
+                            <Link to="/signin" className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md transition duration-300 shadow-md">
                                 Register Free
                             </Link>
                             <button className="p-2 rounded-full bg-yellow-100 text-yellow-700 hover:bg-yellow-200" onClick={toggleDrawer}>
