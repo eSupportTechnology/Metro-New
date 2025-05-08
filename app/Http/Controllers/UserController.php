@@ -20,4 +20,11 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
+    public function userLogout(CheckUserAuthentication $checkUserAuthentication): JsonResponse
+    {
+        $response = $checkUserAuthentication->logout();
+
+        return response()->json($response);
+    }
+
 }

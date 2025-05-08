@@ -1,6 +1,7 @@
 import { Heart, Menu, X, User, Phone, HelpCircle, DollarSign, FileText, BookOpen, Bookmark, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { logoutUser } from '../../../utilities/services/authService';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -9,6 +10,9 @@ const Header = () => {
     const location = useLocation();
     const hideMenuPaths = ['/', '/success-stories', '/contact'];
     const shouldHideMenu = hideMenuPaths.includes(location.pathname);
+    const handleLogout = () => {
+        logoutUser();
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -100,6 +104,10 @@ const Header = () => {
                         <button className="flex-1 bg-yellow-600 text-white py-2 hover:bg-yellow-700 transition-colors">English</button>
                         <button className="flex-1 bg-white border border-yellow-300 py-2 text-yellow-800 hover:bg-yellow-50">සිංහල</button>
                     </div>
+
+                    <button onClick={handleLogout} className="px-4 py-2 bg-yellow-600 text-white rounded-md text-center font-medium hover:bg-yellow-700 transitionn">
+                        Log Out
+                    </button>
                 </div>
 
                 <div className="h-6 flex-none"></div>
