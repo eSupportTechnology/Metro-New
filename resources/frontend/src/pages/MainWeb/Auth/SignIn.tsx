@@ -1,34 +1,23 @@
 import React, { useState } from 'react';
 import { ChevronDown, ArrowLeft, Phone, Shield, UserCheck, DollarSign, Headphones, Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setAuth } from '../../../store/authSlice';
 import Header from '../NavBar/Header';
 import Footer from '../Footer/Footer';
+import { UserSignIn } from '../../../utilities/services/authService';
 
 const SignIn: React.FC = () => {
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [countryCode, setCountryCode] = useState<string>('+94');
-    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
 
-    const handleContinue = (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-
-        setTimeout(() => {
-            console.log(`Signing in with: ${countryCode}${phoneNumber}`);
-            setIsLoading(false);
-        }, 1500);
-    };
-
-    const handlePasswordLogin = (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-
-        setTimeout(() => {
-            console.log(`Signing in with password for: ${countryCode}${phoneNumber}`);
-            setIsLoading(false);
-        }, 1500);
-    };
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/[^0-9]/g, '');
@@ -37,6 +26,63 @@ const SignIn: React.FC = () => {
 
     const togglePasswordLogin = () => {
         setShowPassword(!showPassword);
+        setError('');
+    };
+
+    const handleContinue = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+
+        try {
+            setShowPassword(true);
+        } catch (err: any) {
+            setError('An error occurred. Please try again later.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handlePasswordLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+
+        try {
+            if (!showPassword) {
+                const data = await UserSignIn(`${countryCode}${phoneNumber}`, password);
+                handleSuccessfulLogin(data);
+            } else {
+                const data = await UserSignIn(email, password);
+                handleSuccessfulLogin(data);
+            }
+        } catch (err: any) {
+            if (err.message === 'Unauthorized') {
+                setError('Invalid credentials. Please check your details and try again.');
+            } else {
+                setError('An error occurred. Please try again later.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSuccessfulLogin = (data: any) => {
+        dispatch(
+            setAuth({
+                userId: data.userId,
+                userRole: data.userRole,
+                token: data.token,
+            }),
+        );
+
+        if (data.userRole === 1) {
+            navigate('/admin');
+        } else if (data.userRole === 2) {
+            navigate('/create-add');
+        } else {
+            navigate('/');
+        }
     };
 
     return (
@@ -47,7 +93,9 @@ const SignIn: React.FC = () => {
                 <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8">
                     <div className="w-full max-w-md mx-auto">
                         <div className="bg-white rounded-lg shadow-md p-8">
-                            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">{showPassword ? 'Sign In with Password' : 'Continue with Phone'}</h2>
+                            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">{!showPassword ? 'Continue with Phone' : 'Sign In with Password'}</h2>
+
+                            {error && <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md text-sm">{error}</div>}
 
                             {!showPassword ? (
                                 <form onSubmit={handleContinue}>
@@ -93,32 +141,25 @@ const SignIn: React.FC = () => {
 
                                     <div className="text-center mb-4">
                                         <button type="button" className="text-gray-600 text-sm hover:text-gray-800 hover:underline" onClick={togglePasswordLogin}>
-                                            Login using password
+                                            Login with email instead
                                         </button>
                                     </div>
                                 </form>
                             ) : (
                                 <form onSubmit={handlePasswordLogin}>
                                     <div className="mb-4">
-                                        <label htmlFor="phone" className="block text-gray-700 mb-2">
-                                            Phone Number
+                                        <label htmlFor="email" className="block text-gray-700 mb-2">
+                                            Email
                                         </label>
-                                        <div className="flex">
-                                            <div className="relative">
-                                                <button type="button" className="h-full px-3 py-2 inline-flex items-center border border-gray-300 bg-gray-100 text-gray-700 rounded-l-md">
-                                                    {countryCode} <ChevronDown className="ml-1 h-4 w-4" />
-                                                </button>
-                                            </div>
-                                            <input
-                                                type="tel"
-                                                id="phone"
-                                                value={phoneNumber}
-                                                onChange={handlePhoneNumberChange}
-                                                className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                                                placeholder="Enter phone number"
-                                                required
-                                            />
-                                        </div>
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                            placeholder="Enter your email"
+                                            required
+                                        />
                                     </div>
 
                                     <div className="mb-6">
@@ -168,7 +209,7 @@ const SignIn: React.FC = () => {
                             )}
 
                             <div className="flex items-center justify-center">
-                                <button type="button" className="inline-flex items-center text-gray-600 text-sm hover:text-gray-800">
+                                <button type="button" className="inline-flex items-center text-gray-600 text-sm hover:text-gray-800" onClick={() => navigate('/')}>
                                     <ArrowLeft className="mr-1 h-4 w-4" /> BACK
                                 </button>
                             </div>
@@ -182,7 +223,11 @@ const SignIn: React.FC = () => {
                         <div className="mt-6 bg-white rounded-lg shadow-md p-8">
                             <h3 className="text-xl font-semibold text-gray-800 mb-4">New to our platform?</h3>
                             <p className="text-gray-600 mb-4">Create an account to find your perfect match and access all our premium features.</p>
-                            <button type="button" className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition duration-300">
+                            <button
+                                type="button"
+                                className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md transition duration-300"
+                                onClick={() => navigate('/register')}
+                            >
                                 Register for Free
                             </button>
                         </div>

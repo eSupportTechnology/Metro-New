@@ -76,7 +76,7 @@ export const useMatrimonySearch = () => {
                 max: maxAge,
             },
             ...Object.entries(uniqueValues)
-                .filter(([_, values]) => values.size > 0) // Only include filters with values
+                .filter(([_, values]) => values.size > 0)
                 .map(([name, values]) => ({
                     name,
                     icon: getIconForFilter(name),

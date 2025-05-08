@@ -8,15 +8,18 @@ import Header from './Header';
 import Setting from './Setting';
 import Sidebar from './Sidebar';
 import Portals from '../../components/Portals';
-import RingLoader from "../Loader/Loader";
+import RingLoader from '../Loader/Loader';
 
 const DefaultLayout = ({ children }: PropsWithChildren) => {
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(true);
-
-    const [showLoader, setShowLoader] = useState(true);
     const [showTopButton, setShowTopButton] = useState(false);
+
+    // Function to toggle sidebar
+    const handleToggleSidebar = () => {
+        dispatch(toggleSidebar());
+    };
 
     const goToTop = () => {
         document.body.scrollTop = 0;
@@ -34,16 +37,20 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
     useEffect(() => {
         window.addEventListener('scroll', onScrollHandler);
 
+        // Set loading to false after a short delay
         const screenLoader = document.getElementsByClassName('screen_loader');
         if (screenLoader?.length) {
             screenLoader[0].classList.add('animate__fadeOut');
             setTimeout(() => {
-                setShowLoader(false);
+                setIsLoading(false);
             }, 200);
+        } else {
+            // If there's no screenLoader, still set isLoading to false
+            setIsLoading(false);
         }
 
         return () => {
-            window.removeEventListener('onscroll', onScrollHandler);
+            window.removeEventListener('scroll', onScrollHandler);
         };
     }, []);
 
@@ -52,9 +59,11 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
             {/* BEGIN MAIN CONTAINER */}
             <div className="relative">
                 {/* sidebar menu overlay */}
-                <div className={`${(!themeConfig.sidebar && 'hidden') || ''} fixed inset-0 bg-[black]/60 z-50 lg:hidden`} onClick={() => dispatch(toggleSidebar())}></div>
+                <div className={`fixed inset-0 bg-[black]/60 z-50 lg:hidden ${themeConfig.sidebar ? '' : 'hidden'}`} onClick={handleToggleSidebar}></div>
+
                 {/* screen loader */}
-                <RingLoader isLoading={isLoading} />
+                {isLoading && <RingLoader isLoading={isLoading} />}
+
                 <div className="fixed bottom-6 ltr:right-6 rtl:left-6 z-50">
                     {showTopButton && (
                         <button type="button" className="btn btn-outline-primary rounded-full p-2 animate-pulse bg-[#fafafa] dark:bg-[#060818] dark:hover:bg-primary" onClick={goToTop}>
@@ -80,7 +89,7 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
                         {/* END TOP NAVBAR */}
 
                         {/* BEGIN CONTENT AREA */}
-                        <Suspense>
+                        <Suspense fallback={<div>Loading...</div>}>
                             <div className={`${themeConfig.animation} p-6 animate__animated`}>{children}</div>
                         </Suspense>
                         {/* END CONTENT AREA */}

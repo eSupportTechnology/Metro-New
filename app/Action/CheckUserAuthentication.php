@@ -5,6 +5,7 @@ namespace App\Action;
 use App\Models\User;
 use App\Services\Response\AuthenticationResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class CheckUserAuthentication
 {
@@ -12,7 +13,7 @@ class CheckUserAuthentication
     {
         $user = User::where('email', $validatedUserSignInRequest['email'])->first();
 
-        if (! $user) {
+        if (!$user) {
             return AuthenticationResponse::sendUserNotFoundResponse();
         }
 
@@ -26,5 +27,19 @@ class CheckUserAuthentication
     private function isUserExisting($user, array $request): bool
     {
         return $user->email == $request['email'] && Hash::check($request['password'], $user->password);
+    }
+
+
+    public function logout(): array
+    {
+        Auth::user()->tokens->each(function ($token) {
+            $token->delete();
+        });
+
+        Auth::user()->currentAccessToken()->delete();
+        return [
+            'status' => 'success',
+            'message' => 'User logged out successfully.',
+        ];
     }
 }
