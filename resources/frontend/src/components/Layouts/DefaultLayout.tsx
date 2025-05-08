@@ -50,12 +50,9 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
         }
 
         return () => {
-            window.removeEventListener('scroll', onScrollHandler); // Fixed typo in event name
+            window.removeEventListener('scroll', onScrollHandler);
         };
     }, []);
-
-    // Debug logs to check state
-    console.log('Sidebar visible:', themeConfig.sidebar);
 
     return (
         <App>
