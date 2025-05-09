@@ -185,7 +185,6 @@ const MatrimonyProfilesTable: React.FC = () => {
                 setProfiles(formattedProfiles);
                 setTotalResults(formattedProfiles.length);
                 generateFilterOptions(formattedProfiles);
-                toast.success('Profiles loaded successfully');
             } else {
                 throw new Error('Failed to fetch profiles');
             }
@@ -478,7 +477,6 @@ const MatrimonyProfilesTable: React.FC = () => {
                 setProfiles(formattedProfiles);
                 setTotalResults(formattedProfiles.length);
                 generateFilterOptions(formattedProfiles);
-                toast.success('Profiles refreshed successfully');
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to refresh profiles');
