@@ -4,75 +4,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import apiConfig from '../../utilities/apiConfig';
-
-// Type definitions
-interface ProfilePicture {
-    image_path: string;
-}
-
-interface Horoscope {
-    birthdate: string;
-    birth_country: string;
-    birth_city: string;
-    birth_time: string;
-    horoscope_matching_required: boolean;
-}
-
-interface FamilyMember {
-    ethnicity: string;
-    religion: string;
-    caste: string;
-    country_of_residence: string;
-    profession: string;
-    additional_info: string;
-}
-
-interface MatrimonyProfile {
-    user_id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    display_name: string;
-    account_created_by: string;
-    birthdate: string;
-    gender: string;
-    ethnicity: string;
-    religion: string;
-    caste: string;
-    height: string;
-    civil_status: string;
-    country_of_residence: string;
-    state_district: string;
-    city: string;
-    visa_type: string;
-    education_level: string;
-    profession: string;
-    drinking: string;
-    food_preference: string;
-    smoking: string;
-    created_at: string;
-    boot_post: number;
-    package_number?: number;
-    is_active?: boolean;
-    picture?: ProfilePicture;
-    father?: FamilyMember;
-    mother?: FamilyMember;
-    horoscope?: Horoscope;
-}
-
-interface FilterOptions {
-    countries: string[];
-    religions: string[];
-    educations: string[];
-    genders: string[];
-}
-
-interface ApiResponse {
-    status: number | string;
-    message?: string;
-    data?: MatrimonyProfile[];
-    'Matrimony profiles retrieved successfully'?: MatrimonyProfile[];
-}
+import { ApiResponse, FilterOptions, MatrimonyProfile } from '../../utilities/types/Matrimony/IAdminMatrimonyView';
 
 // Package descriptions and features
 const packageDetails = {
@@ -96,15 +28,68 @@ const packageDetails = {
     },
 };
 
+// Enhanced sort options with more detailed configurations
+const sortOptions = [
+    { label: 'Latest First', field: 'created_at', direction: 'desc' },
+    { label: 'Oldest First', field: 'created_at', direction: 'asc' },
+    { label: 'Age: Low to High', field: 'birthdate', direction: 'desc' },
+    { label: 'Age: High to Low', field: 'birthdate', direction: 'asc' },
+    { label: 'Name: A to Z', field: 'display_name', direction: 'asc' },
+    { label: 'Name: Z to A', field: 'display_name', direction: 'desc' },
+    { label: 'Country: A to Z', field: 'country_of_residence', direction: 'asc' },
+    { label: 'Country: Z to A', field: 'country_of_residence', direction: 'desc' },
+    { label: 'Religion: A to Z', field: 'religion', direction: 'asc' },
+    { label: 'Religion: Z to A', field: 'religion', direction: 'desc' },
+];
+
+// Filter categories for advanced filtering
+const filterCategories = [
+    {
+        name: 'status',
+        label: 'Status',
+        options: [
+            { value: 'active', label: 'Active', filter: (profile: MatrimonyProfile) => profile.is_active === true },
+            { value: 'inactive', label: 'Inactive', filter: (profile: MatrimonyProfile) => profile.is_active === false },
+        ],
+    },
+    {
+        name: 'featured',
+        label: 'Featured',
+        options: [
+            { value: 'featured', label: 'Featured', filter: (profile: MatrimonyProfile) => profile.boot_post === 1 },
+            { value: 'regular', label: 'Regular', filter: (profile: MatrimonyProfile) => profile.boot_post === 0 },
+        ],
+    },
+    {
+        name: 'gender',
+        label: 'Gender',
+        options: [
+            { value: 'male', label: 'Male', filter: (profile: MatrimonyProfile) => profile.gender?.toLowerCase() === 'male' },
+            { value: 'female', label: 'Female', filter: (profile: MatrimonyProfile) => profile.gender?.toLowerCase() === 'female' },
+        ],
+    },
+    {
+        name: 'package',
+        label: 'Package',
+        options: [
+            { value: '1', label: 'Basic', filter: (profile: MatrimonyProfile) => profile.package_number === 1 },
+            { value: '2', label: 'Standard', filter: (profile: MatrimonyProfile) => profile.package_number === 2 },
+            { value: '3', label: 'Pro', filter: (profile: MatrimonyProfile) => profile.package_number === 3 },
+        ],
+    },
+];
+
 const MatrimonyProfilesTable: React.FC = () => {
-    // State
+    // State variables
     const [profiles, setProfiles] = useState<MatrimonyProfile[]>([]);
     const [selectedProfile, setSelectedProfile] = useState<MatrimonyProfile | null>(null);
+    const [packageModalProfile, setPackageModalProfile] = useState<MatrimonyProfile | null>(null);
     const [showModal, setShowModal] = useState<boolean>(false);
+    const [showPackageModal, setShowPackageModal] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [sortField, setSortField] = useState<string>('');
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-    const [filter, setFilter] = useState<string>('');
+    const [searchFilter, setSearchFilter] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isActionLoading, setIsActionLoading] = useState<Record<string, boolean>>({});
     const [error, setError] = useState<string>('');
@@ -115,18 +100,20 @@ const MatrimonyProfilesTable: React.FC = () => {
         educations: [],
         genders: [],
     });
-    const [activeFilter, setActiveFilter] = useState<string>('');
+
+    // Advanced filtering states
+    const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
     const [dropdownOpen, setDropdownOpen] = useState<Record<string, boolean>>({});
-    const [showPackageModal, setShowPackageModal] = useState<boolean>(false);
-    const [packageModalProfile, setPackageModalProfile] = useState<MatrimonyProfile | null>(null);
+    const [sortDropdownOpen, setSortDropdownOpen] = useState<boolean>(false);
+    const [filterDropdownOpen, setFilterDropdownOpen] = useState<boolean>(false);
+    const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState<boolean>(false);
+
     const profilesPerPage = 10;
 
-    // New filters
-    const [genderFilter, setGenderFilter] = useState<string>('');
-    const [packageFilter, setPackageFilter] = useState<number | null>(null);
-    const [featuredFilter, setFeaturedFilter] = useState<boolean | null>(null);
-    const [activeStatusFilter, setActiveStatusFilter] = useState<boolean | null>(null);
-    const [filterDropdownOpen, setFilterDropdownOpen] = useState<boolean>(false);
+    // Effect to fetch profiles on component mount
+    useEffect(() => {
+        fetchProfiles();
+    }, []);
 
     // Generate filter options from profile data
     const generateFilterOptions = (profileData: MatrimonyProfile[]) => {
@@ -151,10 +138,6 @@ const MatrimonyProfilesTable: React.FC = () => {
     };
 
     // Fetch profiles from API
-    useEffect(() => {
-        fetchProfiles();
-    }, []);
-
     const fetchProfiles = async () => {
         setIsLoading(true);
         try {
@@ -176,7 +159,7 @@ const MatrimonyProfilesTable: React.FC = () => {
                             ...profile,
                             ...profile.matrimony,
                             picture: profile.profile_picture ? { image_path: profile.profile_picture } : undefined,
-                            is_active: profile.is_active !== undefined ? profile.is_active : true, // Default to active if not specified
+                            is_active: profile.is_active !== undefined ? profile.is_active : true,
                         } as unknown as MatrimonyProfile;
                     }
                     return profile;
@@ -192,39 +175,12 @@ const MatrimonyProfilesTable: React.FC = () => {
             setError(err instanceof Error ? err.message : 'Failed to fetch profiles');
             console.error('Error fetching profiles:', err);
             toast.error('Failed to load profiles');
-
-            // For demo purposes - if API call fails, load from local JSON
-            try {
-                const response = await window.fs.readFile('paste-2.txt', { encoding: 'utf8' });
-                const data = JSON.parse(response);
-                const formattedProfiles = data.data.map((profile: any) => {
-                    if (profile.matrimony) {
-                        return {
-                            ...profile,
-                            ...profile.matrimony,
-                            // Set default package number if not set
-                            package_number: profile.matrimony.package_number || 1,
-                            is_active: profile.is_active !== undefined ? profile.is_active : true, // Default to active if not specified
-                            picture: profile.profile_picture ? { image_path: profile.profile_picture } : undefined,
-                        } as MatrimonyProfile;
-                    }
-                    return profile;
-                });
-                setProfiles(formattedProfiles);
-                setTotalResults(formattedProfiles.length);
-                generateFilterOptions(formattedProfiles);
-                setError(''); // Clear error if backup load succeeds
-                toast.info('Loaded profiles from backup data');
-            } catch (backupError) {
-                console.error('Backup loading failed:', backupError);
-                toast.error('Failed to load backup data');
-            }
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Update boot post status
+    // API calls for profile actions
     const updateBootPost = async (matrimonyId: string, bootPost: boolean) => {
         setIsActionLoading((prev) => ({ ...prev, [`boot_${matrimonyId}`]: true }));
         try {
@@ -233,7 +189,6 @@ const MatrimonyProfilesTable: React.FC = () => {
             });
 
             if (response.data && (response.data.status === 200 || response.data.status === 'success')) {
-                // Update local state
                 setProfiles((prevProfiles) => prevProfiles.map((profile) => (profile.user_id === matrimonyId ? { ...profile, boot_post: bootPost ? 1 : 0 } : profile)));
                 toast.success(`Profile ${bootPost ? 'featured' : 'unfeatured'} successfully`);
             } else {
@@ -248,25 +203,18 @@ const MatrimonyProfilesTable: React.FC = () => {
         }
     };
 
-    // Update active status
-    // Improved status update function with more robust response handling
     const updateActiveStatus = async (matrimonyId: string, isActive: boolean) => {
         setIsActionLoading((prev) => ({ ...prev, [`active_${matrimonyId}`]: true }));
         try {
             const response = await axios.post(apiConfig.endpoints.matrimony.updateActiveStatus(matrimonyId), {
                 is_active: isActive,
             });
-            console.log('Raw response:', response);
 
-            // Update local state regardless of success check - for testing
             setProfiles((prevProfiles) => prevProfiles.map((profile) => (profile.user_id === matrimonyId ? { ...profile, is_active: isActive } : profile)));
 
-            // Update selected profile if open in modal
             if (selectedProfile && selectedProfile.user_id === matrimonyId) {
                 setSelectedProfile((prev) => (prev ? { ...prev, is_active: isActive } : null));
             }
-
-            // Always show success toast - for testing
             toast.success(`Profile ${isActive ? 'activated' : 'deactivated'} successfully`);
         } catch (err) {
             console.error('Error updating active status:', err);
@@ -276,27 +224,19 @@ const MatrimonyProfilesTable: React.FC = () => {
         }
     };
 
-    // Update package number
     const updatePackageNumber = async (matrimonyId: string, packageNumber: number) => {
         setIsActionLoading((prev) => ({ ...prev, [`package_${matrimonyId}`]: true }));
         try {
             const response = await axios.post(apiConfig.endpoints.matrimony.updatePackageNumber(matrimonyId), {
                 package_number: packageNumber,
             });
-            // Check for either status 200 or status: "success" in the response
             if (response.data && (response.data.status === 200 || response.data.status === 'success')) {
-                // Update local state
                 setProfiles((prevProfiles) => prevProfiles.map((profile) => (profile.user_id === matrimonyId ? { ...profile, package_number: packageNumber } : profile)));
 
-                // Update selected profile if open in modal
                 if (selectedProfile && selectedProfile.user_id === matrimonyId) {
                     setSelectedProfile((prev) => (prev ? { ...prev, package_number: packageNumber } : null));
                 }
-
-                // Close package modal if open
                 setShowPackageModal(false);
-
-                // Show success notification
                 const packageName = packageDetails[packageNumber as keyof typeof packageDetails]?.name || 'Unknown';
                 toast.success(`Package updated to ${packageName} successfully`);
             } else {
@@ -311,22 +251,16 @@ const MatrimonyProfilesTable: React.FC = () => {
         }
     };
 
-    // Handle package change
+    // UI Interaction handlers
     const handlePackageChange = (profile: MatrimonyProfile, packageNumber: number) => {
         updatePackageNumber(profile.user_id, packageNumber);
-        // Close dropdown
         setDropdownOpen((prev) => ({ ...prev, [profile.user_id]: false }));
     };
 
-    // Toggle dropdown
     const toggleDropdown = (id: string) => {
         setDropdownOpen((prev) => ({ ...prev, [id]: !prev[id] }));
     };
 
-    // Sort dropdown state
-    const [sortDropdownOpen, setSortDropdownOpen] = useState<boolean>(false);
-
-    // Handle sorting
     const handleSort = (field: string, direction?: 'asc' | 'desc') => {
         if (field === sortField && !direction) {
             setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -334,72 +268,70 @@ const MatrimonyProfilesTable: React.FC = () => {
             setSortField(field);
             setSortDirection(direction || 'asc');
         }
-
-        // Auto close dropdown after selection
         setSortDropdownOpen(false);
     };
 
-    // Sort options
-    const sortOptions = [
-        { label: 'Latest First', field: 'created_at', direction: 'desc' },
-        { label: 'Oldest First', field: 'created_at', direction: 'asc' },
-        { label: 'Age: Low to High', field: 'birthdate', direction: 'desc' },
-        { label: 'Age: High to Low', field: 'birthdate', direction: 'asc' },
-        { label: 'Name: A to Z', field: 'display_name', direction: 'asc' },
-        { label: 'Name: Z to A', field: 'display_name', direction: 'desc' },
-    ];
+    // Apply or remove filters
+    const toggleFilter = (category: string, value: string) => {
+        setActiveFilters((prev) => {
+            const currentValues = prev[category] || [];
+            const newValues = currentValues.includes(value) ? currentValues.filter((v) => v !== value) : [...currentValues, value];
 
-    // Clear all filters
+            return {
+                ...prev,
+                [category]: newValues.length > 0 ? newValues : [],
+            };
+        });
+        setCurrentPage(1); // Reset to first page when filters change
+    };
+
     const clearAllFilters = () => {
-        setFilter('');
-        setActiveFilter('');
-        setGenderFilter('');
-        setPackageFilter(null);
-        setFeaturedFilter(null);
-        setActiveStatusFilter(null);
+        setSearchFilter('');
+        setActiveFilters({});
         setCurrentPage(1);
     };
 
-    // Applied filters using useMemo for performance
+    // Count active filters for badge display
+    const getActiveFiltersCount = () => {
+        return Object.values(activeFilters).reduce((count, values) => count + values.length, 0);
+    };
+
+    // Filter profiles based on all active filters
     const filteredProfiles = useMemo(() => {
         let result = [...profiles];
 
-        // Text search filter
-        if (filter) {
-            const lowerFilter = filter.toLowerCase();
+        // Apply text search filter
+        if (searchFilter) {
+            const lowerFilter = searchFilter.toLowerCase();
             result = result.filter(
                 (profile) =>
                     profile.display_name?.toLowerCase().includes(lowerFilter) ||
                     profile.gender?.toLowerCase().includes(lowerFilter) ||
                     profile.profession?.toLowerCase().includes(lowerFilter) ||
-                    profile.country_of_residence?.toLowerCase().includes(lowerFilter),
+                    profile.country_of_residence?.toLowerCase().includes(lowerFilter) ||
+                    profile.religion?.toLowerCase().includes(lowerFilter) ||
+                    profile.email?.toLowerCase().includes(lowerFilter),
             );
         }
 
-        // Gender filter
-        if (genderFilter) {
-            result = result.filter((profile) => profile.gender?.toLowerCase() === genderFilter.toLowerCase());
-        }
+        // Apply each category of filters
+        Object.entries(activeFilters).forEach(([category, values]) => {
+            if (values.length > 0) {
+                const categoryFilters = filterCategories.find((c) => c.name === category);
+                if (categoryFilters) {
+                    const filtersToApply = categoryFilters.options.filter((option) => values.includes(option.value)).map((option) => option.filter);
 
-        // Package filter
-        if (packageFilter !== null) {
-            result = result.filter((profile) => profile.package_number === packageFilter);
-        }
-
-        // Featured filter
-        if (featuredFilter !== null) {
-            result = result.filter((profile) => (featuredFilter ? profile.boot_post === 1 : profile.boot_post === 0));
-        }
-
-        // Active status filter
-        if (activeStatusFilter !== null) {
-            result = result.filter((profile) => profile.is_active === activeStatusFilter);
-        }
+                    if (filtersToApply.length > 0) {
+                        result = result.filter((profile) => filtersToApply.some((filterFn) => filterFn(profile)));
+                    }
+                }
+            }
+        });
 
         return result;
-    }, [profiles, filter, genderFilter, packageFilter, featuredFilter, activeStatusFilter]);
+    }, [profiles, searchFilter, activeFilters]);
 
-    // Sorting applied using useMemo
+    // Apply sorting to filtered profiles
     const sortedProfiles = useMemo(() => {
         if (!sortField) return filteredProfiles;
 
@@ -407,9 +339,17 @@ const MatrimonyProfilesTable: React.FC = () => {
             let aValue = a[sortField as keyof MatrimonyProfile];
             let bValue = b[sortField as keyof MatrimonyProfile];
 
-            if (sortField === 'display_name' && typeof aValue === 'string' && typeof bValue === 'string') {
+            // Handle string sorting (case-insensitive)
+            if (typeof aValue === 'string' && typeof bValue === 'string') {
                 aValue = aValue.toLowerCase();
                 bValue = bValue.toLowerCase();
+            }
+
+            // Handle date comparisons
+            if (sortField === 'birthdate' || sortField === 'created_at') {
+                const dateA = aValue ? new Date(aValue as string).getTime() : 0;
+                const dateB = bValue ? new Date(bValue as string).getTime() : 0;
+                return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
             }
 
             if (sortDirection === 'asc') {
@@ -420,7 +360,7 @@ const MatrimonyProfilesTable: React.FC = () => {
         });
     }, [filteredProfiles, sortField, sortDirection]);
 
-    // Handle view profile
+    // View profile details
     const handleViewProfile = (profile: MatrimonyProfile) => {
         setSelectedProfile(profile);
         setShowModal(true);
@@ -438,10 +378,12 @@ const MatrimonyProfilesTable: React.FC = () => {
         return sortDirection === 'asc' ? <ChevronUp size={16} className="text-yellow-600" /> : <ChevronDown size={16} className="text-yellow-600" />;
     };
 
-    // Handle filter selection
-    const handleFilterSelect = (category: string, value: string) => {
-        setFilter(value);
-        setActiveFilter(`${category}: ${value}`);
+    // Handle quick filter selection
+    const handleQuickFilterSelect = (category: string, value: string) => {
+        setActiveFilters({
+            ...activeFilters,
+            [category]: [value],
+        });
         setCurrentPage(1); // Reset to first page when filter changes
     };
 
@@ -449,49 +391,7 @@ const MatrimonyProfilesTable: React.FC = () => {
     const refreshData = async () => {
         setIsLoading(true);
         setError('');
-        try {
-            const response = await axios.get<ApiResponse>(apiConfig.endpoints.matrimony.list);
-            let profileData: MatrimonyProfile[] = [];
-
-            if (response.data && (response.data.status === 200 || response.data.status === 'success')) {
-                if (response.data['Matrimony profiles retrieved successfully']) {
-                    profileData = response.data['Matrimony profiles retrieved successfully'];
-                } else if (response.data.data) {
-                    profileData = response.data.data;
-                }
-
-                const formattedProfiles = profileData.map((profile) => {
-                    if (profile.matrimony) {
-                        return {
-                            ...profile,
-                            ...profile.matrimony,
-                            is_active: profile.is_active !== undefined ? profile.is_active : true,
-                            picture: profile.profile_picture ? { image_path: profile.profile_picture } : undefined,
-                        } as unknown as MatrimonyProfile;
-                    }
-                    return profile;
-                });
-
-                setProfiles(formattedProfiles);
-                setTotalResults(formattedProfiles.length);
-                generateFilterOptions(formattedProfiles);
-            }
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to refresh profiles');
-            toast.error('Failed to refresh profiles');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    // Get active filters count
-    const getActiveFiltersCount = () => {
-        let count = 0;
-        if (genderFilter) count++;
-        if (packageFilter !== null) count++;
-        if (featuredFilter !== null) count++;
-        if (activeStatusFilter !== null) count++;
-        return count;
+        await fetchProfiles();
     };
 
     // Render package badge
@@ -511,6 +411,245 @@ const MatrimonyProfilesTable: React.FC = () => {
     const currentProfiles = sortedProfiles.slice(indexOfFirstProfile, indexOfLastProfile);
     const totalPages = Math.ceil(sortedProfiles.length / profilesPerPage);
 
+    // Render pagination UI
+    const renderPagination = () => {
+        if (totalPages <= 1) return null;
+
+        return (
+            <div className="mt-6 flex flex-col sm:flex-row justify-between items-center">
+                <div className="text-sm text-gray-500 mb-4 sm:mb-0">
+                    Showing {indexOfFirstProfile + 1} to {Math.min(indexOfLastProfile, sortedProfiles.length)} of {sortedProfiles.length} entries
+                </div>
+
+                <div className="flex space-x-1">
+                    <button
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1 border border-gray-300 rounded-md bg-white disabled:opacity-50 disabled:cursor-not-allowed text-sm hover:bg-gray-50 transition-colors"
+                    >
+                        Previous
+                    </button>
+
+                    {/* Display limited number of page buttons */}
+                    {(() => {
+                        const pageButtons = [];
+                        const maxVisiblePages = 5;
+                        let startPage = 1;
+                        let endPage = totalPages;
+
+                        if (totalPages > maxVisiblePages) {
+                            // Calculate start and end page to show
+                            const halfVisible = Math.floor(maxVisiblePages / 2);
+
+                            if (currentPage <= halfVisible + 1) {
+                                // Near start, show first maxVisiblePages
+                                endPage = maxVisiblePages;
+                            } else if (currentPage >= totalPages - halfVisible) {
+                                // Near end, show last maxVisiblePages
+                                startPage = totalPages - maxVisiblePages + 1;
+                            } else {
+                                // In middle, show currentPage in center
+                                startPage = currentPage - halfVisible;
+                                endPage = currentPage + halfVisible;
+                            }
+                        }
+
+                        for (let i = startPage; i <= endPage; i++) {
+                            pageButtons.push(
+                                <button
+                                    key={i}
+                                    onClick={() => setCurrentPage(i)}
+                                    className={`px-3 py-1 border rounded-md text-sm
+                    ${currentPage === i ? 'bg-yellow-400 text-gray-800 border-yellow-400' : 'bg-white hover:bg-gray-50 border-gray-300'}`}
+                                >
+                                    {i}
+                                </button>,
+                            );
+                        }
+
+                        return pageButtons;
+                    })()}
+
+                    <button
+                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages || totalPages === 0}
+                        className="px-3 py-1 border border-gray-300 rounded-md bg-white disabled:opacity-50 disabled:cursor-not-allowed text-sm hover:bg-gray-50 transition-colors"
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
+    // Render active filters display
+    const renderActiveFilters = () => {
+        if (searchFilter || Object.values(activeFilters).some((values) => values.length > 0)) {
+            return (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-gray-600">Active filters:</span>
+
+                    {/* Text search filter */}
+                    {searchFilter && (
+                        <div className="flex items-center bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">
+                            Search: {searchFilter}
+                            <button onClick={() => setSearchFilter('')} className="ml-2 text-yellow-600 hover:text-yellow-800">
+                                <X size={14} />
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Render all other active filters */}
+                    {Object.entries(activeFilters).map(([category, values]) =>
+                        values.map((value) => {
+                            const categoryConfig = filterCategories.find((c) => c.name === category);
+                            const optionConfig = categoryConfig?.options.find((o) => o.value === value);
+
+                            if (!categoryConfig || !optionConfig) return null;
+
+                            let bgColor = 'bg-gray-100';
+                            let textColor = 'text-gray-800';
+
+                            // Custom colors based on filter type
+                            if (category === 'gender') {
+                                bgColor = value === 'male' ? 'bg-blue-100' : 'bg-pink-100';
+                                textColor = value === 'male' ? 'text-blue-800' : 'text-pink-800';
+                            } else if (category === 'status') {
+                                bgColor = value === 'active' ? 'bg-green-100' : 'bg-red-100';
+                                textColor = value === 'active' ? 'text-green-800' : 'text-red-800';
+                            } else if (category === 'featured') {
+                                bgColor = value === 'featured' ? 'bg-yellow-100' : 'bg-gray-200';
+                                textColor = value === 'featured' ? 'text-yellow-800' : 'text-gray-800';
+                            } else if (category === 'package') {
+                                const pkg = packageDetails[parseInt(value) as keyof typeof packageDetails];
+                                if (pkg) {
+                                    bgColor = pkg.color.split(' ')[0];
+                                    textColor = pkg.color.split(' ')[1];
+                                }
+                            }
+
+                            return (
+                                <div key={`${category}-${value}`} className={`flex items-center px-3 py-1 rounded-full text-sm ${bgColor} ${textColor}`}>
+                                    {categoryConfig.label}: {optionConfig.label}
+                                    <button onClick={() => toggleFilter(category, value)} className="ml-2 text-yellow-600 hover:text-yellow-800">
+                                        <X size={14} />
+                                    </button>
+                                </div>
+                            );
+                        }),
+                    )}
+
+                    {/* Clear all filters button */}
+                    <button onClick={clearAllFilters} className="ml-2 text-xs text-yellow-600 hover:text-yellow-800 underline">
+                        Clear all
+                    </button>
+                </div>
+            );
+        }
+        return null;
+    };
+
+    // Render sort dropdown
+    const renderSortDropdown = () => (
+        <div className="relative">
+            <button onClick={() => setSortDropdownOpen(!sortDropdownOpen)} className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-sm">
+                <ArrowDown size={16} className="mr-2" />
+                Sort
+                {sortField && (
+                    <span className="ml-1 px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-full text-xs">
+                        {sortOptions.find((o) => o.field === sortField && o.direction === sortDirection)?.label || 'Custom'}
+                    </span>
+                )}
+            </button>
+
+            {sortDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-10">
+                    <div className="py-1">
+                        {sortOptions.map((option, index) => (
+                            <button key={index} className="flex items-center w-full px-4 py-2 text-sm text-left hover:bg-gray-50" onClick={() => handleSort(option.field, option.direction)}>
+                                {option.field === sortField && option.direction === sortDirection ? <CheckCircle size={14} className="mr-2 text-yellow-600" /> : <div className="w-4 h-4 mr-2" />}
+                                {option.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+
+    // Render advanced filter dropdown
+    const renderAdvancedFilterDropdown = () => (
+        <div className="relative">
+            <button
+                onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}
+                className={`flex items-center px-4 py-2 rounded-md text-sm font-medium ${
+                    getActiveFiltersCount() > 0 ? 'bg-yellow-400 text-yellow-900' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                }`}
+            >
+                <Filter size={16} className="mr-2" />
+                Filters
+                {getActiveFiltersCount() > 0 && <span className="ml-2 bg-white text-yellow-800 rounded-full w-5 h-5 flex items-center justify-center text-xs">{getActiveFiltersCount()}</span>}
+            </button>
+
+            {filterDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-72 bg-white rounded-md shadow-lg z-10 p-4">
+                    <div className="flex justify-between items-center mb-3">
+                        <h3 className="text-sm font-medium text-gray-700">Advanced Filters</h3>
+                        <button onClick={clearAllFilters} className="text-xs text-yellow-600 hover:text-yellow-800">
+                            Clear all
+                        </button>
+                    </div>
+
+                    {filterCategories.map((category) => (
+                        <div key={category.name} className="mb-3">
+                            <label className="block text-xs font-medium text-gray-700 mb-1">{category.label}</label>
+                            <div className="flex flex-wrap gap-2">
+                                {category.options.map((option) => {
+                                    const isActive = (activeFilters[category.name] || []).includes(option.value);
+                                    let buttonClasses = 'px-3 py-1 text-xs rounded-full ';
+
+                                    // Custom styling based on filter type and state
+                                    if (isActive) {
+                                        if (category.name === 'gender') {
+                                            buttonClasses += option.value === 'male' ? 'bg-blue-100 text-blue-800 border border-blue-300' : 'bg-pink-100 text-pink-800 border border-pink-300';
+                                        } else if (category.name === 'status') {
+                                            buttonClasses += option.value === 'active' ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-red-100 text-red-800 border border-red-300';
+                                        } else if (category.name === 'featured') {
+                                            buttonClasses +=
+                                                option.value === 'featured' ? 'bg-yellow-100 text-yellow-800 border border-yellow-300' : 'bg-gray-200 text-gray-800 border border-gray-300';
+                                        } else if (category.name === 'package') {
+                                            const pkg = packageDetails[parseInt(option.value) as keyof typeof packageDetails];
+                                            if (pkg) {
+                                                buttonClasses += `${pkg.color} border ${pkg.borderColor}`;
+                                            }
+                                        } else {
+                                            buttonClasses += 'bg-yellow-100 text-yellow-800 border border-yellow-300';
+                                        }
+                                    } else {
+                                        buttonClasses += 'bg-gray-100 text-gray-700 hover:bg-gray-200';
+                                    }
+
+                                    return (
+                                        <button key={option.value} onClick={() => toggleFilter(category.name, option.value)} className={buttonClasses}>
+                                            {option.label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
+
+                    <div className="mt-4 pt-2 border-t border-gray-100">
+                        <button onClick={() => setFilterDropdownOpen(false)} className="w-full px-3 py-2 bg-yellow-400 text-gray-800 rounded-md text-xs font-medium hover:bg-yellow-500">
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+
+    // Main component render
     return (
         <div className="container mx-auto p-4 font-sans">
             {/* Toast notifications container */}
@@ -530,6 +669,9 @@ const MatrimonyProfilesTable: React.FC = () => {
                             Refresh
                         </button>
 
+                        {/* Sort dropdown */}
+                        {renderSortDropdown()}
+
                         <span className="text-sm text-gray-500 bg-white px-3 py-2 rounded-md border border-gray-200">
                             {sortedProfiles.length} {sortedProfiles.length === 1 ? 'profile' : 'profiles'} found
                         </span>
@@ -547,266 +689,67 @@ const MatrimonyProfilesTable: React.FC = () => {
                                 type="text"
                                 placeholder="Search profiles by name, gender, profession, country..."
                                 className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                value={filter}
+                                value={searchFilter}
                                 onChange={(e) => {
-                                    setFilter(e.target.value);
-                                    if (!e.target.value) setActiveFilter('');
+                                    setSearchFilter(e.target.value);
                                     setCurrentPage(1); // Reset to first page when search changes
                                 }}
                             />
-                            {filter && (
-                                <button
-                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                                    onClick={() => {
-                                        setFilter('');
-                                        setActiveFilter('');
-                                    }}
-                                >
+                            {searchFilter && (
+                                <button className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" onClick={() => setSearchFilter('')}>
                                     <X size={18} />
                                 </button>
                             )}
                         </div>
 
                         {/* Advanced Filters Button */}
-                        <div className="relative">
-                            <button
-                                onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}
-                                className={`flex items-center px-4 py-2 rounded-md text-sm font-medium ${
-                                    getActiveFiltersCount() > 0 ? 'bg-yellow-400 text-yellow-900' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                                }`}
-                            >
-                                <Filter size={16} className="mr-2" />
-                                Filters
-                                {getActiveFiltersCount() > 0 && (
-                                    <span className="ml-2 bg-white text-yellow-800 rounded-full w-5 h-5 flex items-center justify-center text-xs">{getActiveFiltersCount()}</span>
-                                )}
-                            </button>
+                        {renderAdvancedFilterDropdown()}
 
-                            {/* Advanced Filters Dropdown */}
-                            {filterDropdownOpen && (
-                                <div className="absolute right-0 mt-2 w-72 bg-white rounded-md shadow-lg z-10 p-4">
-                                    <div className="flex justify-between items-center mb-3">
-                                        <h3 className="text-sm font-medium text-gray-700">Advanced Filters</h3>
-                                        <button onClick={clearAllFilters} className="text-xs text-yellow-600 hover:text-yellow-800">
-                                            Clear all
-                                        </button>
-                                    </div>
-
-                                    {/* Gender Filter */}
-                                    <div className="mb-3">
-                                        <label className="block text-xs font-medium text-gray-700 mb-1">Gender</label>
-                                        <div className="flex space-x-2">
-                                            <button
-                                                onClick={() => setGenderFilter(genderFilter === 'male' ? '' : 'male')}
-                                                className={`px-3 py-1 text-xs rounded-full ${
-                                                    genderFilter === 'male' ? 'bg-blue-100 text-blue-800 border border-blue-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                }`}
-                                            >
-                                                Male
-                                            </button>
-                                            <button
-                                                onClick={() => setGenderFilter(genderFilter === 'female' ? '' : 'female')}
-                                                className={`px-3 py-1 text-xs rounded-full ${
-                                                    genderFilter === 'female' ? 'bg-pink-100 text-pink-800 border border-pink-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                }`}
-                                            >
-                                                Female
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Package Filter */}
-                                    <div className="mb-3">
-                                        <label className="block text-xs font-medium text-gray-700 mb-1">Package</label>
-                                        <div className="flex flex-wrap gap-2">
-                                            {Object.entries(packageDetails).map(([key, pkg]) => (
-                                                <button
-                                                    key={key}
-                                                    onClick={() => setPackageFilter(packageFilter === parseInt(key) ? null : parseInt(key))}
-                                                    className={`px-3 py-1 text-xs rounded-full ${
-                                                        packageFilter === parseInt(key) ? `${pkg.color} border ${pkg.borderColor}` : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                    }`}
-                                                >
-                                                    {pkg.name}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Featured Status Filter */}
-                                    <div className="mb-3">
-                                        <label className="block text-xs font-medium text-gray-700 mb-1">Featured Status</label>
-                                        <div className="flex space-x-2">
-                                            <button
-                                                onClick={() => setFeaturedFilter(featuredFilter === true ? null : true)}
-                                                className={`px-3 py-1 text-xs rounded-full ${
-                                                    featuredFilter === true ? 'bg-yellow-100 text-yellow-800 border border-yellow-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                }`}
-                                            >
-                                                Featured
-                                            </button>
-                                            <button
-                                                onClick={() => setFeaturedFilter(featuredFilter === false ? null : false)}
-                                                className={`px-3 py-1 text-xs rounded-full ${
-                                                    featuredFilter === false ? 'bg-gray-200 text-gray-800 border border-gray-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                }`}
-                                            >
-                                                Regular
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Active Status Filter */}
-                                    <div className="mb-2">
-                                        <label className="block text-xs font-medium text-gray-700 mb-1">Active Status</label>
-                                        <div className="flex space-x-2">
-                                            <button
-                                                onClick={() => setActiveStatusFilter(activeStatusFilter === true ? null : true)}
-                                                className={`px-3 py-1 text-xs rounded-full ${
-                                                    activeStatusFilter === true ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                }`}
-                                            >
-                                                Active
-                                            </button>
-                                            <button
-                                                onClick={() => setActiveStatusFilter(activeStatusFilter === false ? null : false)}
-                                                className={`px-3 py-1 text-xs rounded-full ${
-                                                    activeStatusFilter === false ? 'bg-red-100 text-red-800 border border-red-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                }`}
-                                            >
-                                                Inactive
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-4 pt-2 border-t border-gray-100">
-                                        <button
-                                            onClick={() => setFilterDropdownOpen(false)}
-                                            className="w-full px-3 py-2 bg-yellow-400 text-gray-800 rounded-md text-xs font-medium hover:bg-yellow-500"
-                                        >
-                                            Apply Filters
-                                        </button>
-                                    </div>
+                        {/* Quick filters - Country dropdown */}
+                        {filterOptions.countries.length > 0 && (
+                            <div className="relative">
+                                <select
+                                    className="appearance-none pl-3 pr-8 py-2 border border-gray-300 rounded-md bg-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent cursor-pointer"
+                                    onChange={(e) => e.target.value && handleQuickFilterSelect('country', e.target.value)}
+                                    value=""
+                                >
+                                    <option value="">Filter by country</option>
+                                    {filterOptions.countries.map((country) => (
+                                        <option key={country} value={country}>
+                                            {country}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <ChevronDown size={16} />
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
 
-                        <div className="flex flex-wrap gap-2">
-                            {/* Country filter */}
-                            {filterOptions.countries.length > 0 && (
-                                <div className="relative">
-                                    <select
-                                        className="appearance-none pl-3 pr-8 py-2 border border-gray-300 rounded-md bg-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent cursor-pointer"
-                                        onChange={(e) => e.target.value && handleFilterSelect('Country', e.target.value)}
-                                        value=""
-                                    >
-                                        <option value="">Filter by country</option>
-                                        {filterOptions.countries.map((country) => (
-                                            <option key={country} value={country}>
-                                                {country}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                        <ChevronDown size={16} />
-                                    </div>
+                        {/* Quick filters - Religion dropdown */}
+                        {filterOptions.religions.length > 0 && (
+                            <div className="relative">
+                                <select
+                                    className="appearance-none pl-3 pr-8 py-2 border border-gray-300 rounded-md bg-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent cursor-pointer"
+                                    onChange={(e) => e.target.value && handleQuickFilterSelect('religion', e.target.value)}
+                                    value=""
+                                >
+                                    <option value="">Filter by religion</option>
+                                    {filterOptions.religions.map((religion) => (
+                                        <option key={religion} value={religion}>
+                                            {religion}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <ChevronDown size={16} />
                                 </div>
-                            )}
-
-                            {/* Religion filter */}
-                            {filterOptions.religions.length > 0 && (
-                                <div className="relative">
-                                    <select
-                                        className="appearance-none pl-3 pr-8 py-2 border border-gray-300 rounded-md bg-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent cursor-pointer"
-                                        onChange={(e) => e.target.value && handleFilterSelect('Religion', e.target.value)}
-                                        value=""
-                                    >
-                                        <option value="">Filter by religion</option>
-                                        {filterOptions.religions.map((religion) => (
-                                            <option key={religion} value={religion}>
-                                                {religion}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                        <ChevronDown size={16} />
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Active filters display */}
-                    {(activeFilter || genderFilter || packageFilter !== null || featuredFilter !== null || activeStatusFilter !== null) && (
-                        <div className="mt-3 flex flex-wrap items-center gap-2">
-                            <span className="text-sm text-gray-600">Active filters:</span>
-
-                            {/* Text search filter */}
-                            {activeFilter && (
-                                <div className="flex items-center bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">
-                                    {activeFilter}
-                                    <button
-                                        onClick={() => {
-                                            setFilter('');
-                                            setActiveFilter('');
-                                        }}
-                                        className="ml-2 text-yellow-600 hover:text-yellow-800"
-                                    >
-                                        <X size={14} />
-                                    </button>
-                                </div>
-                            )}
-
-                            {/* Gender filter */}
-                            {genderFilter && (
-                                <div className={`flex items-center px-3 py-1 rounded-full text-sm ${genderFilter === 'male' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'}`}>
-                                    Gender: {genderFilter.charAt(0).toUpperCase() + genderFilter.slice(1)}
-                                    <button onClick={() => setGenderFilter('')} className="ml-2 text-blue-600 hover:text-blue-800">
-                                        <X size={14} />
-                                    </button>
-                                </div>
-                            )}
-
-                            {/* Package filter */}
-                            {packageFilter !== null && (
-                                <div
-                                    className={`flex items-center px-3 py-1 rounded-full text-sm ${packageDetails[packageFilter as keyof typeof packageDetails]?.color || 'bg-gray-100 text-gray-800'}`}
-                                >
-                                    Package: {packageDetails[packageFilter as keyof typeof packageDetails]?.name || packageFilter}
-                                    <button onClick={() => setPackageFilter(null)} className="ml-2 text-yellow-600 hover:text-yellow-800">
-                                        <X size={14} />
-                                    </button>
-                                </div>
-                            )}
-
-                            {/* Featured filter */}
-                            {featuredFilter !== null && (
-                                <div className={`flex items-center px-3 py-1 rounded-full text-sm ${featuredFilter ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-200 text-gray-800'}`}>
-                                    Status: {featuredFilter ? 'Featured' : 'Regular'}
-                                    <button onClick={() => setFeaturedFilter(null)} className="ml-2 text-yellow-600 hover:text-yellow-800">
-                                        <X size={14} />
-                                    </button>
-                                </div>
-                            )}
-
-                            {/* Active status filter */}
-                            {activeStatusFilter !== null && (
-                                <div className={`flex items-center px-3 py-1 rounded-full text-sm ${activeStatusFilter ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                    Status: {activeStatusFilter ? 'Active' : 'Inactive'}
-                                    <button onClick={() => setActiveStatusFilter(null)} className="ml-2 text-red-600 hover:text-red-800">
-                                        <X size={14} />
-                                    </button>
-                                </div>
-                            )}
-
-                            {/* Clear all filters button */}
-                            {(activeFilter || genderFilter || packageFilter !== null || featuredFilter !== null || activeStatusFilter !== null) && (
-                                <button onClick={clearAllFilters} className="ml-2 text-xs text-yellow-600 hover:text-yellow-800 underline">
-                                    Clear all
-                                </button>
-                            )}
-                        </div>
-                    )}
+                    {renderActiveFilters()}
                 </div>
 
                 {/* Loading State */}
@@ -818,8 +761,6 @@ const MatrimonyProfilesTable: React.FC = () => {
                         </div>
                     </div>
                 )}
-
-                {/* We've removed the error display div and will use toast notifications instead */}
 
                 {/* Main table */}
                 {!isLoading && (
@@ -870,8 +811,8 @@ const MatrimonyProfilesTable: React.FC = () => {
                                     <tr
                                         key={profile.user_id}
                                         className={`${profile.boot_post === 1 ? 'bg-yellow-50' : ''}
-                                                   ${!profile.is_active ? 'bg-red-50 bg-opacity-30' : ''}
-                                                   hover:bg-gray-50 transition-colors duration-150`}
+                               ${!profile.is_active ? 'bg-red-50 bg-opacity-30' : ''}
+                               hover:bg-gray-50 transition-colors duration-150`}
                                     >
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
@@ -918,17 +859,6 @@ const MatrimonyProfilesTable: React.FC = () => {
                                                                     <span className={pkg.color}>{pkg.name}</span>
                                                                 </button>
                                                             ))}
-                                                            <div className="border-t border-gray-100 my-1"></div>
-                                                            <button
-                                                                className="flex items-center w-full px-4 py-2 text-sm text-left text-blue-600 hover:bg-blue-50"
-                                                                onClick={() => {
-                                                                    handlePackageModal(profile);
-                                                                    toggleDropdown(profile.user_id);
-                                                                }}
-                                                            >
-                                                                <Package size={14} className="mr-2" />
-                                                                View package details
-                                                            </button>
                                                         </div>
                                                     </div>
                                                 )}
@@ -993,7 +923,7 @@ const MatrimonyProfilesTable: React.FC = () => {
                                             <div className="flex flex-col items-center">
                                                 <Search size={24} className="text-gray-400 mb-2" />
                                                 <p className="mb-2">No profiles found</p>
-                                                {(filter || genderFilter || packageFilter !== null || featuredFilter !== null || activeStatusFilter !== null) && (
+                                                {(searchFilter || getActiveFiltersCount() > 0) && (
                                                     <button onClick={clearAllFilters} className="text-yellow-600 hover:text-yellow-800 text-sm underline">
                                                         Clear all filters
                                                     </button>
