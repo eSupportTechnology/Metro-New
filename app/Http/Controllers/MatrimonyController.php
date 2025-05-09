@@ -8,9 +8,10 @@ use App\Action\GetSingleMatrimonyProfile;
 use App\Action\MatrimonyDelete;
 use App\Action\UpdateBootPost;
 use App\Action\UpdatePackageNumber;
-use Illuminate\Http\Client\Request;
+//use Illuminate\Http\Client\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\StoreMatrimonyRequest;
+use Illuminate\Http\Request;
 
 class MatrimonyController extends Controller
 {

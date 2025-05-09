@@ -8,6 +8,7 @@ import ProfileDetailsPage from '../pages/Matrimony/ProfileDetailsPage';
 import AllAdd from '../pages/AdminWeb/AllAdd';
 import { IRootState } from '../store';
 import PrivateRoute from './PrivateRoute';
+import MatrimonyProfilesTable from '../pages/AdminWeb/MatrimonyProfilesTable';
 const Index = lazy(() => import('../pages/Index'));
 
 const useAuth = () => useSelector((state: IRootState) => state.auth);
@@ -45,7 +46,7 @@ const routes = [
     },
     {
         path: '/admin/all-add',
-        element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={AllAdd} />,
+        element: <MatrimonyProfilesTable />,
         layout: 'default',
     },
 ];

@@ -10,7 +10,7 @@ class UpdatePackageNumber
     public function __invoke(string $matrimonyId, int $packageNumber): array
     {
         try {
-            $matrimony = Matrimony::where('id', $matrimonyId)->first();
+            $matrimony = Matrimony::where('user_id', $matrimonyId)->first();
 
             if (!$matrimony) {
                 return CommonResponse::sendBadRequestResponse('Matrimony profile not found.');
