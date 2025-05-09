@@ -29,6 +29,7 @@ class Matrimony extends Model
         'state_district',
         'city',
         'visa_type',
+        'is_active',
         'education_level',
         'profession',
         'drinking',

@@ -6,6 +6,7 @@ use App\Action\CreateMatrimonyProfile;
 use App\Action\GetAllMatrimonyProfiles;
 use App\Action\GetSingleMatrimonyProfile;
 use App\Action\MatrimonyDelete;
+use App\Action\UpdateActiveStatus;
 use App\Action\UpdateBootPost;
 use App\Action\UpdatePackageNumber;
 //use Illuminate\Http\Client\Request;
@@ -57,5 +58,14 @@ class MatrimonyController extends Controller
         ]);
 
         return response()->json($action($matrimonyId, $validated['package_number']));
+    }
+
+    public function updateActiveStatus(Request $request, string $matrimonyId, UpdateActiveStatus $action): JsonResponse
+    {
+        $validated = $request->validate([
+            'is_active' => 'required|boolean',
+        ]);
+
+        return response()->json($action($matrimonyId, $validated['is_active']));
     }
 }
