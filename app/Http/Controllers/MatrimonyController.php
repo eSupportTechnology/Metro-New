@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Action\CreateMatrimonyProfile;
+use App\Action\GetActiveMatrimonyProfiles;
 use App\Action\GetAllMatrimonyProfiles;
 use App\Action\GetSingleMatrimonyProfile;
 use App\Action\MatrimonyDelete;
@@ -25,6 +26,11 @@ class MatrimonyController extends Controller
     public function getAllMatrimony(GetAllMatrimonyProfiles $getAllMatrimonyProfiles): JsonResponse
     {
         return response()->json($getAllMatrimonyProfiles());
+    }
+
+    public function getActiveMatrimony(GetActiveMatrimonyProfiles $getActiveMatrimonyProfiles): JsonResponse
+    {
+        return response()->json($getActiveMatrimonyProfiles());
     }
 
     public function getProfile($profileId, GetSingleMatrimonyProfile $getSingleMatrimonyProfile): JsonResponse

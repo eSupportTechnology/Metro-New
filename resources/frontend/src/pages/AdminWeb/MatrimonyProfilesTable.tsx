@@ -228,7 +228,7 @@ const MatrimonyProfilesTable: React.FC = () => {
     const updateBootPost = async (matrimonyId: string, bootPost: boolean) => {
         setIsActionLoading((prev) => ({ ...prev, [`boot_${matrimonyId}`]: true }));
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/matrimony/${matrimonyId}/update-boot-post`, {
+            const response = await axios.post(apiConfig.endpoints.matrimony.updateBootPost(matrimonyId), {
                 boot_post: bootPost ? 1 : 0,
             });
 
@@ -253,10 +253,9 @@ const MatrimonyProfilesTable: React.FC = () => {
     const updateActiveStatus = async (matrimonyId: string, isActive: boolean) => {
         setIsActionLoading((prev) => ({ ...prev, [`active_${matrimonyId}`]: true }));
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/matrimony/${matrimonyId}/update-active-status`, {
+            const response = await axios.post(apiConfig.endpoints.matrimony.updateActiveStatus(matrimonyId), {
                 is_active: isActive,
             });
-
             console.log('Raw response:', response);
 
             // Update local state regardless of success check - for testing
@@ -281,10 +280,9 @@ const MatrimonyProfilesTable: React.FC = () => {
     const updatePackageNumber = async (matrimonyId: string, packageNumber: number) => {
         setIsActionLoading((prev) => ({ ...prev, [`package_${matrimonyId}`]: true }));
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/matrimony/${matrimonyId}/update-package-number`, {
+            const response = await axios.post(apiConfig.endpoints.matrimony.updatePackageNumber(matrimonyId), {
                 package_number: packageNumber,
             });
-
             // Check for either status 200 or status: "success" in the response
             if (response.data && (response.data.status === 200 || response.data.status === 'success')) {
                 // Update local state
