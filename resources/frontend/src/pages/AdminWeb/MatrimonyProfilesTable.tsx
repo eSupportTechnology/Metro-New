@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ChevronDown, ChevronUp, Eye, Filter, Loader, AlertCircle, ArrowDown, ArrowUp, Search, RefreshCw, X, Star, CheckCircle, Package, Zap } from 'lucide-react';
+import { ChevronDown, ChevronUp, Eye, Filter, Loader, ArrowDown, ArrowUp, Search, RefreshCw, X, Star, CheckCircle, Package, Zap, ToggleLeft, ToggleRight } from 'lucide-react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -53,6 +53,7 @@ interface MatrimonyProfile {
     created_at: string;
     boot_post: number;
     package_number?: number;
+    is_active?: boolean;
     picture?: ProfilePicture;
     father?: FamilyMember;
     mother?: FamilyMember;
@@ -124,6 +125,7 @@ const MatrimonyProfilesTable: React.FC = () => {
     const [genderFilter, setGenderFilter] = useState<string>('');
     const [packageFilter, setPackageFilter] = useState<number | null>(null);
     const [featuredFilter, setFeaturedFilter] = useState<boolean | null>(null);
+    const [activeStatusFilter, setActiveStatusFilter] = useState<boolean | null>(null);
     const [filterDropdownOpen, setFilterDropdownOpen] = useState<boolean>(false);
 
     // Generate filter options from profile data
@@ -174,6 +176,7 @@ const MatrimonyProfilesTable: React.FC = () => {
                             ...profile,
                             ...profile.matrimony,
                             picture: profile.profile_picture ? { image_path: profile.profile_picture } : undefined,
+                            is_active: profile.is_active !== undefined ? profile.is_active : true, // Default to active if not specified
                         } as unknown as MatrimonyProfile;
                     }
                     return profile;
@@ -202,6 +205,7 @@ const MatrimonyProfilesTable: React.FC = () => {
                             ...profile.matrimony,
                             // Set default package number if not set
                             package_number: profile.matrimony.package_number || 1,
+                            is_active: profile.is_active !== undefined ? profile.is_active : true, // Default to active if not specified
                             picture: profile.profile_picture ? { image_path: profile.profile_picture } : undefined,
                         } as MatrimonyProfile;
                     }
@@ -229,7 +233,7 @@ const MatrimonyProfilesTable: React.FC = () => {
                 boot_post: bootPost ? 1 : 0,
             });
 
-            if (response.data && response.data.status === 'success') {
+            if (response.data && (response.data.status === 200 || response.data.status === 'success')) {
                 // Update local state
                 setProfiles((prevProfiles) => prevProfiles.map((profile) => (profile.user_id === matrimonyId ? { ...profile, boot_post: bootPost ? 1 : 0 } : profile)));
                 toast.success(`Profile ${bootPost ? 'featured' : 'unfeatured'} successfully`);
@@ -245,6 +249,36 @@ const MatrimonyProfilesTable: React.FC = () => {
         }
     };
 
+    // Update active status
+    const updateActiveStatus = async (matrimonyId: string, isActive: boolean) => {
+        setIsActionLoading((prev) => ({ ...prev, [`active_${matrimonyId}`]: true }));
+        try {
+            const response = await axios.post(`http://127.0.0.1:8000/api/matrimony/${matrimonyId}/update-active-status`, {
+                is_active: isActive,
+            });
+
+            if (response.data && response.data.status === 'success') {
+                // Update local state
+                setProfiles((prevProfiles) => prevProfiles.map((profile) => (profile.user_id === matrimonyId ? { ...profile, is_active: isActive } : profile)));
+
+                // Update selected profile if open in modal
+                if (selectedProfile && selectedProfile.user_id === matrimonyId) {
+                    setSelectedProfile((prev) => (prev ? { ...prev, is_active: isActive } : null));
+                }
+
+                toast.success(`Profile ${isActive ? 'activated' : 'deactivated'} successfully`);
+            } else {
+                throw new Error(response.data?.message || 'Failed to update active status');
+            }
+        } catch (err) {
+            console.error('Error updating active status:', err);
+            setError(err instanceof Error ? err.message : 'Failed to update active status');
+            toast.error('Failed to update active status');
+        } finally {
+            setIsActionLoading((prev) => ({ ...prev, [`active_${matrimonyId}`]: false }));
+        }
+    };
+
     // Update package number
     const updatePackageNumber = async (matrimonyId: string, packageNumber: number) => {
         setIsActionLoading((prev) => ({ ...prev, [`package_${matrimonyId}`]: true }));
@@ -253,7 +287,8 @@ const MatrimonyProfilesTable: React.FC = () => {
                 package_number: packageNumber,
             });
 
-            if (response.data && response.data.status === 'success') {
+            // Check for either status 200 or status: "success" in the response
+            if (response.data && (response.data.status === 200 || response.data.status === 'success')) {
                 // Update local state
                 setProfiles((prevProfiles) => prevProfiles.map((profile) => (profile.user_id === matrimonyId ? { ...profile, package_number: packageNumber } : profile)));
 
@@ -325,6 +360,7 @@ const MatrimonyProfilesTable: React.FC = () => {
         setGenderFilter('');
         setPackageFilter(null);
         setFeaturedFilter(null);
+        setActiveStatusFilter(null);
         setCurrentPage(1);
     };
 
@@ -359,8 +395,13 @@ const MatrimonyProfilesTable: React.FC = () => {
             result = result.filter((profile) => (featuredFilter ? profile.boot_post === 1 : profile.boot_post === 0));
         }
 
+        // Active status filter
+        if (activeStatusFilter !== null) {
+            result = result.filter((profile) => profile.is_active === activeStatusFilter);
+        }
+
         return result;
-    }, [profiles, filter, genderFilter, packageFilter, featuredFilter]);
+    }, [profiles, filter, genderFilter, packageFilter, featuredFilter, activeStatusFilter]);
 
     // Sorting applied using useMemo
     const sortedProfiles = useMemo(() => {
@@ -428,6 +469,7 @@ const MatrimonyProfilesTable: React.FC = () => {
                         return {
                             ...profile,
                             ...profile.matrimony,
+                            is_active: profile.is_active !== undefined ? profile.is_active : true,
                             picture: profile.profile_picture ? { image_path: profile.profile_picture } : undefined,
                         } as unknown as MatrimonyProfile;
                     }
@@ -453,6 +495,7 @@ const MatrimonyProfilesTable: React.FC = () => {
         if (genderFilter) count++;
         if (packageFilter !== null) count++;
         if (featuredFilter !== null) count++;
+        if (activeStatusFilter !== null) count++;
         return count;
     };
 
@@ -596,7 +639,7 @@ const MatrimonyProfilesTable: React.FC = () => {
                                     </div>
 
                                     {/* Featured Status Filter */}
-                                    <div className="mb-2">
+                                    <div className="mb-3">
                                         <label className="block text-xs font-medium text-gray-700 mb-1">Featured Status</label>
                                         <div className="flex space-x-2">
                                             <button
@@ -614,6 +657,29 @@ const MatrimonyProfilesTable: React.FC = () => {
                                                 }`}
                                             >
                                                 Regular
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Active Status Filter */}
+                                    <div className="mb-2">
+                                        <label className="block text-xs font-medium text-gray-700 mb-1">Active Status</label>
+                                        <div className="flex space-x-2">
+                                            <button
+                                                onClick={() => setActiveStatusFilter(activeStatusFilter === true ? null : true)}
+                                                className={`px-3 py-1 text-xs rounded-full ${
+                                                    activeStatusFilter === true ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                }`}
+                                            >
+                                                Active
+                                            </button>
+                                            <button
+                                                onClick={() => setActiveStatusFilter(activeStatusFilter === false ? null : false)}
+                                                className={`px-3 py-1 text-xs rounded-full ${
+                                                    activeStatusFilter === false ? 'bg-red-100 text-red-800 border border-red-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                }`}
+                                            >
+                                                Inactive
                                             </button>
                                         </div>
                                     </div>
@@ -676,7 +742,7 @@ const MatrimonyProfilesTable: React.FC = () => {
                     </div>
 
                     {/* Active filters display */}
-                    {(activeFilter || genderFilter || packageFilter !== null || featuredFilter !== null) && (
+                    {(activeFilter || genderFilter || packageFilter !== null || featuredFilter !== null || activeStatusFilter !== null) && (
                         <div className="mt-3 flex flex-wrap items-center gap-2">
                             <span className="text-sm text-gray-600">Active filters:</span>
 
@@ -728,8 +794,18 @@ const MatrimonyProfilesTable: React.FC = () => {
                                 </div>
                             )}
 
+                            {/* Active status filter */}
+                            {activeStatusFilter !== null && (
+                                <div className={`flex items-center px-3 py-1 rounded-full text-sm ${activeStatusFilter ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                    Status: {activeStatusFilter ? 'Active' : 'Inactive'}
+                                    <button onClick={() => setActiveStatusFilter(null)} className="ml-2 text-red-600 hover:text-red-800">
+                                        <X size={14} />
+                                    </button>
+                                </div>
+                            )}
+
                             {/* Clear all filters button */}
-                            {(activeFilter || genderFilter || packageFilter !== null || featuredFilter !== null) && (
+                            {(activeFilter || genderFilter || packageFilter !== null || featuredFilter !== null || activeStatusFilter !== null) && (
                                 <button onClick={clearAllFilters} className="ml-2 text-xs text-yellow-600 hover:text-yellow-800 underline">
                                     Clear all
                                 </button>
@@ -738,7 +814,7 @@ const MatrimonyProfilesTable: React.FC = () => {
                     )}
                 </div>
 
-                {/* Loading and Error States */}
+                {/* Loading State */}
                 {isLoading && (
                     <div className="flex justify-center items-center p-12">
                         <div className="flex flex-col items-center">
@@ -748,22 +824,10 @@ const MatrimonyProfilesTable: React.FC = () => {
                     </div>
                 )}
 
-                {error && !isLoading && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
-                        <div className="flex items-center">
-                            <AlertCircle className="mr-2" size={20} />
-                            <span>{error}</span>
-                        </div>
-                        <div className="mt-2 text-sm">
-                            <button onClick={refreshData} className="text-red-700 underline hover:text-red-800">
-                                Retry
-                            </button>
-                        </div>
-                    </div>
-                )}
+                {/* We've removed the error display div and will use toast notifications instead */}
 
                 {/* Main table */}
-                {!isLoading && !error && (
+                {!isLoading && (
                     <div className="overflow-x-auto bg-white rounded-lg shadow-md">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
@@ -777,6 +841,9 @@ const MatrimonyProfilesTable: React.FC = () => {
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Package
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Gender
@@ -805,7 +872,12 @@ const MatrimonyProfilesTable: React.FC = () => {
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {currentProfiles.map((profile) => (
-                                    <tr key={profile.user_id} className={`${profile.boot_post === 1 ? 'bg-yellow-50' : 'hover:bg-gray-50'} transition-colors duration-150`}>
+                                    <tr
+                                        key={profile.user_id}
+                                        className={`${profile.boot_post === 1 ? 'bg-yellow-50' : ''}
+                                                   ${!profile.is_active ? 'bg-red-50 bg-opacity-30' : ''}
+                                                   hover:bg-gray-50 transition-colors duration-150`}
+                                    >
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
                                                 <div className="flex-shrink-0 h-10 w-10">
@@ -868,6 +940,24 @@ const MatrimonyProfilesTable: React.FC = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
+                                            <button
+                                                onClick={() => updateActiveStatus(profile.user_id, !profile.is_active)}
+                                                disabled={isActionLoading[`active_${profile.user_id}`]}
+                                                className={`flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                                                    profile.is_active ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-red-100 text-red-800 hover:bg-red-200'
+                                                }`}
+                                            >
+                                                {isActionLoading[`active_${profile.user_id}`] ? (
+                                                    <Loader size={12} className="animate-spin mr-1" />
+                                                ) : profile.is_active ? (
+                                                    <ToggleRight size={12} className="mr-1 text-green-600" />
+                                                ) : (
+                                                    <ToggleLeft size={12} className="mr-1 text-red-600" />
+                                                )}
+                                                {profile.is_active ? 'Active' : 'Inactive'}
+                                            </button>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             <span
                                                 className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                                     profile.gender?.toLowerCase() === 'male' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'
@@ -904,11 +994,11 @@ const MatrimonyProfilesTable: React.FC = () => {
 
                                 {currentProfiles.length === 0 && !isLoading && (
                                     <tr>
-                                        <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                                        <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                                             <div className="flex flex-col items-center">
-                                                <AlertCircle size={24} className="text-gray-400 mb-2" />
+                                                <Search size={24} className="text-gray-400 mb-2" />
                                                 <p className="mb-2">No profiles found</p>
-                                                {(filter || genderFilter || packageFilter !== null || featuredFilter !== null) && (
+                                                {(filter || genderFilter || packageFilter !== null || featuredFilter !== null || activeStatusFilter !== null) && (
                                                     <button onClick={clearAllFilters} className="text-yellow-600 hover:text-yellow-800 text-sm underline">
                                                         Clear all filters
                                                     </button>
