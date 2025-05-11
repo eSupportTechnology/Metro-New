@@ -1,4 +1,4 @@
-import { Heart, Menu, X, User, Phone, HelpCircle, DollarSign, FileText, BookOpen, Bookmark, Star } from 'lucide-react';
+import { Menu, X, User, Phone, HelpCircle, DollarSign, FileText, BookOpen, Bookmark, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { logoutUser } from '../../../utilities/services/authService';
@@ -125,7 +125,7 @@ const Header = () => {
                     <div className="flex justify-between items-center">
                         <Link to="/">
                             <div className="flex items-center">
-                                <Heart className="h-8 w-8 text-yellow-600" fill="#ca8a04" />
+                                <img className="w-8 ltr:-ml-1 rtl:-mr-1 inline" src="/assets/images/logo.svg" alt="logo" />
                                 <span className="ml-2 text-2xl font-bold text-gray-800">
                                     ශ්‍රී ලංකාවේ<span className="text-yellow-600">මංගල යෝඡනා</span>
                                 </span>
