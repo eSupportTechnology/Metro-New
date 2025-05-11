@@ -12,13 +12,11 @@ Route::post('logout', [UserController::class, 'userLogout'])->middleware('auth:s
 
 Route::post('/matrimony-create', [MatrimonyController::class, 'Create']);
 Route::get('/get-active-matrimony', [MatrimonyController::class, 'getActiveMatrimony']);
-
-
-Route::delete('/delete-matrimony-profile/{userId}', [MatrimonyController::class, 'deleteMatrimonyProfile']);
-
+Route::get('/get-homepage-profiles', [MatrimonyController::class, 'getHomepageProfiles']);
 
 Route::middleware(['auth:sanctum', FollowerUserCheckMiddleware::class])->group(function () {
     Route::get('/get-profile/{profileId}', [MatrimonyController::class, 'getProfile']);
+    Route::delete('/delete-matrimony-profile/{userId}', [MatrimonyController::class, 'deleteMatrimonyProfile']);
 });
 
 

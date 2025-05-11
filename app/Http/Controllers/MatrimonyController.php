@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Action\CreateMatrimonyProfile;
 use App\Action\GetActiveMatrimonyProfiles;
 use App\Action\GetAllMatrimonyProfiles;
+use App\Action\GetHomepageMatrimonyProfiles;
 use App\Action\GetSingleMatrimonyProfile;
 use App\Action\MatrimonyDelete;
 use App\Action\UpdateActiveStatus;
@@ -74,4 +75,10 @@ class MatrimonyController extends Controller
 
         return response()->json($action($matrimonyId, $validated['is_active']));
     }
+
+    public function getHomepageProfiles(GetHomepageMatrimonyProfiles $getHomepageMatrimonyProfiles): JsonResponse
+    {
+        return response()->json($getHomepageMatrimonyProfiles());
+    }
+
 }
