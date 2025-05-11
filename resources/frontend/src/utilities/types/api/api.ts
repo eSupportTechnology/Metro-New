@@ -15,5 +15,6 @@ export interface ApiConfig {
         profile: {
             get: (id: number | string) => string;
         };
+        homepageProfiles: string;
     };
 }

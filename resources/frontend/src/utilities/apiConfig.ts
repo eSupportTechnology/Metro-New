@@ -29,6 +29,7 @@ const apiConfig: ApiConfig = {
         profile: {
             get: (id) => `${baseURL}/get-profile/${id}`,
         },
+        homepageProfiles: `${baseURL}/get-homepage-profiles`,
     },
 };
 
