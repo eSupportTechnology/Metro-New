@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { User } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 interface GenderSelectorProps {
     selectedGender: string;
@@ -7,6 +8,19 @@ interface GenderSelectorProps {
 }
 
 const GenderSelector: React.FC<GenderSelectorProps> = ({ selectedGender, setSelectedGender }) => {
+    const location = useLocation();
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(location.search);
+        const partner = urlParams.get('partner');
+
+        if (partner === 'groom') {
+            setSelectedGender('Male');
+        } else if (partner === 'bride') {
+            setSelectedGender('Female');
+        }
+    }, [location.search, setSelectedGender]);
+
     return (
         <div>
             <h3 className="text-lg font-semibold text-gray-800 mb-4">I'm looking for</h3>
