@@ -16,5 +16,7 @@ export interface ApiConfig {
             get: (id: number | string) => string;
         };
         homepageProfiles: string;
+        signIn: string;
+        logout: string;
     };
 }

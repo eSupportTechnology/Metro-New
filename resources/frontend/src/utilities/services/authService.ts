@@ -1,11 +1,14 @@
 import axios from 'axios';
+import apiConfig from '../apiConfig';
 
 export const UserSignIn = async (email: string, password: string) => {
     try {
-        const response = await axios.post('http://127.0.0.1:8000/api/sign-in', { email, password });
+        const response = await axios.post(apiConfig.endpoints.signIn, { email, password });
 
         if (response.data.token) {
             localStorage.setItem('token', response.data.token);
+            localStorage.setItem('userId', response.data.userId);
+            localStorage.setItem('userRole', response.data.userRole);
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
         }
 
@@ -19,11 +22,21 @@ export const UserSignIn = async (email: string, password: string) => {
 };
 
 export const logoutUser = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        console.error('No authentication token found');
+        return;
+    }
+
     try {
         const response = await axios.post(
-            'http://127.0.0.1:8000/api/logout',
+            apiConfig.endpoints.logout,
             {},
             {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
                 withCredentials: true,
             },
         );
