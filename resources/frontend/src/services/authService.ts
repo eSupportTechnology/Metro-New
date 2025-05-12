@@ -1,5 +1,5 @@
 import axios from 'axios';
-import apiConfig from '../apiConfig';
+import apiConfig from '../utilities/apiConfig';
 
 export const UserSignIn = async (email: string, password: string) => {
     try {

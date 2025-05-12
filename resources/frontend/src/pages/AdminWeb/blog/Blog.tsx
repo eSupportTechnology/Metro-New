@@ -24,9 +24,9 @@ import {
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Spinner from '../../components/Loader/Spinner';
-import Header from '../MainWeb/NavBar/Header';
-import Footer from '../MainWeb/Footer/Footer';
+import Spinner from '../../../components/Loader/Spinner';
+import Header from '../../MainWeb/NavBar/Header';
+import Footer from '../../MainWeb/Footer/Footer';
 
 // Blog type definitions
 interface BlogPost {

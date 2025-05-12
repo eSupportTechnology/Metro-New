@@ -24,15 +24,17 @@ Route::middleware(['auth:sanctum', FollowerUserCheckMiddleware::class])->group(f
 
 Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(function () {
 
-    //Matrimony
-    Route::get('/get-matrimony', [MatrimonyController::class, 'getAllMatrimony']);
-    Route::post('matrimony/{matrimonyId}/update-boot-post', [MatrimonyController::class, 'updateBootPost']);
-    Route::post('matrimony/{matrimonyId}/update-package-number', [MatrimonyController::class, 'updatePackageNumber']);
-    Route::post('matrimony/{id}/update-active-status', [MatrimonyController::class, 'updateActiveStatus']);
 
 
 
 });
+
+//Matrimony
+Route::get('/get-matrimony', [MatrimonyController::class, 'getAllMatrimony']);
+Route::post('matrimony/{matrimonyId}/update-boot-post', [MatrimonyController::class, 'updateBootPost']);
+Route::post('matrimony/{matrimonyId}/update-package-number', [MatrimonyController::class, 'updatePackageNumber']);
+Route::post('matrimony/{id}/update-active-status', [MatrimonyController::class, 'updateActiveStatus']);
+
 //Blog
 Route::post('/blog-create', [BlogController::class, 'createBlog']);
 Route::post('/blog-update/{id}', [BlogController::class, 'updateBlog']);

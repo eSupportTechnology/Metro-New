@@ -1,7 +1,7 @@
 import { Menu, X, User, Phone, HelpCircle, DollarSign, FileText, BookOpen, Bookmark, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { logoutUser } from '../../../utilities/services/authService';
+import { logoutUser } from '../../../services/authService';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);

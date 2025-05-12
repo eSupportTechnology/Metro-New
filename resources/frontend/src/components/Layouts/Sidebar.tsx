@@ -76,6 +76,14 @@ const Sidebar = () => {
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('ALL-ADD')}</span>
                                             </div>
                                         </NavLink>
+                                        <NavLink to="/admin/all-blog" className="group">
+                                            <div className="flex items-center">
+                                                <HeartHandshake className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                                                    {t('ALL-BLOG')} {/* You can replace this with your own translation key */}
+                                                </span>
+                                            </div>
+                                        </NavLink>
                                     </li>
                                 </ul>
                             </li>

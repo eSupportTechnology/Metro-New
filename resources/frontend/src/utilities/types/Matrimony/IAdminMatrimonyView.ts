@@ -21,35 +21,37 @@ export interface FamilyMember {
 
 export interface MatrimonyProfile {
     user_id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
     display_name: string;
-    account_created_by: string;
-    birthdate: string;
-    gender: string;
-    ethnicity: string;
-    religion: string;
-    caste: string;
-    height: string;
-    civil_status: string;
-    country_of_residence: string;
-    state_district: string;
-    city: string;
-    visa_type: string;
-    education_level: string;
-    profession: string;
-    drinking: string;
-    food_preference: string;
-    smoking: string;
-    created_at: string;
-    boot_post: number;
+    first_name?: string;
+    last_name?: string;
+    gender?: string;
+    birthdate?: string;
+    profession?: string;
+    country_of_residence?: string;
+    religion?: string;
+    email?: string;
+    picture?: {
+        image_path: string;
+    };
+    profile_picture?: string;
     package_number?: number;
+    boot_post?: number;
     is_active?: boolean;
-    picture?: ProfilePicture;
+    civil_status?: string;
+    height?: string;
+    education_level?: string;
+    city?: string;
+    food_preference?: string;
+    smoking?: string;
+    drinking?: string;
+    ethnicity?: string;
+    caste?: string;
+    created_at?: string;
+    account_created_by?: string;
+    horoscope?: Horoscope;
     father?: FamilyMember;
     mother?: FamilyMember;
-    horoscope?: Horoscope;
+    matrimony?: Partial<MatrimonyProfile>;
 }
 
 export interface FilterOptions {
@@ -60,7 +62,7 @@ export interface FilterOptions {
 }
 
 export interface ApiResponse {
-    status: number | string;
+    status: string | number;
     message?: string;
     data?: MatrimonyProfile[];
     'Matrimony profiles retrieved successfully'?: MatrimonyProfile[];

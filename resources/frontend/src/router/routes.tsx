@@ -5,11 +5,10 @@ import SignIn from '../pages/MainWeb/Auth/SignIn';
 import MatrimonyCreate from '../pages/Matrimony/MatrimonyCreate';
 import SearchResults from '../pages/Matrimony/SearchResults';
 import ProfileDetailsPage from '../pages/Matrimony/ProfileDetailsPage';
-import AllAdd from '../pages/AdminWeb/AllAdd';
 import { IRootState } from '../store';
 import PrivateRoute from './PrivateRoute';
-import MatrimonyProfilesTable from '../pages/AdminWeb/MatrimonyProfilesTable';
-import Blog from '../pages/AdminWeb/Blog';
+import MatrimonyProfilesTable from '../pages/AdminWeb/Matrimony/MatrimonyProfilesTable';
+import Blog from '../pages/AdminWeb/blog/Blog';
 const Index = lazy(() => import('../pages/Index'));
 
 const useAuth = () => useSelector((state: IRootState) => state.auth);

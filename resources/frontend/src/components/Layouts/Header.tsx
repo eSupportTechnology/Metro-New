@@ -9,7 +9,7 @@ import IconSun from '../Icon/IconSun';
 import IconMoon from '../Icon/IconMoon';
 import IconLaptop from '../Icon/IconLaptop';
 import IconLogout from '../Icon/IconLogout';
-import { logoutUser } from '../../utilities/services/authService';
+import { logoutUser } from '../../services/authService';
 import { useState } from 'react';
 
 const Header = () => {
