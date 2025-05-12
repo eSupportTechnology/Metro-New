@@ -26,6 +26,12 @@ const apiConfig: ApiConfig = {
             updateActiveStatus: (id) => `${baseURL}/matrimony/${id}/update-active-status`,
             updatePackageNumber: (id) => `${baseURL}/matrimony/${id}/update-package-number`,
         },
+        blog: {
+            create: `${baseURL}/blog-create`,
+            update: (id) => `${baseURL}/blog-update/${id}`,
+            list: `${baseURL}/get-all-blogs`,
+            delete: (id) => `${baseURL}/blog-delete/${id}`,
+        },
         profile: {
             get: (id) => `${baseURL}/get-profile/${id}`,
         },

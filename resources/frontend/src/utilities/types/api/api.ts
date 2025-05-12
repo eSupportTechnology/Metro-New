@@ -12,6 +12,12 @@ export interface ApiConfig {
             updateActiveStatus: (id: string) => string;
             updatePackageNumber: (id: string) => string;
         };
+        blog: {
+            create: string;
+            update: (id: number | string) => string;
+            list: string;
+            delete: (id: number | string) => string;
+        };
         profile: {
             get: (id: number | string) => string;
         };
