@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Action;
+namespace App\Action\Matrimony;
 
+use App\Response\CommonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use App\Response\CommonResponse;
 
 class GetHomepageMatrimonyProfiles
 {

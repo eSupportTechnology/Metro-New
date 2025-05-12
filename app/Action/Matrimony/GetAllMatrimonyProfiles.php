@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Action;
+namespace App\Action\Matrimony;
 
-use Illuminate\Support\Facades\Storage;
+use App\Response\CommonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Response\CommonResponse;
+use Illuminate\Support\Facades\Storage;
 
-class GetActiveMatrimonyProfiles
+class GetAllMatrimonyProfiles
 {
     public function __invoke(): array
     {
@@ -35,16 +35,17 @@ class GetActiveMatrimonyProfiles
                     'pictures.image_path as profile_picture',
                     'matrimonies.created_at as matrimony_created_at',
                     'matrimonies.boot_post',
+                    'matrimonies.package_number',
+                    'matrimonies.is_active'
                 )
-                ->where('matrimonies.is_active', 1)
                 ->get();
 
             $groupedProfiles = $this->groupProfiles($profiles);
 
-            return CommonResponse::sendSuccessResponseWithData('Active Matrimony Profiles', $groupedProfiles);
+            return CommonResponse::sendSuccessResponseWithData('Matrimony Profiles', $groupedProfiles);
         } catch (\Exception $e) {
-            Log::error('GetActiveMatrimonyProfiles Error: ' . $e->getMessage());
-            return CommonResponse::sendBadRequestResponse('Failed to retrieve active matrimony profiles: ' . $e->getMessage());
+            Log::error('GetAllMatrimonyProfiles Error: ' . $e->getMessage());
+            return CommonResponse::sendBadRequestResponse('Failed to retrieve matrimony profiles: ' . $e->getMessage());
         }
     }
 
@@ -87,6 +88,8 @@ class GetActiveMatrimonyProfiles
                         'smoking' => $profile->smoking,
                         'created_at' => $profile->matrimony_created_at,
                         'boot_post' => $profile->boot_post,
+                        'package_number' => $profile->package_number ?? 1,
+                        'is_active' => $profile->is_active ?? true
                     ],
                     'father' => [
                         'ethnicity' => $profile->father_ethnicity ?? '',
@@ -112,7 +115,7 @@ class GetActiveMatrimonyProfiles
                         'birth_time' => $profile->horoscope_birth_time ?? '',
                     ],
                     'profile_picture' => $profilePictureData,
-                    'is_active' => $profile->is_active
+                    'is_active' => $profile->is_active ?? true
                 ];
             }
         }

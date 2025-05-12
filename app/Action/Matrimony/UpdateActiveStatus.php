@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Action;
+namespace App\Action\Matrimony;
 
 use App\Models\Matrimony;
 use App\Response\CommonResponse;
 
-class UpdateBootPost
+class UpdateActiveStatus
 {
-    public function __invoke(string $matrimonyId, bool $bootPost): array
+    public function __invoke(string $matrimonyId, bool $isActive): array
     {
         try {
             $matrimony = Matrimony::where('user_id', $matrimonyId)->first();
@@ -17,12 +17,12 @@ class UpdateBootPost
             }
 
             $matrimony->update([
-                'boot_post' => $bootPost,
+                'is_active' => $isActive,
             ]);
 
-            return CommonResponse::sendSuccessResponse('Boot post status updated successfully.');
+            return CommonResponse::sendSuccessResponse('Active status updated successfully.');
         } catch (\Exception $e) {
-            return CommonResponse::sendBadRequestResponse('Error updating boot post: ' . $e->getMessage());
+            return CommonResponse::sendBadRequestResponse('Error updating active status: ' . $e->getMessage());
         }
     }
 }

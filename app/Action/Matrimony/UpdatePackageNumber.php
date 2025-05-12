@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Action;
+namespace App\Action\Matrimony;
 
 use App\Models\Matrimony;
 use App\Response\CommonResponse;
 
-class UpdateActiveStatus
+class UpdatePackageNumber
 {
-    public function __invoke(string $matrimonyId, bool $isActive): array
+    public function __invoke(string $matrimonyId, int $packageNumber): array
     {
         try {
             $matrimony = Matrimony::where('user_id', $matrimonyId)->first();
@@ -17,12 +17,12 @@ class UpdateActiveStatus
             }
 
             $matrimony->update([
-                'is_active' => $isActive,
+                'package_number' => $packageNumber,
             ]);
 
-            return CommonResponse::sendSuccessResponse('Active status updated successfully.');
+            return CommonResponse::sendSuccessResponse('Package number updated successfully.');
         } catch (\Exception $e) {
-            return CommonResponse::sendBadRequestResponse('Error updating active status: ' . $e->getMessage());
+            return CommonResponse::sendBadRequestResponse('Error updating package number: ' . $e->getMessage());
         }
     }
 }

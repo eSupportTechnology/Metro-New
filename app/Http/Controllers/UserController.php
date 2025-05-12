@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Action\CheckUserAuthentication;
+use App\Action\Auth\CheckUserAuthentication;
 use App\Http\Requests\UserSignInValidationRequest;
 use Illuminate\Http\JsonResponse;
 

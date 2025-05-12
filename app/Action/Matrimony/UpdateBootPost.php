@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Action;
+namespace App\Action\Matrimony;
 
 use App\Models\Matrimony;
 use App\Response\CommonResponse;
 
-class UpdatePackageNumber
+class UpdateBootPost
 {
-    public function __invoke(string $matrimonyId, int $packageNumber): array
+    public function __invoke(string $matrimonyId, bool $bootPost): array
     {
         try {
             $matrimony = Matrimony::where('user_id', $matrimonyId)->first();
@@ -17,12 +17,12 @@ class UpdatePackageNumber
             }
 
             $matrimony->update([
-                'package_number' => $packageNumber,
+                'boot_post' => $bootPost,
             ]);
 
-            return CommonResponse::sendSuccessResponse('Package number updated successfully.');
+            return CommonResponse::sendSuccessResponse('Boot post status updated successfully.');
         } catch (\Exception $e) {
-            return CommonResponse::sendBadRequestResponse('Error updating package number: ' . $e->getMessage());
+            return CommonResponse::sendBadRequestResponse('Error updating boot post: ' . $e->getMessage());
         }
     }
 }

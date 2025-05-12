@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Action\CreateMatrimonyProfile;
-use App\Action\GetActiveMatrimonyProfiles;
-use App\Action\GetAllMatrimonyProfiles;
-use App\Action\GetHomepageMatrimonyProfiles;
-use App\Action\GetSingleMatrimonyProfile;
-use App\Action\MatrimonyDelete;
-use App\Action\UpdateActiveStatus;
-use App\Action\UpdateBootPost;
-use App\Action\UpdatePackageNumber;
-//use Illuminate\Http\Client\Request;
-use Illuminate\Http\JsonResponse;
+use App\Action\Matrimony\CreateMatrimonyProfile;
+use App\Action\Matrimony\GetActiveMatrimonyProfiles;
+use App\Action\Matrimony\GetAllMatrimonyProfiles;
+use App\Action\Matrimony\GetHomepageMatrimonyProfiles;
+use App\Action\Matrimony\GetSingleMatrimonyProfile;
+use App\Action\Matrimony\MatrimonyDelete;
+use App\Action\Matrimony\UpdateActiveStatus;
+use App\Action\Matrimony\UpdateBootPost;
+use App\Action\Matrimony\UpdatePackageNumber;
 use App\Http\Requests\StoreMatrimonyRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+
+//use Illuminate\Http\Client\Request;
 
 class MatrimonyController extends Controller
 {
