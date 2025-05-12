@@ -7,7 +7,7 @@ class BlogService {
         try {
             const response = await axios.get<ApiResponse>(apiConfig.endpoints.blog.list);
 
-            if (response.data.status === 'success' && response.data.data) {
+            if ((response.data.status === 'success' || response.data.status === 200) && response.data.data) {
                 return response.data.data;
             }
 
@@ -37,8 +37,8 @@ class BlogService {
                 },
             });
 
-            if (response.data.status === 'success') {
-                return response.data.data;
+            if (response.data.status === 'success' || response.data.status === 200 || response.data.status === 201) {
+                return response.data.data || response.data;
             }
 
             throw new Error(response.data.message || 'Failed to create blog');
@@ -61,16 +61,14 @@ class BlogService {
                 data.append('image', formData.image);
             }
 
-            data.append('_method', 'PUT');
-
             const response = await axios.post(apiConfig.endpoints.blog.update(id), data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
 
-            if (response.data.status === 'success') {
-                return response.data.data;
+            if (response.data.status === 'success' || response.data.status === 200) {
+                return response.data.data || ({ id, ...formData } as any);
             }
 
             throw new Error(response.data.message || 'Failed to update blog');
@@ -84,9 +82,11 @@ class BlogService {
         try {
             const response = await axios.delete(apiConfig.endpoints.blog.delete(id));
 
-            if (response.data.status !== 'success') {
-                throw new Error(response.data.message || 'Failed to delete blog');
+            if (response.data.status === 'success' || response.data.status === 200) {
+                return;
             }
+
+            throw new Error(response.data.message || 'Failed to delete blog');
         } catch (error) {
             console.error('Error deleting blog:', error);
             throw error;

@@ -17,7 +17,7 @@ class BlogController extends Controller
         return response()->json($action($validatedData));
     }
 
-    public function update(StoreBlogRequest $request, $id, UpdateBlog $action): JsonResponse
+    public function updateBlog(StoreBlogRequest $request, $id, UpdateBlog $action): JsonResponse
     {
         $validatedData = $request->validated();
         return response()->json($action($validatedData, $id));

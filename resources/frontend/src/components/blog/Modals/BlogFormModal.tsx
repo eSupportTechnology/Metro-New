@@ -1,8 +1,6 @@
 import React from 'react';
 import { X, FileText } from 'lucide-react';
 import { BlogFormData } from '../../../utilities/types/Blog/IBlog';
-import { blogCategories } from '../../../constants/blog/blogConstants';
-import RichTextEditor from '../Common/RichTextEditor';
 
 interface BlogFormModalProps {
     isEditMode: boolean;
@@ -46,18 +44,14 @@ const BlogFormModal: React.FC<BlogFormModalProps> = ({ isEditMode, formData, ima
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Category <span className="text-red-500">*</span>
                                 </label>
-                                <select
+                                <input
+                                    type="text"
                                     value={formData.category}
                                     onChange={(e) => onFormChange({ category: e.target.value })}
                                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                    placeholder="Enter category"
                                     required
-                                >
-                                    {blogCategories.map((category) => (
-                                        <option key={category} value={category}>
-                                            {category}
-                                        </option>
-                                    ))}
-                                </select>
+                                />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -122,7 +116,14 @@ const BlogFormModal: React.FC<BlogFormModalProps> = ({ isEditMode, formData, ima
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Description <span className="text-red-500">*</span>
                             </label>
-                            <RichTextEditor value={formData.description} onChange={(value) => onFormChange({ description: value })} placeholder="Enter blog content..." />
+                            <textarea
+                                value={formData.description}
+                                onChange={(e) => onFormChange({ description: e.target.value })}
+                                rows={8}
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                placeholder="Enter blog description..."
+                                required
+                            />
                         </div>
 
                         <div className="flex justify-end space-x-3 pt-6 border-t">

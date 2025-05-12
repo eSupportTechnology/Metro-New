@@ -11,29 +11,10 @@ export const filterCategories = [
     {
         name: 'category',
         label: 'Category',
-        options: [
-            {
-                value: 'News',
-                label: 'News',
-                filter: (blog: any) => blog.category === 'News',
-            },
-            {
-                value: 'Events',
-                label: 'Events',
-                filter: (blog: any) => blog.category === 'Events',
-            },
-            {
-                value: 'Tips',
-                label: 'Tips',
-                filter: (blog: any) => blog.category === 'Tips',
-            },
-        ],
     },
 ];
 
 export const BLOGS_PER_PAGE = 10;
-
-export const blogCategories = ['News', 'Events', 'Tips'];
 
 export const defaultFormData = {
     title: '',

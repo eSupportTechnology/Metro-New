@@ -29,8 +29,6 @@ export const useBlogFilters = (blogs: BlogPost[]) => {
 
     const filteredBlogs = useMemo(() => {
         let result = [...blogs];
-
-        // Apply text search
         if (searchFilter) {
             const lowerFilter = searchFilter.toLowerCase();
             result = result.filter(
@@ -42,7 +40,6 @@ export const useBlogFilters = (blogs: BlogPost[]) => {
             );
         }
 
-        // Apply category filters
         Object.entries(activeFilters).forEach(([category, values]) => {
             if (values.length > 0) {
                 const categoryFilters = filterCategories.find((c) => c.name === category);

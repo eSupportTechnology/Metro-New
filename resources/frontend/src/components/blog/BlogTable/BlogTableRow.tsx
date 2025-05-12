@@ -11,7 +11,6 @@ interface BlogTableRowProps {
 }
 
 const BlogTableRow: React.FC<BlogTableRowProps> = ({ blog, onViewBlog, onEditBlog, onDeleteBlog, isActionLoading }) => {
-    // Function to strip HTML tags for preview
     const stripHtml = (html: string) => {
         const tmp = document.createElement('div');
         tmp.innerHTML = html;

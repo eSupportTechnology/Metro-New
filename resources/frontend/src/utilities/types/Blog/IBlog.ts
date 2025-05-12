@@ -20,7 +20,7 @@ export interface BlogFormData {
 }
 
 export interface ApiResponse {
-    status: string;
+    status: string | number;
     message?: string;
     data?: BlogPost[];
 }

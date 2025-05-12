@@ -14,7 +14,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ searchFilter, onSearchChang
             </div>
             <input
                 type="text"
-                placeholder="Search profiles by name, gender, profession, country..."
+                placeholder="Search..."
                 className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 value={searchFilter}
                 onChange={(e) => onSearchChange(e.target.value)}

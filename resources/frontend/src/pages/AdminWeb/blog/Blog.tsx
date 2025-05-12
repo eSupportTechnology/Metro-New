@@ -8,14 +8,11 @@ import { useBlogActions } from '../../../hooks/blog/useBlogActions';
 import { useBlogFilters } from '../../../hooks/blog/useBlogFilters';
 import { useBlogSort } from '../../../hooks/blog/useBlogSort';
 import { BLOGS_PER_PAGE, defaultFormData, sortOptions } from '../../../constants/blog/blogConstants';
-import Header from '../../MainWeb/NavBar/Header';
-import Footer from '../../MainWeb/Footer/Footer';
 import Spinner from '../../../components/Loader/Spinner';
 import Pagination from '../../../components/matrimony/Common/Pagination';
 import SearchFilter from '../../../components/matrimony/Filters/SearchFilter';
 import ActiveFilters from '../../../components/matrimony/Filters/ActiveFilters';
 import SortDropdown from '../../../components/matrimony/Controls/SortDropdown';
-import AdvancedFilterDropdown from '../../../components/matrimony/Filters/AdvancedFilterDropdown';
 import BlogTableRow from '../../../components/blog/BlogTable/BlogTableRow';
 import BlogViewModal from '../../../components/blog/Modals/BlogViewModal';
 import BlogFormModal from '../../../components/blog/Modals/BlogFormModal';
@@ -23,7 +20,6 @@ import DeleteConfirmationModal from '../../../components/blog/Modals/DeleteConfi
 import BlogEmptyState from '../../../components/blog/Common/BlogEmptyState';
 
 const Blog: React.FC = () => {
-    // State for modals and forms
     const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
     const [showViewModal, setShowViewModal] = useState<boolean>(false);
     const [showFormModal, setShowFormModal] = useState<boolean>(false);
@@ -33,20 +29,14 @@ const Blog: React.FC = () => {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [formData, setFormData] = useState<BlogFormData>(defaultFormData);
-
-    // Custom hooks
     const { blogs, setBlogs, isLoading, error, fetchBlogs } = useBlogs();
     const { isActionLoading, deleteBlog, createBlog, updateBlog } = useBlogActions(blogs, setBlogs);
     const { searchFilter, setSearchFilter, activeFilters, toggleFilter, clearAllFilters, getActiveFiltersCount, filteredBlogs } = useBlogFilters(blogs);
     const { sortField, sortDirection, handleSort, sortedBlogs } = useBlogSort(filteredBlogs);
-
-    // Pagination
     const indexOfLastBlog = currentPage * BLOGS_PER_PAGE;
     const indexOfFirstBlog = indexOfLastBlog - BLOGS_PER_PAGE;
     const currentBlogs = sortedBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
     const totalPages = Math.ceil(sortedBlogs.length / BLOGS_PER_PAGE);
-
-    // Form handlers
     const handleFormChange = (data: Partial<BlogFormData>) => {
         setFormData((prev) => ({ ...prev, ...data }));
     };
@@ -56,8 +46,6 @@ const Blog: React.FC = () => {
         if (file) {
             setImageFile(file);
             setFormData((prev) => ({ ...prev, image: file }));
-
-            // Create preview
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result as string);
@@ -83,9 +71,7 @@ const Blog: React.FC = () => {
             }
             setShowFormModal(false);
             resetForm();
-        } catch (err) {
-            // Error is handled in the action
-        }
+        } catch (err) {}
     };
 
     const resetForm = () => {
@@ -95,19 +81,17 @@ const Blog: React.FC = () => {
         setIsEditMode(false);
         setSelectedBlog(null);
     };
-
-    // Event handlers
     const handleEdit = (blog: BlogPost) => {
         setSelectedBlog(blog);
         setFormData({
             title: blog.title,
             category: blog.category,
-            image: null, // We can't populate a File object from existing image URL
+            image: null,
             writer: blog.writer,
             date: blog.date,
             description: blog.description,
         });
-        setImagePreview(blog.image); // Show existing image in preview
+        setImagePreview(blog.image);
         setIsEditMode(true);
         setShowFormModal(true);
     };
@@ -121,12 +105,10 @@ const Blog: React.FC = () => {
     };
 
     return (
-        <div className="font-sans bg-gradient-to-b from-yellow-50 to-white min-h-screen">
-            <Header />
+        <div className="container mx-auto  font-sans">
             <ToastContainer position="top-right" autoClose={5000} />
 
-            <div className="max-w-7xl mx-auto mt-14 pt-6 px-4">
-                {/* Page Header */}
+            <div className="bg-gradient-to-b from-yellow-50 to-white p-6 rounded-lg shadow-md mb-6">
                 <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                     <div className="flex flex-col md:flex-row justify-between items-center mb-4">
                         <h1 className="text-2xl font-semibold text-gray-800 mb-3 md:mb-0">Blog Management</h1>
@@ -154,7 +136,6 @@ const Blog: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Search and filters */}
                     <div className="mb-6">
                         <div className="flex flex-col md:flex-row gap-3">
                             <SearchFilter
@@ -165,9 +146,7 @@ const Blog: React.FC = () => {
                                 }}
                             />
 
-                            <SortDropdown sortField={sortField} sortDirection={sortDirection} sortOptions={sortOptions} onSort={handleSort} />
-
-                            <AdvancedFilterDropdown activeFilters={activeFilters} onToggleFilter={toggleFilter} onClearAllFilters={clearAllFilters} getActiveFiltersCount={getActiveFiltersCount} />
+                            <SortDropdown sortField={sortField} sortDirection={sortDirection} sortOptions={sortOptions} onSort={(field, direction) => handleSort(field, direction || 'asc')} />
                         </div>
 
                         <ActiveFilters
@@ -180,7 +159,6 @@ const Blog: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Blog table */}
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
                     {isLoading ? (
                         <div className="flex justify-center items-center p-12">
@@ -224,7 +202,6 @@ const Blog: React.FC = () => {
                                 </table>
                             </div>
 
-                            {/* Pagination */}
                             {totalPages > 1 && (
                                 <div className="bg-gray-50 px-4 py-3">
                                     <Pagination currentPage={currentPage} totalPages={totalPages} totalItems={sortedBlogs.length} itemsPerPage={BLOGS_PER_PAGE} onPageChange={setCurrentPage} />
@@ -235,7 +212,6 @@ const Blog: React.FC = () => {
                 </div>
             </div>
 
-            {/* Modals */}
             {showViewModal && selectedBlog && <BlogViewModal blog={selectedBlog} onClose={() => setShowViewModal(false)} onEdit={handleEdit} />}
 
             {showFormModal && (
@@ -265,8 +241,6 @@ const Blog: React.FC = () => {
                     }}
                 />
             )}
-
-            <Footer />
         </div>
     );
 };

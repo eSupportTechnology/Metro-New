@@ -55,11 +55,18 @@ class GetAllBlogs
     private function getImageData($imagePath): ?string
     {
         try {
-            if (Storage::exists($imagePath)) {
-                $binaryData = Storage::get($imagePath);
-                $mimeType = Storage::mimeType($imagePath);
+            if (empty($imagePath)) {
+                return null;
+            }
+
+            $storagePath = str_replace('storage/', 'public/', $imagePath);
+
+            if (Storage::exists($storagePath)) {
+                $binaryData = Storage::get($storagePath);
+                $mimeType = Storage::mimeType($storagePath);
                 return 'data:' . $mimeType . ';base64,' . base64_encode($binaryData);
             }
+
             Log::warning("Image not found: {$imagePath}");
             return null;
         } catch (\Exception $e) {
