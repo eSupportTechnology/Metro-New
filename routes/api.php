@@ -30,10 +30,11 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
     Route::post('matrimony/{matrimonyId}/update-package-number', [MatrimonyController::class, 'updatePackageNumber']);
     Route::post('matrimony/{id}/update-active-status', [MatrimonyController::class, 'updateActiveStatus']);
 
-    //Blog
-    Route::post('/blog-create', [BlogController::class, 'createBlog']);
-    Route::post('/blog-update/{id}', [BlogController::class, 'updateBlog']);
-    Route::get('/get-all-blogs', [BlogController::class, 'getAllBlogs']);
-    Route::delete('/blog-delete/{id}', [BlogController::class, 'deleteBlog']);
+
 
 });
+//Blog
+Route::post('/blog-create', [BlogController::class, 'createBlog']);
+Route::post('/blog-update/{id}', [BlogController::class, 'updateBlog']);
+Route::get('/get-all-blogs', [BlogController::class, 'getAllBlogs']);
+Route::delete('/blog-delete/{id}', [BlogController::class, 'deleteBlog']);

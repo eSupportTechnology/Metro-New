@@ -8,7 +8,6 @@ import GenderSelector from '../Matrimony/ViewMatrimony/GenderSelector';
 import FilterSection from '../Matrimony/ViewMatrimony/FilterSection';
 import Spinner from '../../components/Loader/Spinner';
 import ProfileCard from '../Matrimony/ViewMatrimony/ProfileCard';
-import { Pagination } from '@mantine/core';
 const AllAdd: React.FC = () => {
     const {
         isLoading,
