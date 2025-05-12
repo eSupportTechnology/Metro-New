@@ -6,16 +6,23 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         setAuth: (state, action: PayloadAction<{ userId: string; userRole: number; token: string }>) => {
-            state.userId = action.payload.userId;
-            state.userRole = action.payload.userRole;
-            state.userToken = action.payload.token;
+            const { userId, userRole, token } = action.payload;
+
+            state.userId = userId;
+            state.userRole = userRole;
+            state.userToken = token;
             state.isAuthenticated = true;
+            localStorage.setItem('userId', userId);
+            localStorage.setItem('userRole', String(userRole));
+            localStorage.setItem('token', token);
         },
         logout: (state) => {
             state.userId = '';
             state.userRole = 0;
             state.userToken = '';
             state.isAuthenticated = false;
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userRole');
             localStorage.removeItem('token');
         },
     },

@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Action\CreateMatrimonyProfile;
-use App\Action\GetAllMatrimonyProfiles;
-use App\Action\GetSingleMatrimonyProfile;
-use App\Action\MatrimonyDelete;
-use App\Action\UpdateBootPost;
-use App\Action\UpdatePackageNumber;
-use Illuminate\Http\Client\Request;
-use Illuminate\Http\JsonResponse;
+use App\Action\Matrimony\CreateMatrimonyProfile;
+use App\Action\Matrimony\GetActiveMatrimonyProfiles;
+use App\Action\Matrimony\GetAllMatrimonyProfiles;
+use App\Action\Matrimony\GetHomepageMatrimonyProfiles;
+use App\Action\Matrimony\GetSingleMatrimonyProfile;
+use App\Action\Matrimony\MatrimonyDelete;
+use App\Action\Matrimony\UpdateActiveStatus;
+use App\Action\Matrimony\UpdateBootPost;
+use App\Action\Matrimony\UpdatePackageNumber;
 use App\Http\Requests\StoreMatrimonyRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+//use Illuminate\Http\Client\Request;
 
 class MatrimonyController extends Controller
 {
@@ -23,6 +28,11 @@ class MatrimonyController extends Controller
     public function getAllMatrimony(GetAllMatrimonyProfiles $getAllMatrimonyProfiles): JsonResponse
     {
         return response()->json($getAllMatrimonyProfiles());
+    }
+
+    public function getActiveMatrimony(GetActiveMatrimonyProfiles $getActiveMatrimonyProfiles): JsonResponse
+    {
+        return response()->json($getActiveMatrimonyProfiles());
     }
 
     public function getProfile($profileId, GetSingleMatrimonyProfile $getSingleMatrimonyProfile): JsonResponse
@@ -57,4 +67,19 @@ class MatrimonyController extends Controller
 
         return response()->json($action($matrimonyId, $validated['package_number']));
     }
+
+    public function updateActiveStatus(Request $request, string $matrimonyId, UpdateActiveStatus $action): JsonResponse
+    {
+        $validated = $request->validate([
+            'is_active' => 'required|boolean',
+        ]);
+
+        return response()->json($action($matrimonyId, $validated['is_active']));
+    }
+
+    public function getHomepageProfiles(GetHomepageMatrimonyProfiles $getHomepageMatrimonyProfiles): JsonResponse
+    {
+        return response()->json($getHomepageMatrimonyProfiles());
+    }
+
 }

@@ -21,8 +21,21 @@ const ProfileDetailsPage = () => {
     useEffect(() => {
         const fetchProfileDetails = async () => {
             setIsLoading(true);
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                setError('No authentication token found');
+                setIsLoading(false);
+                return;
+            }
+
             try {
-                const response = await axios.get(apiConfig.endpoints.profile.get(profileId));
+                const response = await axios.get(apiConfig.endpoints.profile.get(profileId), {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
                 if (response.data && response.data.status === 'success') {
                     setProfile(response.data.data);
                 } else {
@@ -30,7 +43,6 @@ const ProfileDetailsPage = () => {
                 }
             } catch (err) {
                 setError('Error fetching profile details');
-                console.error('Error fetching profile details:', err);
             } finally {
                 setIsLoading(false);
             }

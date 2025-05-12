@@ -1,7 +1,7 @@
-import { Heart, Menu, X, User, Phone, HelpCircle, DollarSign, FileText, BookOpen, Bookmark, Star } from 'lucide-react';
+import { Menu, X, User, Phone, HelpCircle, DollarSign, FileText, BookOpen, Bookmark, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { logoutUser } from '../../../utilities/services/authService';
+import { logoutUser } from '../../../services/authService';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -10,6 +10,9 @@ const Header = () => {
     const location = useLocation();
     const hideMenuPaths = ['/', '/success-stories', '/contact'];
     const shouldHideMenu = hideMenuPaths.includes(location.pathname);
+
+    const token = localStorage.getItem('token');
+
     const handleLogout = () => {
         logoutUser();
     };
@@ -47,18 +50,26 @@ const Header = () => {
                     </button>
 
                     <div className="mt-12 flex gap-4">
-                        <Link to="/signin">
-                            <div className="flex-1 border border-yellow-300 rounded-md p-4 flex flex-col items-center justify-center hover:bg-yellow-100 cursor-pointer">
-                                <User className="h-6 w-6 mb-2 text-yellow-600" />
-                                <span className="text-center text-sm text-yellow-800">Create an account</span>
-                            </div>
-                        </Link>
-                        <Link to="/contact">
-                            <div className="flex-1 border border-yellow-300 rounded-md p-4 flex flex-col items-center justify-center hover:bg-yellow-100 cursor-pointer">
-                                <Phone className="h-6 w-6 mb-2 text-yellow-600" />
-                                <span className="text-center text-sm text-yellow-800">Call us to create your account</span>
-                            </div>
-                        </Link>
+                        {!token ? (
+                            <>
+                                <Link to="/signin">
+                                    <div className="flex-1 border border-yellow-300 rounded-md p-4 flex flex-col items-center justify-center hover:bg-yellow-100 cursor-pointer">
+                                        <User className="h-6 w-6 mb-2 text-yellow-600" />
+                                        <span className="text-center text-sm text-yellow-800">Create an account</span>
+                                    </div>
+                                </Link>
+                                <Link to="/contact">
+                                    <div className="flex-1 border border-yellow-300 rounded-md p-4 flex flex-col items-center justify-center hover:bg-yellow-100 cursor-pointer">
+                                        <Phone className="h-6 w-6 mb-2 text-yellow-600" />
+                                        <span className="text-center text-sm text-yellow-800">Call us to create your account</span>
+                                    </div>
+                                </Link>
+                            </>
+                        ) : (
+                            <button onClick={handleLogout} className="px-4 py-2 bg-yellow-600 text-white rounded-md text-center font-medium hover:bg-yellow-700 transitionn">
+                                Log Out
+                            </button>
+                        )}
                     </div>
 
                     <div className="mt-8">
@@ -68,12 +79,14 @@ const Header = () => {
                                 <span className="text-yellow-800">All Ads</span>
                             </div>
                         </Link>
-                        <Link to="/signin">
-                            <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
-                                <User className="h-5 w-5 text-yellow-600" />
-                                <span className="text-yellow-800">Login</span>
-                            </div>
-                        </Link>
+                        {!token && (
+                            <Link to="/signin">
+                                <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
+                                    <User className="h-5 w-5 text-yellow-600" />
+                                    <span className="text-yellow-800">Login</span>
+                                </div>
+                            </Link>
+                        )}
                         <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
                             <HelpCircle className="h-5 w-5 text-yellow-600" />
                             <span className="text-yellow-800">Help</span>
@@ -104,13 +117,7 @@ const Header = () => {
                         <button className="flex-1 bg-yellow-600 text-white py-2 hover:bg-yellow-700 transition-colors">English</button>
                         <button className="flex-1 bg-white border border-yellow-300 py-2 text-yellow-800 hover:bg-yellow-50">සිංහල</button>
                     </div>
-
-                    <button onClick={handleLogout} className="px-4 py-2 bg-yellow-600 text-white rounded-md text-center font-medium hover:bg-yellow-700 transitionn">
-                        Log Out
-                    </button>
                 </div>
-
-                <div className="h-6 flex-none"></div>
             </div>
 
             <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
@@ -118,7 +125,7 @@ const Header = () => {
                     <div className="flex justify-between items-center">
                         <Link to="/">
                             <div className="flex items-center">
-                                <Heart className="h-8 w-8 text-yellow-600" fill="#ca8a04" />
+                                <img className="w-8 ltr:-ml-1 rtl:-mr-1 inline" src="/assets/images/logo.svg" alt="logo" />
                                 <span className="ml-2 text-2xl font-bold text-gray-800">
                                     ශ්‍රී ලංකාවේ<span className="text-yellow-600">මංගල යෝඡනා</span>
                                 </span>
@@ -140,12 +147,21 @@ const Header = () => {
                         </nav>
 
                         <div className="hidden md:flex items-center space-x-4">
-                            <Link to="/signin" className="text-gray-800 hover:text-yellow-600 font-medium">
-                                Sign In
-                            </Link>
-                            <Link to="/signin" className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md transition duration-300 shadow-md">
-                                Register Free
-                            </Link>
+                            {token ? (
+                                <button onClick={handleLogout} className="px-4 py-2 bg-yellow-600 text-white rounded-md text-center font-medium hover:bg-yellow-700 transitionn">
+                                    Log Out
+                                </button>
+                            ) : (
+                                <>
+                                    <Link to="/signin" className="text-gray-800 hover:text-yellow-600 font-medium">
+                                        Sign In
+                                    </Link>
+                                    <Link to="/signin" className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md transition duration-300 shadow-md">
+                                        Register Free
+                                    </Link>
+                                </>
+                            )}
+
                             {!shouldHideMenu && (
                                 <button className="p-2 rounded-full bg-yellow-100 text-yellow-700 hover:bg-yellow-200" onClick={toggleDrawer}>
                                     <Menu className="h-6 w-6" />
@@ -160,32 +176,6 @@ const Header = () => {
                         )}
                     </div>
                 </div>
-
-                {isMenuOpen && (
-                    <div className="md:hidden absolute top-full left-0 right-0 bg-yellow-50 shadow-lg py-3 px-4 border-t border-yellow-100 animate-fade-in overflow-y-auto max-h-96">
-                        <nav className="flex flex-col space-y-3">
-                            <Link to="/" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
-                                Home
-                            </Link>
-                            <Link to="/success-stories" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
-                                Success Stories
-                            </Link>
-                            <Link to="/about" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
-                                About Us
-                            </Link>
-                            <Link to="/contact" className="px-4 py-2 hover:bg-yellow-100 rounded-md text-yellow-800">
-                                Contact
-                            </Link>
-                            <div className="border-t border-yellow-200 my-2"></div>
-                            <Link to="/signin" className="px-4 py-2 text-yellow-800 font-medium">
-                                Sign In
-                            </Link>
-                            <Link to="/register" className="px-4 py-2 bg-yellow-600 text-white rounded-md text-center font-medium hover:bg-yellow-700 transition">
-                                Register Free
-                            </Link>
-                        </nav>
-                    </div>
-                )}
             </header>
         </div>
     );

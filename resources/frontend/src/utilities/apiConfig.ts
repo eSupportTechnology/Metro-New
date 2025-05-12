@@ -18,13 +18,26 @@ const apiConfig: ApiConfig = {
         matrimony: {
             create: `${baseURL}/matrimony-create`,
             list: `${baseURL}/get-matrimony`,
+            listActive: `${baseURL}/get-active-matrimony`,
             detail: (id) => `${baseURL}/matrimony/${id}`,
             update: (id) => `${baseURL}/matrimony/${id}/update`,
             delete: (id) => `${baseURL}/matrimony/${id}/delete`,
+            updateBootPost: (id) => `${baseURL}/matrimony/${id}/update-boot-post`,
+            updateActiveStatus: (id) => `${baseURL}/matrimony/${id}/update-active-status`,
+            updatePackageNumber: (id) => `${baseURL}/matrimony/${id}/update-package-number`,
+        },
+        blog: {
+            create: `${baseURL}/blog-create`,
+            update: (id) => `${baseURL}/blog-update/${id}`,
+            list: `${baseURL}/get-all-blogs`,
+            delete: (id) => `${baseURL}/blog-delete/${id}`,
         },
         profile: {
             get: (id) => `${baseURL}/get-profile/${id}`,
         },
+        homepageProfiles: `${baseURL}/get-homepage-profiles`,
+        signIn: `${baseURL}/sign-in`,
+        logout: `${baseURL}/logout`,
     },
 };
 

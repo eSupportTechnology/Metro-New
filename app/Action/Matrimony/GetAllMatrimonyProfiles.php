@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Action;
+namespace App\Action\Matrimony;
 
-use Illuminate\Support\Facades\Storage;
+use App\Response\CommonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Response\CommonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class GetAllMatrimonyProfiles
 {
@@ -35,6 +35,8 @@ class GetAllMatrimonyProfiles
                     'pictures.image_path as profile_picture',
                     'matrimonies.created_at as matrimony_created_at',
                     'matrimonies.boot_post',
+                    'matrimonies.package_number',
+                    'matrimonies.is_active'
                 )
                 ->get();
 
@@ -86,6 +88,8 @@ class GetAllMatrimonyProfiles
                         'smoking' => $profile->smoking,
                         'created_at' => $profile->matrimony_created_at,
                         'boot_post' => $profile->boot_post,
+                        'package_number' => $profile->package_number ?? 1,
+                        'is_active' => $profile->is_active ?? true
                     ],
                     'father' => [
                         'ethnicity' => $profile->father_ethnicity ?? '',
@@ -111,6 +115,7 @@ class GetAllMatrimonyProfiles
                         'birth_time' => $profile->horoscope_birth_time ?? '',
                     ],
                     'profile_picture' => $profilePictureData,
+                    'is_active' => $profile->is_active ?? true
                 ];
             }
         }

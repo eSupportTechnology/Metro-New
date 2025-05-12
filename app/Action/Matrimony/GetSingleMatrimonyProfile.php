@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Action;
+namespace App\Action\Matrimony;
 
-use Illuminate\Support\Facades\Storage;
+use App\Response\CommonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Response\CommonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class GetSingleMatrimonyProfile
 {
@@ -36,8 +36,8 @@ class GetSingleMatrimonyProfile
                     'matrimonies.created_at as matrimony_created_at',
                     'matrimonies.boot_post',
                 )
-                ->where('matrimonies.user_id', $profileId) // Filter by profileId (user_id)
-                ->first();  // We need only one profile
+                ->where('matrimonies.user_id', $profileId)
+                ->first();
 
             if (!$profile) {
                 return CommonResponse::sendBadRequestResponse('Profile not found');
@@ -48,7 +48,6 @@ class GetSingleMatrimonyProfile
                 $profilePictureData = $this->getImageData($profile->profile_picture);
             }
 
-            // Return the profile data grouped as per your requirement
             $groupedProfile = [
                 'user_id' => $profile->user_id,
                 'first_name' => $profile->first_name,

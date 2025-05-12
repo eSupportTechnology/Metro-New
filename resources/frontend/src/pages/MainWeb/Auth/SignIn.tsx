@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { setAuth } from '../../../store/authSlice';
 import Header from '../NavBar/Header';
 import Footer from '../Footer/Footer';
-import { UserSignIn } from '../../../utilities/services/authService';
+import { UserSignIn } from '../../../services/authService';
 
 const SignIn: React.FC = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);

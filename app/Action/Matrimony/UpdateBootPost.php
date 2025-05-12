@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Action;
+namespace App\Action\Matrimony;
 
 use App\Models\Matrimony;
 use App\Response\CommonResponse;
@@ -10,7 +10,7 @@ class UpdateBootPost
     public function __invoke(string $matrimonyId, bool $bootPost): array
     {
         try {
-            $matrimony = Matrimony::where('id', $matrimonyId)->first();
+            $matrimony = Matrimony::where('user_id', $matrimonyId)->first();
 
             if (!$matrimony) {
                 return CommonResponse::sendBadRequestResponse('Matrimony profile not found.');

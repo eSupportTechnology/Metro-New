@@ -4,7 +4,7 @@ import authSlice from './authSlice';
 
 const rootReducer = combineReducers({
     themeConfig: themeConfigSlice,
-    auth: authSlice, // ✅ ADD THIS
+    auth: authSlice,
 });
 
 const store = configureStore({

@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Action;
+namespace App\Action\Matrimony;
 
-use App\Models\User;
-use App\Models\Matrimony;
 use App\Models\Father;
-use App\Models\Mother;
 use App\Models\HoroscopeDetail;
+use App\Models\Matrimony;
+use App\Models\Mother;
 use App\Models\Picture;
+use App\Models\User;
 use App\Response\CommonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 
 class MatrimonyDelete
 {

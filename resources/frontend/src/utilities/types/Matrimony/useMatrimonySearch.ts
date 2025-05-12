@@ -103,7 +103,7 @@ export const useMatrimonySearch = () => {
         const fetchProfiles = async () => {
             setIsLoading(true);
             try {
-                const response = await axios.get(apiConfig.endpoints.matrimony.list);
+                const response = await axios.get(apiConfig.endpoints.matrimony.listActive);
                 let profileData;
 
                 if (response.data && (response.data.status === 200 || response.data.status === 'success')) {

@@ -7,11 +7,16 @@ export type AuthState = {
     isAuthenticated: boolean;
 };
 
+const storedUserId = localStorage.getItem('userId') || '';
+const storedUserRole = parseInt(localStorage.getItem('userRole') || '0', 10);
+const storedToken = localStorage.getItem('token') || '';
+const isAuthenticated = !!storedToken;
+
 export const initialState: AuthState = {
     loading: false,
-    userId: '',
-    userRole: 0,
-    userToken: '',
+    userId: storedUserId,
+    userRole: storedUserRole,
+    userToken: storedToken,
     error: null,
-    isAuthenticated: false,
+    isAuthenticated,
 };

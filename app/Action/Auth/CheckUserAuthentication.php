@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Action;
+namespace App\Action\Auth;
 
 use App\Models\User;
 use App\Services\Response\AuthenticationResponse;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class CheckUserAuthentication
 {
