@@ -53,58 +53,60 @@ const MatrimonyProfilesTable: React.FC = () => {
     };
 
     return (
-        <div className="container mx-auto p-4 font-sans">
+        <div className="container mx-auto  font-sans">
             <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
 
             <div className="bg-gradient-to-b from-yellow-50 to-white p-6 rounded-lg shadow-md mb-6">
-                <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-                    <h1 className="text-2xl font-semibold text-gray-800 mb-3 md:mb-0">Matrimony Profiles</h1>
+                <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+                        <h1 className="text-2xl font-semibold text-gray-800 mb-3 md:mb-0">Matrimony Profiles</h1>
 
-                    <div className="flex items-center space-x-3">
-                        <button
-                            onClick={refreshData}
-                            className="flex items-center text-sm px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 transition-colors"
-                            disabled={isLoading}
-                        >
-                            <RefreshCw size={16} className={`mr-2 ${isLoading ? 'animate-spin text-yellow-600' : 'text-gray-600'}`} />
-                            Refresh
-                        </button>
+                        <div className="flex items-center space-x-3">
+                            <button
+                                onClick={refreshData}
+                                className="flex items-center text-sm px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 transition-colors"
+                                disabled={isLoading}
+                            >
+                                <RefreshCw size={16} className={`mr-2 ${isLoading ? 'animate-spin text-yellow-600' : 'text-gray-600'}`} />
+                                Refresh
+                            </button>
 
-                        <SortDropdown sortField={sortField} sortDirection={sortDirection} sortOptions={sortOptions} onSort={handleSort} />
+                            <SortDropdown sortField={sortField} sortDirection={sortDirection} sortOptions={sortOptions} onSort={handleSort} />
 
-                        <span className="text-sm text-gray-500 bg-white px-3 py-2 rounded-md border border-gray-200">
-                            {sortedProfiles.length} {sortedProfiles.length === 1 ? 'profile' : 'profiles'} found
-                        </span>
+                            <span className="text-sm text-gray-500 bg-white px-3 py-2 rounded-md border border-gray-200">
+                                {sortedProfiles.length} {sortedProfiles.length === 1 ? 'profile' : 'profiles'} found
+                            </span>
+                        </div>
                     </div>
-                </div>
-                <div className="mb-6">
-                    <div className="flex flex-col md:flex-row gap-3">
-                        <SearchFilter
-                            searchFilter={searchFilter}
-                            onSearchChange={(value) => {
-                                setSearchFilter(value);
-                                setCurrentPage(1);
-                            }}
-                        />
+                    <div className="mb-6">
+                        <div className="flex flex-col md:flex-row gap-3">
+                            <SearchFilter
+                                searchFilter={searchFilter}
+                                onSearchChange={(value) => {
+                                    setSearchFilter(value);
+                                    setCurrentPage(1);
+                                }}
+                            />
 
-                        <AdvancedFilterDropdown
+                            <AdvancedFilterDropdown
+                                activeFilters={activeFilters}
+                                onToggleFilter={toggleFilter}
+                                onClearAllFilters={clearAllFilters}
+                                getActiveFiltersCount={getActiveFiltersCount}
+                                filterOptions={filterOptions}
+                            />
+
+                            <QuickFilters filterOptions={filterOptions} onQuickFilterSelect={handleQuickFilterSelect} />
+                        </div>
+
+                        <ActiveFilters
+                            searchFilter={searchFilter}
                             activeFilters={activeFilters}
+                            onClearSearchFilter={() => setSearchFilter('')}
                             onToggleFilter={toggleFilter}
                             onClearAllFilters={clearAllFilters}
-                            getActiveFiltersCount={getActiveFiltersCount}
-                            filterOptions={filterOptions}
                         />
-
-                        <QuickFilters filterOptions={filterOptions} onQuickFilterSelect={handleQuickFilterSelect} />
                     </div>
-
-                    <ActiveFilters
-                        searchFilter={searchFilter}
-                        activeFilters={activeFilters}
-                        onClearSearchFilter={() => setSearchFilter('')}
-                        onToggleFilter={toggleFilter}
-                        onClearAllFilters={clearAllFilters}
-                    />
                 </div>
                 {isLoading ? (
                     <LoadingState />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PlusCircle, RefreshCw } from 'lucide-react';
+import { Loader, PlusCircle, RefreshCw } from 'lucide-react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { BlogPost, BlogFormData } from '../../../utilities/types/Blog/IBlog';
@@ -163,7 +163,8 @@ const Blog: React.FC = () => {
                     {isLoading ? (
                         <div className="flex justify-center items-center p-12">
                             <div className="flex flex-col items-center">
-                                <Spinner size="lg" color="yellow-500" text="Loading blog posts..." />
+                                <Loader className="animate-spin text-yellow-500 h-8 w-8 mb-3" />
+                                <span className="text-gray-600">Loading blog posts...</span>
                             </div>
                         </div>
                     ) : (

@@ -46,12 +46,12 @@ const routes = [
     },
     {
         path: '/admin/all-add',
-        element: <MatrimonyProfilesTable />,
+        element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={MatrimonyProfilesTable} />,
         layout: 'default',
     },
     {
         path: '/admin/all-blog',
-        element: <Blog />,
+        element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={Blog} />,
         layout: 'default',
     },
 ];
