@@ -17,6 +17,7 @@ export interface ApiConfig {
             update: (id: number | string) => string;
             list: string;
             delete: (id: number | string) => string;
+            detail: (id: number | string) => string;
         };
         profile: {
             get: (id: number | string) => string;

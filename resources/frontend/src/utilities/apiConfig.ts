@@ -31,6 +31,7 @@ const apiConfig: ApiConfig = {
             update: (id) => `${baseURL}/blog-update/${id}`,
             list: `${baseURL}/get-all-blogs`,
             delete: (id) => `${baseURL}/blog-delete/${id}`,
+            detail: (id) => `${baseURL}/blog-detail/${id}`,
         },
         profile: {
             get: (id) => `${baseURL}/get-profile/${id}`,

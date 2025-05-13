@@ -106,6 +106,21 @@ class BlogService {
             throw error;
         }
     }
+
+    async fetchBlogById(id: string): Promise<BlogPost> {
+        try {
+            const response = await axios.get<ApiResponse>(apiConfig.endpoints.blog.detail(id));
+
+            if ((response.data.status === 'success' || response.data.status === 200) && response.data.data) {
+                return response.data.data;
+            }
+
+            throw new Error(response.data.message || 'Failed to fetch blog');
+        } catch (error) {
+            console.error('Error fetching blog by ID:', error);
+            throw error;
+        }
+    }
 }
 
 export default new BlogService();

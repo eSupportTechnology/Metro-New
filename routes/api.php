@@ -13,6 +13,8 @@ Route::post('logout', [UserController::class, 'userLogout'])->middleware('auth:s
 Route::get('/get-active-matrimony', [MatrimonyController::class, 'getActiveMatrimony']);
 Route::get('/get-homepage-profiles', [MatrimonyController::class, 'getHomepageProfiles']);
 Route::get('/get-all-blogs', [BlogController::class, 'getAllBlogs']);
+Route::get('/blog-detail/{id}', [BlogController::class, 'getBlogById']);
+
 
 Route::middleware(['auth:sanctum', FollowerUserCheckMiddleware::class])->group(function () {
     Route::post('/matrimony-create', [MatrimonyController::class, 'Create']);
