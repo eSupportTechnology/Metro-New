@@ -15,9 +15,7 @@ class BlogService {
 
     async fetchBlogs(): Promise<BlogPost[]> {
         try {
-            const response = await axios.get<ApiResponse>(apiConfig.endpoints.blog.list, {
-                headers: this.getAuthHeaders(),
-            });
+            const response = await axios.get<ApiResponse>(apiConfig.endpoints.blog.list);
 
             if ((response.data.status === 'success' || response.data.status === 200) && response.data.data) {
                 return response.data.data;
