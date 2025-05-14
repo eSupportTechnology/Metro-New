@@ -12,6 +12,7 @@ import Blog from '../pages/AdminWeb/blog/Blog';
 import BlogPage from '../pages/MainWeb/Blog/BlogPage';
 import BlogDetailPage from '../pages/MainWeb/Blog/BlogDetailPage';
 import ProfilePage from '../pages/MainWeb/Profile/ProfilePage';
+import ContactUs from '../pages/MainWeb/Component/ContactUs';
 const Index = lazy(() => import('../pages/Index'));
 
 const useAuth = () => useSelector((state: IRootState) => state.auth);
@@ -30,6 +31,11 @@ const routes = [
     {
         path: '/blog',
         element: <BlogPage />,
+        layout: 'blank',
+    },
+    {
+        path: '/contact',
+        element: <ContactUs />,
         layout: 'blank',
     },
     {
