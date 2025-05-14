@@ -10,6 +10,7 @@ import PrivateRoute from './PrivateRoute';
 import MatrimonyProfilesTable from '../pages/AdminWeb/Matrimony/MatrimonyProfilesTable';
 import Blog from '../pages/AdminWeb/blog/Blog';
 import BlogPage from '../pages/MainWeb/Blog/BlogPage';
+import BlogDetailPage from '../pages/MainWeb/Blog/BlogDetailPage';
 const Index = lazy(() => import('../pages/Index'));
 
 const useAuth = () => useSelector((state: IRootState) => state.auth);
@@ -28,6 +29,11 @@ const routes = [
     {
         path: '/blog',
         element: <BlogPage />,
+        layout: 'blank',
+    },
+    {
+        path: '/blog/detail/:id',
+        element: <BlogDetailPage />,
         layout: 'blank',
     },
     {

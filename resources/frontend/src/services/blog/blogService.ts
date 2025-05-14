@@ -28,6 +28,21 @@ class BlogService {
         }
     }
 
+    async getBlogById(id: string): Promise<BlogPost> {
+        try {
+            const response = await axios.get<ApiResponse>(apiConfig.endpoints.blog.detail(id));
+
+            if ((response.data.status === 'success' || response.data.status === 200) && response.data.data) {
+                return response.data.data;
+            }
+
+            throw new Error(response.data.message || 'Failed to fetch blog details');
+        } catch (error) {
+            console.error('Error fetching blog details:', error);
+            throw error;
+        }
+    }
+
     async createBlog(formData: BlogFormData): Promise<BlogPost> {
         try {
             const data = new FormData();
@@ -103,21 +118,6 @@ class BlogService {
             throw new Error(response.data.message || 'Failed to delete blog');
         } catch (error) {
             console.error('Error deleting blog:', error);
-            throw error;
-        }
-    }
-
-    async fetchBlogById(id: string): Promise<BlogPost> {
-        try {
-            const response = await axios.get<ApiResponse>(apiConfig.endpoints.blog.detail(id));
-
-            if ((response.data.status === 'success' || response.data.status === 200) && response.data.data) {
-                return response.data.data;
-            }
-
-            throw new Error(response.data.message || 'Failed to fetch blog');
-        } catch (error) {
-            console.error('Error fetching blog by ID:', error);
             throw error;
         }
     }

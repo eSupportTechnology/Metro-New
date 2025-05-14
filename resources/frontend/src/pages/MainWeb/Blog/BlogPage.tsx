@@ -113,7 +113,6 @@ const BlogPage = () => {
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-12">
                         <h1 className="text-4xl font-bold text-gray-800 mb-4 animate-fade-in">Our Blog</h1>
-                        <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">Discover insights, trends, and expert opinions on technology, health, travel, and more.</p>
 
                         <div className="max-w-2xl mx-auto mb-8">
                             <div className="relative">
