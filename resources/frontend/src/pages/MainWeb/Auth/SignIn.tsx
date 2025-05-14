@@ -49,13 +49,13 @@ const SignIn: React.FC = () => {
         setError('');
 
         try {
+            let data;
             if (!showPassword) {
-                const data = await UserSignIn(`${countryCode}${phoneNumber}`, password);
-                handleSuccessfulLogin(data);
+                data = await UserSignIn(`${countryCode}${phoneNumber}`, password);
             } else {
-                const data = await UserSignIn(email, password);
-                handleSuccessfulLogin(data);
+                data = await UserSignIn(email, password);
             }
+            handleSuccessfulLogin(data);
         } catch (err: any) {
             if (err.message === 'Unauthorized') {
                 setError('Invalid credentials. Please check your details and try again.');
@@ -68,18 +68,23 @@ const SignIn: React.FC = () => {
     };
 
     const handleSuccessfulLogin = (data: any) => {
-        dispatch(
-            setAuth({
-                userId: data.userId,
-                userRole: data.userRole,
-                token: data.token,
-            }),
-        );
+        const authData = {
+            userId: data.userId || data.user?.id || '',
+            userRole: data.userRole || data.user?.role || 0,
+            token: data.token || '',
+            firstName: data.firstName || data.user?.first_name || '',
+            lastName: data.lastName || data.user?.last_name || '',
+            email: data.email || data.user?.email || '',
+        };
 
-        if (data.userRole === 1) {
+        localStorage.setItem('userId', authData.userId);
+        localStorage.setItem('token', authData.token);
+
+        dispatch(setAuth(authData));
+        if (authData.userRole === 1) {
             navigate('/admin');
-        } else if (data.userRole === 2) {
-            navigate('/create-add');
+        } else if (authData.userRole === 2) {
+            navigate(`/my-profile/${authData.userId}`);
         } else {
             navigate('/');
         }

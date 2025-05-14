@@ -46,6 +46,12 @@ class CreateMatrimonyProfile
                 ]);
             }
 
+            $existingMatrimonyProfile = Matrimony::where('user_id', $user->id)->first();
+
+            if ($existingMatrimonyProfile) {
+                return CommonResponse::sendBadRequestResponse('Matrimony profile already created');
+            }
+
             Matrimony::updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -125,7 +131,9 @@ class CreateMatrimonyProfile
                     ['image_path' => $publicPath]
                 );
             }
+
             return CommonResponse::sendSuccessResponse('Matrimony profile created successfully.');
+
         } catch (\Exception $e) {
             Log::error('Error creating matrimony profile: ' . $e->getMessage());
             return CommonResponse::sendBadRequestResponse('Something went wrong while creating the profile: ' . $e->getMessage());

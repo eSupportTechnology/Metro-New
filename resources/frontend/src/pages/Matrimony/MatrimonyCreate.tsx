@@ -1,6 +1,5 @@
 import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { renderPersonalInfoForm } from './CreateMatrimony/PersonalInformation';
 import { renderParentsInfoForm } from './CreateMatrimony/ParentsInformation';
 import { renderHoroscopeAndPreferencesForm } from './CreateMatrimony/HoroscopeAndPreferences';
 import { renderReviewAndSubmitForm } from './CreateMatrimony/ReviewAndSubmit';
@@ -12,6 +11,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import apiService from '../../utilities/apiService';
 import apiConfig from '../../utilities/apiConfig';
 import { getValidationRule, validationSchema } from '../../utilities/types/Matrimony/MatrimonyCreatevalidation';
+import PersonalInfoForm from './CreateMatrimony/PersonalInformation';
+import { IRootState } from '../../store';
+import { useSelector } from 'react-redux';
 
 const progressAnimation = `
   @keyframes progress {
@@ -28,6 +30,7 @@ const MatrimonyCreate: React.FC = () => {
     const [isSuccess, setIsSuccess] = React.useState<boolean>(false);
     const [errors, setErrors] = React.useState<Record<string, string>>({});
     const [touched, setTouched] = React.useState<Record<string, boolean>>({});
+    const userToken = useSelector((state: IRootState) => state.auth.userToken);
     const [formData, setFormData] = React.useState<MatrimonyFormData>({
         first_name: '',
         last_name: '',
@@ -263,7 +266,18 @@ const MatrimonyCreate: React.FC = () => {
                 }
             }
 
-            const response = await apiService.postFormData(apiConfig.endpoints.matrimony.create, matrimonyData);
+            const token = localStorage.getItem('token');
+            if (!token) {
+                toast.error('Authentication token is missing.');
+                setIsLoading(false);
+                return;
+            }
+
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+
+            const response = await apiService.postFormData(apiConfig.endpoints.matrimony.create, matrimonyData, { headers });
 
             setIsLoading(false);
 
@@ -365,15 +379,17 @@ const MatrimonyCreate: React.FC = () => {
     const renderForm = () => {
         switch (currentStep) {
             case 1:
-                return renderPersonalInfoForm({
-                    formData,
-                    handleInputChange,
-                    handleImageChange,
-                    previewUrl,
-                    errors,
-                    touched,
-                    handleBlur,
-                });
+                return (
+                    <PersonalInfoForm
+                        formData={formData}
+                        handleInputChange={handleInputChange}
+                        handleImageChange={handleImageChange}
+                        previewUrl={previewUrl}
+                        errors={errors}
+                        touched={touched}
+                        handleBlur={handleBlur}
+                    />
+                );
             case 2:
                 return renderParentsInfoForm({
                     formData,

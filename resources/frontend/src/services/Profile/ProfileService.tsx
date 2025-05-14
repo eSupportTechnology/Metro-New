@@ -76,7 +76,6 @@ class ProfileService {
 
     async getProfileByUserId(userId: string): Promise<MatrimonyProfile> {
         try {
-            // The backend endpoint accepts both matrimony ID and user ID
             const response = await axios.get<ApiResponse>(apiConfig.endpoints.profile.get(userId), {
                 headers: this.getAuthHeaders(),
             });

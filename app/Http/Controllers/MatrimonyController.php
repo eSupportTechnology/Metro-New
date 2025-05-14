@@ -15,7 +15,6 @@ use App\Http\Requests\StoreMatrimonyRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-//use Illuminate\Http\Client\Request;
 
 class MatrimonyController extends Controller
 {

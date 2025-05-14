@@ -67,9 +67,9 @@ const ProfilePage = () => {
                     <div className="max-w-2xl mx-auto px-6 py-32 text-center">
                         <h1 className="text-3xl font-light text-gray-900 mb-4">Profile Not Found</h1>
                         <p className="text-gray-600 mb-8">{error || 'The profile you are looking for does not exist.'}</p>
-                        <button onClick={() => navigate('/profiles')} className="inline-flex items-center bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg transition-colors">
+                        <button onClick={() => navigate('/create-add')} className="inline-flex items-center bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg transition-colors">
                             <ArrowLeft className="h-5 w-5 mr-2" />
-                            Browse Profiles
+                            Create Profile
                         </button>
                     </div>
                 </div>
