@@ -25,4 +25,14 @@ class GetUserDetailsRequest extends FormRequest
             'id' => 'required|exists:users,id'
         ];
     }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'id' => $this->route('id')
+        ]);
+    }
 }
