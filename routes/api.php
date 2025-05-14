@@ -17,6 +17,8 @@ Route::get('/blog-detail/{id}', [BlogController::class, 'getBlogById']);
 
 
 Route::middleware(['auth:sanctum', FollowerUserCheckMiddleware::class])->group(function () {
+    Route::get('/user/{id}', [UserController::class, 'getUserDetails']);
+
     Route::post('/matrimony-create', [MatrimonyController::class, 'Create']);
     Route::get('/get-profile/{profileId}', [MatrimonyController::class, 'getProfile']);
     Route::delete('/delete-matrimony-profile/{userId}', [MatrimonyController::class, 'deleteMatrimonyProfile']);
