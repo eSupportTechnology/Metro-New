@@ -16,7 +16,7 @@ class StoreMatrimonyRequest extends FormRequest
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email',
             'display_name' => 'required|string',
             'account_created_by' => 'required|string',
             'birthdate' => 'required|date',

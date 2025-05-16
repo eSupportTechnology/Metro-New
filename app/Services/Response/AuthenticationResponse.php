@@ -30,6 +30,9 @@ class AuthenticationResponse
             'userId' => $user->id,
             'token' => AuthenticatedUserTokenGenerator::getValidToken($user),
             'userRole' => $user->role_as,
+            'firstName' => $user->first_name,
+            'lastName' => $user->last_name,
+            'email' => $user->email,
         ];
     }
 }

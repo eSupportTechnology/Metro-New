@@ -2,6 +2,18 @@ import { useState, useMemo } from 'react';
 import { BlogPost } from '../../utilities/types/Blog/IBlog';
 import { filterCategories } from '../../constants/blog/blogConstants';
 
+interface FilterOption {
+    value: string;
+    label: string;
+    filter: (blog: BlogPost) => boolean;
+}
+
+interface FilterCategory {
+    name: string;
+    label: string;
+    options: FilterOption[];
+}
+
 export const useBlogFilters = (blogs: BlogPost[]) => {
     const [searchFilter, setSearchFilter] = useState<string>('');
     const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
@@ -42,12 +54,12 @@ export const useBlogFilters = (blogs: BlogPost[]) => {
 
         Object.entries(activeFilters).forEach(([category, values]) => {
             if (values.length > 0) {
-                const categoryFilters = filterCategories.find((c) => c.name === category);
-                if (categoryFilters) {
-                    const filtersToApply = categoryFilters.options.filter((option) => values.includes(option.value)).map((option) => option.filter);
+                const categoryFilters = (filterCategories as FilterCategory[]).find((c) => c.name === category);
+                if (categoryFilters && categoryFilters.options) {
+                    const filtersToApply = categoryFilters.options.filter((option: FilterOption) => values.includes(option.value)).map((option: FilterOption) => option.filter);
 
                     if (filtersToApply.length > 0) {
-                        result = result.filter((blog) => filtersToApply.some((filterFn) => filterFn(blog)));
+                        result = result.filter((blog) => filtersToApply.some((filterFn: (blog: BlogPost) => boolean) => filterFn(blog)));
                     }
                 }
             }

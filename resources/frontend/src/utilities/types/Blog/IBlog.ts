@@ -6,21 +6,25 @@ export interface BlogPost {
     writer: string;
     date: string;
     description: string;
-    created_at?: string;
-    updated_at?: string;
+    content?: string;
+    readTime?: number;
+    featured?: boolean;
+    views?: number;
+    likes?: number;
+    tags?: string[];
 }
 
 export interface BlogFormData {
     title: string;
     category: string;
-    image: File | null;
     writer: string;
     date: string;
     description: string;
+    image?: File | null;
 }
 
-export interface ApiResponse {
+export interface ApiResponse<T = any> {
     status: string | number;
     message?: string;
-    data?: BlogPost[];
+    data: T;
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Action\Blog\BlogDelete;
 use App\Action\Blog\CreateBlog;
 use App\Action\Blog\GetAllBlogs;
+use App\Action\Blog\GetBlogById;
 use App\Action\Blog\UpdateBlog;
 use App\Http\Requests\StoreBlogRequest;
 use Illuminate\Http\JsonResponse;
@@ -32,4 +33,10 @@ class BlogController extends Controller
     {
         return response()->json($blogDelete($id));
     }
+
+    public function getBlogById($id, GetBlogById $getBlogById): JsonResponse
+    {
+        return response()->json($getBlogById($id));
+    }
+
 }

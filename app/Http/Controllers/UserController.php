@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Action\Auth\CheckUserAuthentication;
+use App\Action\Auth\GetUserDetails;
+use App\Http\Requests\GetUserDetailsRequest;
 use App\Http\Requests\UserSignInValidationRequest;
 use Illuminate\Http\JsonResponse;
 
@@ -27,4 +29,13 @@ class UserController extends Controller
         return response()->json($response);
     }
 
+    public function getUserDetails(
+        GetUserDetailsRequest $request,
+        GetUserDetails $getUserDetails
+    ): JsonResponse {
+        $validatedData = $request->validated();
+        $response = $getUserDetails($validatedData['id']);
+
+        return response()->json($response, $response['status'] === 'success' ? 200 : 404);
+    }
 }

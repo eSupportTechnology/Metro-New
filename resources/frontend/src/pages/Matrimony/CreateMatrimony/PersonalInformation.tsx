@@ -1,10 +1,47 @@
-import React from 'react';
-import { PersonalInfoProps } from '../../../utilities/types/Matrimony/MatrimonyTypes';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { IRootState } from '../../../store';
 
-export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImageChange, previewUrl, errors, touched, handleBlur }: PersonalInfoProps) => {
+export interface PersonalInfoFormProps {
+    formData: any;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+    handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    previewUrl: string | null;
+    errors: Record<string, string>;
+    touched: Record<string, boolean>;
+    handleBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => void;
+}
+
+const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, handleInputChange, handleImageChange, previewUrl, errors, touched, handleBlur }) => {
+    const { firstName, lastName, email } = useSelector((state: IRootState) => state.auth);
     const showError = (fieldName: string): boolean => {
         return !!(touched[fieldName] && errors[fieldName]);
     };
+    useEffect(() => {
+        if (firstName && !formData.first_name) {
+            const event = {
+                target: { name: 'first_name', value: firstName },
+                currentTarget: { name: 'first_name', value: firstName },
+            } as React.ChangeEvent<HTMLInputElement>;
+            handleInputChange(event);
+        }
+
+        if (lastName && !formData.last_name) {
+            const event = {
+                target: { name: 'last_name', value: lastName },
+                currentTarget: { name: 'last_name', value: lastName },
+            } as React.ChangeEvent<HTMLInputElement>;
+            handleInputChange(event);
+        }
+
+        if (email && !formData.email) {
+            const event = {
+                target: { name: 'email', value: email },
+                currentTarget: { name: 'email', value: email },
+            } as React.ChangeEvent<HTMLInputElement>;
+            handleInputChange(event);
+        }
+    }, []);
 
     return (
         <div className="space-y-4">
@@ -59,6 +96,7 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
                     onBlur={handleBlur}
                     className={`w-full px-3 py-2 border ${showError('email') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                     required
+                    readOnly
                 />
                 {showError('email') && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
@@ -338,3 +376,5 @@ export const renderPersonalInfoForm = ({ formData, handleInputChange, handleImag
         </div>
     );
 };
+
+export default PersonalInfoForm;

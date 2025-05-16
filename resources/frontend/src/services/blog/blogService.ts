@@ -15,9 +15,7 @@ class BlogService {
 
     async fetchBlogs(): Promise<BlogPost[]> {
         try {
-            const response = await axios.get<ApiResponse>(apiConfig.endpoints.blog.list, {
-                headers: this.getAuthHeaders(),
-            });
+            const response = await axios.get<ApiResponse>(apiConfig.endpoints.blog.list);
 
             if ((response.data.status === 'success' || response.data.status === 200) && response.data.data) {
                 return response.data.data;
@@ -26,6 +24,21 @@ class BlogService {
             throw new Error(response.data.message || 'Failed to fetch blogs');
         } catch (error) {
             console.error('Error fetching blogs:', error);
+            throw error;
+        }
+    }
+
+    async getBlogById(id: string): Promise<BlogPost> {
+        try {
+            const response = await axios.get<ApiResponse>(apiConfig.endpoints.blog.detail(id));
+
+            if ((response.data.status === 'success' || response.data.status === 200) && response.data.data) {
+                return response.data.data;
+            }
+
+            throw new Error(response.data.message || 'Failed to fetch blog details');
+        } catch (error) {
+            console.error('Error fetching blog details:', error);
             throw error;
         }
     }

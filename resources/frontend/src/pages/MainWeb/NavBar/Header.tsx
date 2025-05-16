@@ -1,4 +1,4 @@
-import { Menu, X, User, Phone, HelpCircle, DollarSign, FileText, BookOpen, Bookmark, Star } from 'lucide-react';
+import { Menu, X, User, Phone, HelpCircle, DollarSign, FileText, BookOpen, Bookmark, Star, UserCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { logoutUser } from '../../../services/authService';
@@ -12,6 +12,7 @@ const Header = () => {
     const shouldHideMenu = hideMenuPaths.includes(location.pathname);
 
     const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
 
     const handleLogout = () => {
         logoutUser();
@@ -66,9 +67,19 @@ const Header = () => {
                                 </Link>
                             </>
                         ) : (
-                            <button onClick={handleLogout} className="px-4 py-2 bg-yellow-600 text-white rounded-md text-center font-medium hover:bg-yellow-700 transitionn">
-                                Log Out
-                            </button>
+                            <>
+                                {token && userId && (
+                                    <Link to={`/my-profile/${userId}`}>
+                                        <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
+                                            <UserCircle className="h-5 w-5 text-yellow-600" />
+                                            <span className="text-yellow-800">My Profile</span>
+                                        </div>
+                                    </Link>
+                                )}
+                                <button onClick={handleLogout} className="px-4 py-2 bg-yellow-600 text-white rounded-md text-center font-medium hover:bg-yellow-700 transition">
+                                    Log Out
+                                </button>
+                            </>
                         )}
                     </div>
 
@@ -91,22 +102,22 @@ const Header = () => {
                             <HelpCircle className="h-5 w-5 text-yellow-600" />
                             <span className="text-yellow-800">Help</span>
                         </div>
-                        <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
-                            <DollarSign className="h-5 w-5 text-yellow-600" />
-                            <span className="text-yellow-800">Pricing</span>
-                        </div>
+                        <Link to="pricing">
+                            <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
+                                <DollarSign className="h-5 w-5 text-yellow-600" />
+                                <span className="text-yellow-800">Pricing</span>
+                            </div>
+                        </Link>
                         <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
                             <FileText className="h-5 w-5 text-yellow-600" />
                             <span className="text-yellow-800">Terms</span>
                         </div>
-                        <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
-                            <BookOpen className="h-5 w-5 text-yellow-600" />
-                            <span className="text-yellow-800">Monthly Magazine</span>
-                        </div>
-                        <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
-                            <Bookmark className="h-5 w-5 text-yellow-600" />
-                            <span className="text-yellow-800">Blog</span>
-                        </div>
+                        <Link to="/blog">
+                            <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
+                                <Bookmark className="h-5 w-5 text-yellow-600" />
+                                <span className="text-yellow-800">Blog</span>
+                            </div>
+                        </Link>
                         <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
                             <Star className="h-5 w-5 text-yellow-600" />
                             <span className="text-yellow-800">Reviews and Ratings</span>
@@ -148,9 +159,17 @@ const Header = () => {
 
                         <div className="hidden md:flex items-center space-x-4">
                             {token ? (
-                                <button onClick={handleLogout} className="px-4 py-2 bg-yellow-600 text-white rounded-md text-center font-medium hover:bg-yellow-700 transitionn">
-                                    Log Out
-                                </button>
+                                <>
+                                    {userId && (
+                                        <Link to={`/my-profile/${userId}`} className="text-gray-800 hover:text-yellow-600 font-medium">
+                                            <UserCircle className="h-5 w-5 text-yellow-600" />
+                                            <span className="text-yellow-800">My Profile</span>
+                                        </Link>
+                                    )}
+                                    <button onClick={handleLogout} className="px-4 py-2 bg-yellow-600 text-white rounded-md text-center font-medium hover:bg-yellow-700 transition">
+                                        Log Out
+                                    </button>
+                                </>
                             ) : (
                                 <>
                                     <Link to="/signin" className="text-gray-800 hover:text-yellow-600 font-medium">

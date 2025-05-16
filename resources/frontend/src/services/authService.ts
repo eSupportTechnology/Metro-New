@@ -45,6 +45,9 @@ export const logoutUser = async () => {
             localStorage.removeItem('token');
             localStorage.removeItem('userId');
             localStorage.removeItem('userRole');
+            localStorage.removeItem('email');
+            localStorage.removeItem('firstName');
+            localStorage.removeItem('lastName');
             window.location.href = '/signin';
         }
     } catch (error) {
