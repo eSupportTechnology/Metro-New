@@ -12,6 +12,20 @@ export const renderReviewAndSubmitForm = ({ formData, previewUrl, isLoading, ter
         ) : null;
     };
 
+    const getPackageName = (packageId: number | null): string => {
+        if (!packageId) return 'Not selected';
+        switch (packageId) {
+            case 1:
+                return '2 Months Basic';
+            case 2:
+                return '3 Months Basic';
+            case 3:
+                return '3 Months Pro';
+            default:
+                return `Package #${packageId}`;
+        }
+    };
+
     return (
         <div className="space-y-6">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Review Your Information</h3>
@@ -98,6 +112,14 @@ export const renderReviewAndSubmitForm = ({ formData, previewUrl, isLoading, ter
                 </div>
             </div>
 
+            <div className="mt-4">
+                <h4 className="text-lg font-semibold text-gray-700 mb-3">Package Information</h4>
+                <div className="bg-yellow-50 p-4 rounded-md">
+                    {renderField('Selected Package', getPackageName(formData.package_id as number))}
+                    {!formData.package_id && <p className="text-red-500 text-sm mt-2">No package selected. Please go back to the package selection page.</p>}
+                </div>
+            </div>
+
             <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
                 <div className="flex items-center mb-4">
                     <input
@@ -131,9 +153,9 @@ export const renderReviewAndSubmitForm = ({ formData, previewUrl, isLoading, ter
                 <button
                     type="submit"
                     onClick={handleSubmit}
-                    disabled={isLoading || hasErrors}
+                    disabled={isLoading || hasErrors || !formData.package_id}
                     className={`w-full py-3 px-4 rounded-md font-semibold flex items-center justify-center ${
-                        isLoading || hasErrors ? 'bg-gray-400 cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-600'
+                        isLoading || hasErrors || !formData.package_id ? 'bg-gray-400 cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-600'
                     } text-white transition duration-300`}
                 >
                     {isLoading ? (
@@ -148,6 +170,8 @@ export const renderReviewAndSubmitForm = ({ formData, previewUrl, isLoading, ter
                             </svg>
                             Processing...
                         </>
+                    ) : !formData.package_id ? (
+                        'Please select a package first'
                     ) : hasErrors ? (
                         'Please fix errors before submitting'
                     ) : (
@@ -157,6 +181,7 @@ export const renderReviewAndSubmitForm = ({ formData, previewUrl, isLoading, ter
             </div>
 
             {hasErrors && <p className="text-sm text-red-600 text-center mt-4">Please return to previous steps and correct all errors before submitting your profile.</p>}
+            {!formData.package_id && <p className="text-sm text-red-600 text-center mt-4">You must select a package before submitting your profile.</p>}
         </div>
     );
 };

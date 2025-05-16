@@ -62,7 +62,7 @@ class StoreMatrimonyRequest extends FormRequest
 
             'image' => 'nullable|image|max:2048',
 
-            'package_number' => 'nullable|integer|in:1,2,3',
+            'package_number' => 'required|integer|in:1,2,3',
             'boot_post' => 'nullable|boolean',
         ];
     }
