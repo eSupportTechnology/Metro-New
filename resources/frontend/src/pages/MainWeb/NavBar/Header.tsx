@@ -98,10 +98,12 @@ const Header = () => {
                                 </div>
                             </Link>
                         )}
-                        <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
-                            <HelpCircle className="h-5 w-5 text-yellow-600" />
-                            <span className="text-yellow-800">Help</span>
-                        </div>
+                        <Link to="/help">
+                            <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
+                                <HelpCircle className="h-5 w-5 text-yellow-600" />
+                                <span className="text-yellow-800">Help</span>
+                            </div>
+                        </Link>
                         <Link to="pricing">
                             <div className="py-3 px-2 flex items-center gap-3 border-b border-yellow-200 hover:bg-yellow-100">
                                 <DollarSign className="h-5 w-5 text-yellow-600" />
