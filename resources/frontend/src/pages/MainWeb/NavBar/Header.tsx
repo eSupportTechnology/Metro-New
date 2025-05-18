@@ -149,7 +149,7 @@ const Header = () => {
                             <Link to="/success-stories" className="text-gray-700 hover:text-yellow-600 font-medium">
                                 Success Stories
                             </Link>
-                            <Link to="/about" className="text-gray-700 hover:text-yellow-600 font-medium">
+                            <Link to="/about-us" className="text-gray-700 hover:text-yellow-600 font-medium">
                                 About Us
                             </Link>
                             <Link to="/contact" className="text-gray-700 hover:text-yellow-600 font-medium">
