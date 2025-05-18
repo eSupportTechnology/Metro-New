@@ -15,6 +15,7 @@ import ProfilePage from '../pages/MainWeb/Profile/ProfilePage';
 import ContactUs from '../pages/MainWeb/Component/ContactUs';
 import AboutUs from '../pages/MainWeb/Component/AboutUs';
 import Help from '../pages/MainWeb/Component/Help';
+import PricingPage from '../pages/MainWeb/Component/PricingPage';
 const Index = lazy(() => import('../pages/Index'));
 
 const useAuth = () => useSelector((state: IRootState) => state.auth);
@@ -48,6 +49,11 @@ const routes = [
     {
         path: '/help',
         element: <Help />,
+        layout: 'blank',
+    },
+    {
+        path: '/pricing',
+        element: <PricingPage />,
         layout: 'blank',
     },
     {
