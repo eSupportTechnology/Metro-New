@@ -13,6 +13,9 @@ import BlogPage from '../pages/MainWeb/Blog/BlogPage';
 import BlogDetailPage from '../pages/MainWeb/Blog/BlogDetailPage';
 import ProfilePage from '../pages/MainWeb/Profile/ProfilePage';
 import ContactUs from '../pages/MainWeb/Component/ContactUs';
+import AboutUs from '../pages/MainWeb/Component/AboutUs';
+import Help from '../pages/MainWeb/Component/Help';
+import PricingPage from '../pages/MainWeb/Component/PricingPage';
 const Index = lazy(() => import('../pages/Index'));
 
 const useAuth = () => useSelector((state: IRootState) => state.auth);
@@ -36,6 +39,21 @@ const routes = [
     {
         path: '/contact',
         element: <ContactUs />,
+        layout: 'blank',
+    },
+    {
+        path: '/about-us',
+        element: <AboutUs />,
+        layout: 'blank',
+    },
+    {
+        path: '/help',
+        element: <Help />,
+        layout: 'blank',
+    },
+    {
+        path: '/pricing',
+        element: <PricingPage />,
         layout: 'blank',
     },
     {

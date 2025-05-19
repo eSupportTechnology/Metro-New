@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { renderParentsInfoForm } from './CreateMatrimony/ParentsInformation';
 import { renderHoroscopeAndPreferencesForm } from './CreateMatrimony/HoroscopeAndPreferences';
+import { renderPackageSelectionForm } from './CreateMatrimony/PackageSelection';
 import { renderReviewAndSubmitForm } from './CreateMatrimony/ReviewAndSubmit';
 import { MatrimonyFormData, ValidationSchemaSection } from '../../utilities/types/Matrimony/MatrimonyTypes';
 import Header from '../MainWeb/NavBar/Header';
@@ -30,6 +31,7 @@ const MatrimonyCreate: React.FC = () => {
     const [isSuccess, setIsSuccess] = React.useState<boolean>(false);
     const [errors, setErrors] = React.useState<Record<string, string>>({});
     const [touched, setTouched] = React.useState<Record<string, boolean>>({});
+    const [currency, setCurrency] = React.useState<string>('LKR');
     const userToken = useSelector((state: IRootState) => state.auth.userToken);
     const [formData, setFormData] = React.useState<MatrimonyFormData>({
         first_name: '',
@@ -53,6 +55,7 @@ const MatrimonyCreate: React.FC = () => {
         drinking: 'No',
         food_preference: '',
         smoking: 'No',
+        package_id: null,
         father: {
             ethnicity: '',
             religion: '',
@@ -82,17 +85,33 @@ const MatrimonyCreate: React.FC = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [termsAccepted, setTermsAccepted] = React.useState<boolean>(false);
     const [redirectCountdown, setRedirectCountdown] = React.useState<number>(3);
-    const totalSteps = 4;
+    const totalSteps = 5;
 
     const isValidEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
+
     const validateStep = (step: number): boolean => {
         const newErrors: Record<string, string> = {};
         let isValid = true;
 
-        const schemaToUse: ValidationSchemaSection = step === 1 ? validationSchema.step1 : step === 2 ? validationSchema.step2 : step === 3 ? validationSchema.step3 : {};
+        let schemaToUse: ValidationSchemaSection = {};
+
+        if (step === 1) {
+            schemaToUse = validationSchema.step1;
+        } else if (step === 2) {
+            schemaToUse = validationSchema.step2;
+        } else if (step === 3) {
+            schemaToUse = validationSchema.step3;
+        } else if (step === 4) {
+            if (!formData.package_id) {
+                newErrors['package_id'] = 'Please select a package to continue';
+                isValid = false;
+            }
+            setErrors(newErrors);
+            return isValid;
+        }
 
         Object.entries(schemaToUse).forEach(([field, rules]) => {
             if (field.includes('.')) {
@@ -154,6 +173,18 @@ const MatrimonyCreate: React.FC = () => {
             }));
         }
         validateField(name, value);
+    };
+
+    const handlePackageSelect = (packageId: number) => {
+        setFormData((prev) => ({
+            ...prev,
+            package_id: packageId,
+        }));
+
+        setErrors((prev) => ({
+            ...prev,
+            package_id: '',
+        }));
     };
 
     const validateField = (name: string, value: string): void => {
@@ -239,12 +270,18 @@ const MatrimonyCreate: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!validateStep(3) || !termsAccepted) {
+        if (!validateStep(5) || !termsAccepted) {
             if (!termsAccepted) {
                 toast.error('Please accept the terms and conditions to proceed.');
             } else {
                 toast.error('Please fill in all required fields correctly before submitting.');
             }
+            return;
+        }
+
+        if (!formData.package_id) {
+            toast.error('Please select a package before submitting your profile.');
+            setCurrentStep(4);
             return;
         }
 
@@ -260,6 +297,10 @@ const MatrimonyCreate: React.FC = () => {
                 } else if (key === 'father' || key === 'mother' || key === 'horoscope') {
                     if (value) {
                         matrimonyData.append(key, JSON.stringify(value));
+                    }
+                } else if (key === 'package_id') {
+                    if (value !== null) {
+                        matrimonyData.append('package_number', String(value));
                     }
                 } else if (value !== null && value !== undefined) {
                     matrimonyData.append(key, String(value));
@@ -329,18 +370,23 @@ const MatrimonyCreate: React.FC = () => {
             setCurrentStep(currentStep + 1);
             window.scrollTo(0, 0);
         } else {
-            const stepSchema = currentStep === 1 ? validationSchema.step1 : currentStep === 2 ? validationSchema.step2 : validationSchema.step3;
+            if (currentStep <= 3) {
+                const stepSchema = currentStep === 1 ? validationSchema.step1 : currentStep === 2 ? validationSchema.step2 : validationSchema.step3;
+                const stepFields = Object.keys(stepSchema);
+                const newTouched: Record<string, boolean> = { ...touched };
 
-            const stepFields = Object.keys(stepSchema);
-            const newTouched: Record<string, boolean> = { ...touched };
+                stepFields.forEach((field) => {
+                    newTouched[field] = true;
+                });
 
-            stepFields.forEach((field) => {
-                newTouched[field] = true;
-            });
+                setTouched(newTouched);
+            }
 
-            setTouched(newTouched);
-
-            toast.error('Please fill in all required fields correctly before proceeding.');
+            if (currentStep === 4 && !formData.package_id) {
+                toast.error('Please select a package before proceeding.');
+            } else {
+                toast.error('Please fill in all required fields correctly before proceeding.');
+            }
         }
     };
 
@@ -364,7 +410,7 @@ const MatrimonyCreate: React.FC = () => {
                             >
                                 {currentStep > index + 1 ? '✓' : index + 1}
                             </div>
-                            <span className="text-xs mt-1">{index === 0 ? 'Personal' : index === 1 ? 'Parents' : index === 2 ? 'Preferences' : 'Review'}</span>
+                            <span className="text-xs mt-1">{index === 0 ? 'Personal' : index === 1 ? 'Parents' : index === 2 ? 'Preferences' : index === 3 ? 'Package' : 'Review'}</span>
                         </div>
                     ))}
                 </div>
@@ -408,6 +454,14 @@ const MatrimonyCreate: React.FC = () => {
                     handleBlur,
                 });
             case 4:
+                return renderPackageSelectionForm({
+                    formData,
+                    handlePackageSelect,
+                    errors,
+                    currency,
+                    setCurrency,
+                });
+            case 5:
                 return renderReviewAndSubmitForm({
                     formData,
                     previewUrl,

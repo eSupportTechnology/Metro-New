@@ -35,6 +35,7 @@ export interface MatrimonyFormData {
     city: string;
     visa_type: string;
     education_level: string;
+    package_id?: number | null;
     profession: string;
     drinking: string;
     food_preference: string;
@@ -43,6 +44,14 @@ export interface MatrimonyFormData {
     mother: ParentInfo;
     horoscope: Horoscope;
     image: File | null;
+}
+
+export interface PackageSelectionProps {
+    formData: MatrimonyFormData;
+    handlePackageSelect: (packageId: number) => void;
+    errors: Record<string, string>;
+    currency: string;
+    setCurrency: (currency: string) => void;
 }
 
 export interface ValidationRule {
