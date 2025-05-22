@@ -42,3 +42,6 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
     Route::delete('/blog-delete/{id}', [BlogController::class, 'deleteBlog']);
 });
 Route::get('/nic-details', [NicController::class, 'getAllNic']);
+Route::post('/nic-verification/{nicNumber}/verify', [NicController::class, 'verifyNic']);
+Route::post('/nic-verification/{nicNumber}/reject', [NicController::class, 'rejectNic']);
+Route::get('/nic-verification/{nicNumber}', [NicController::class, 'getNicDetail']);
