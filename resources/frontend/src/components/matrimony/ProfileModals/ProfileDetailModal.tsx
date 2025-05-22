@@ -171,7 +171,6 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ profile, isActi
                         </div>
                     </div>
 
-                    {/* NIC Details Section - Replaces Horoscope */}
                     {profile.nic_details && profile.nic_details.nic_number && (
                         <div className="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
                             <div className="flex items-center mb-3">
@@ -218,7 +217,6 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ profile, isActi
                                 </div>
                             </div>
 
-                            {/* NIC Images Display */}
                             {(profile.nic_details.nic_front_image_url || profile.nic_details.nic_back_image_url) && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {profile.nic_details.nic_front_image_url && (
@@ -241,7 +239,6 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ profile, isActi
                                 </div>
                             )}
 
-                            {/* Verification Status */}
                             <div className="mt-4 p-3 bg-white rounded border">
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm font-medium text-gray-700">Verification Status:</span>
