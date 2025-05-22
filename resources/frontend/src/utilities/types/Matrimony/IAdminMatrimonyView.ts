@@ -12,6 +12,7 @@ export interface NicDetails {
     nic_back_image_data: string | null;
     nic_front_exists?: boolean;
     nic_back_exists?: boolean;
+    is_verified?: number;
 }
 
 export interface FamilyMember {

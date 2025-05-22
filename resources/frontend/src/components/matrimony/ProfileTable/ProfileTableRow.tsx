@@ -15,15 +15,31 @@ interface ProfileTableRowProps {
 
 const ProfileTableRow: React.FC<ProfileTableRowProps> = ({ profile, onViewProfile, onUpdateBootPost, onUpdateActiveStatus, onUpdatePackage, isActionLoading }) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
+
     const handlePackageChange = (packageNumber: number) => {
         onUpdatePackage(profile.user_id, packageNumber);
         setDropdownOpen(false);
     };
 
+    const getRowBackgroundClass = () => {
+        if (profile.nic_details?.is_verified === 1) {
+            return 'bg-green-50 border-l-4 border-green-400';
+        }
+        if (profile.nic_details?.is_verified === 2) {
+            return 'bg-red-50 border-l-4 border-red-400';
+        }
+        if (profile.boot_post === 1) {
+            return 'bg-yellow-50';
+        }
+        if (!profile.is_active) {
+            return 'bg-red-50 bg-opacity-30';
+        }
+        return '';
+    };
+
     return (
         <tr
-            className={`${profile.boot_post === 1 ? 'bg-yellow-50' : ''}
-               ${!profile.is_active ? 'bg-red-50 bg-opacity-30' : ''}
+            className={`${getRowBackgroundClass()}
                hover:bg-gray-50 transition-colors duration-150`}
         >
             <td className="px-6 py-4 whitespace-nowrap">
@@ -36,7 +52,18 @@ const ProfileTableRow: React.FC<ProfileTableRowProps> = ({ profile, onViewProfil
                         )}
                     </div>
                     <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{profile.display_name}</div>
+                        <div className="flex items-center">
+                            <div className="text-sm font-medium text-gray-900">{profile.display_name}</div>
+                            {profile.nic_details?.is_verified === 1 && (
+                                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                    <CheckCircle size={12} className="mr-1" />
+                                    Verified
+                                </span>
+                            )}
+                            {profile.nic_details?.is_verified === 2 && (
+                                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Unverified</span>
+                            )}
+                        </div>
                         <div className="text-sm text-gray-500">{profile.email}</div>
                     </div>
                 </div>
