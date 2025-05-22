@@ -36,9 +36,12 @@ class StoreMatrimonyRequest extends FormRequest
             'food_preference' => 'nullable|string',
             'smoking' => 'nullable|string',
 
+            'nic_number' => 'required|string|max:12|unique:nic_details,nic_number',
+            'nic_front_image' => 'required|image|mimes:jpeg,png,jpg|max:10240',
+            'nic_back_image' => 'required|image|mimes:jpeg,png,jpg|max:10240',
+
             'father' => 'nullable',
             'mother' => 'nullable',
-            'horoscope' => 'nullable',
 
             'father.ethnicity' => 'nullable|string',
             'father.religion' => 'nullable|string',
@@ -54,16 +57,25 @@ class StoreMatrimonyRequest extends FormRequest
             'mother.profession' => 'nullable|string',
             'mother.additional_info' => 'nullable|string',
 
-            'horoscope.birthdate' => 'nullable|date',
-            'horoscope.birth_country' => 'nullable|string',
-            'horoscope.horoscope_matching_required' => 'nullable|boolean',
-            'horoscope.birth_city' => 'nullable|string',
-            'horoscope.birth_time' => 'nullable|string',
-
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:10240',
 
             'package_number' => 'required|integer|in:1,2,3',
             'boot_post' => 'nullable|boolean',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'nic_number.required' => 'NIC number is required.',
+            'nic_number.unique' => 'This NIC number is already registered.',
+            'nic_front_image.required' => 'NIC front image is required.',
+            'nic_back_image.required' => 'NIC back image is required.',
+            'nic_front_image.image' => 'NIC front image must be a valid image file.',
+            'nic_back_image.image' => 'NIC back image must be a valid image file.',
+            'nic_front_image.max' => 'NIC front image must not exceed 10MB.',
+            'nic_back_image.max' => 'NIC back image must not exceed 10MB.',
+            'image.max' => 'Profile image must not exceed 10MB.',
         ];
     }
 
@@ -71,7 +83,7 @@ class StoreMatrimonyRequest extends FormRequest
     {
         $validated = parent::validated($key, $default);
 
-        foreach (['father', 'mother', 'horoscope'] as $field) {
+        foreach (['father', 'mother'] as $field) {
             if ($this->has($field) && !isset($validated[$field])) {
                 $value = $this->input($field);
                 if (is_string($value)) {
