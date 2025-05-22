@@ -56,6 +56,7 @@ const MatrimonyCreate: React.FC = () => {
         food_preference: '',
         smoking: 'No',
         package_id: null,
+        nic_number: '',
         father: {
             ethnicity: '',
             religion: '',
@@ -72,16 +73,13 @@ const MatrimonyCreate: React.FC = () => {
             profession: '',
             additional_info: '',
         },
-        horoscope: {
-            birthdate: '',
-            birth_country: '',
-            horoscope_matching_required: false,
-            birth_city: '',
-            birth_time: '',
-        },
         image: null,
+        nic_front_image: null,
+        nic_back_image: null,
     });
     const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+    const [nicFrontPreviewUrl, setNicFrontPreviewUrl] = React.useState<string | null>(null);
+    const [nicBackPreviewUrl, setNicBackPreviewUrl] = React.useState<string | null>(null);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [termsAccepted, setTermsAccepted] = React.useState<boolean>(false);
     const [redirectCountdown, setRedirectCountdown] = React.useState<number>(3);
@@ -218,19 +216,7 @@ const MatrimonyCreate: React.FC = () => {
             [name]: true,
         }));
 
-        if (name.includes('.')) {
-            const [parent, child] = name.split('.');
-            setFormData((prev) => {
-                const parentObj = prev[parent as keyof MatrimonyFormData] as Record<string, any>;
-                return {
-                    ...prev,
-                    [parent]: {
-                        ...parentObj,
-                        [child]: checked,
-                    },
-                };
-            });
-        } else if (name === 'terms') {
+        if (name === 'terms') {
             setTermsAccepted(checked);
         } else {
             setFormData((prev) => ({
@@ -243,14 +229,38 @@ const MatrimonyCreate: React.FC = () => {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
+            const inputName = e.target.name;
+
+            const maxSize = 10 * 1024 * 1024;
+            if (file.size > maxSize) {
+                toast.error('File size must be less than 10MB');
+                return;
+            }
+
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!allowedTypes.includes(file.type)) {
+                toast.error('Please upload only JPG, JPEG, or PNG images');
+                return;
+            }
+
             setFormData((prev) => ({
                 ...prev,
-                image: file,
+                [inputName]: file,
             }));
 
             const reader = new FileReader();
             reader.onloadend = () => {
-                setPreviewUrl(reader.result as string);
+                const result = reader.result as string;
+                if (inputName === 'image') {
+                    setPreviewUrl(result);
+                    console.log('Profile image preview set:', result ? 'Success' : 'Failed');
+                } else if (inputName === 'nic_front_image') {
+                    setNicFrontPreviewUrl(result);
+                    console.log('NIC front image preview set:', result ? 'Success' : 'Failed');
+                } else if (inputName === 'nic_back_image') {
+                    setNicBackPreviewUrl(result);
+                    console.log('NIC back image preview set:', result ? 'Success' : 'Failed');
+                }
             };
             reader.readAsDataURL(file);
         }
@@ -292,9 +302,9 @@ const MatrimonyCreate: React.FC = () => {
 
             for (const key in formData) {
                 const value = formData[key as keyof MatrimonyFormData];
-                if (key === 'image' && value instanceof File) {
-                    matrimonyData.append('image', value);
-                } else if (key === 'father' || key === 'mother' || key === 'horoscope') {
+                if ((key === 'image' || key === 'nic_front_image' || key === 'nic_back_image') && value instanceof File) {
+                    matrimonyData.append(key, value);
+                } else if (key === 'father' || key === 'mother') {
                     if (value) {
                         matrimonyData.append(key, JSON.stringify(value));
                     }
@@ -410,7 +420,7 @@ const MatrimonyCreate: React.FC = () => {
                             >
                                 {currentStep > index + 1 ? '✓' : index + 1}
                             </div>
-                            <span className="text-xs mt-1">{index === 0 ? 'Personal' : index === 1 ? 'Parents' : index === 2 ? 'Preferences' : index === 3 ? 'Package' : 'Review'}</span>
+                            <span className="text-xs mt-1">{index === 0 ? 'Personal' : index === 1 ? 'Parents' : index === 2 ? 'Details' : index === 3 ? 'Package' : 'Review'}</span>
                         </div>
                     ))}
                 </div>
@@ -448,7 +458,9 @@ const MatrimonyCreate: React.FC = () => {
                 return renderHoroscopeAndPreferencesForm({
                     formData,
                     handleInputChange,
-                    handleCheckboxChange,
+                    handleImageChange,
+                    nicFrontPreviewUrl,
+                    nicBackPreviewUrl,
                     errors,
                     touched,
                     handleBlur,
@@ -465,6 +477,8 @@ const MatrimonyCreate: React.FC = () => {
                 return renderReviewAndSubmitForm({
                     formData,
                     previewUrl,
+                    nicFrontPreviewUrl,
+                    nicBackPreviewUrl,
                     isLoading,
                     termsAccepted,
                     setTermsAccepted,
