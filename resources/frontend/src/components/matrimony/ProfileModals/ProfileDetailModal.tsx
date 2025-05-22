@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Star, Loader } from 'lucide-react';
+import { X, Star, Loader, Shield, CheckCircle, XCircle } from 'lucide-react';
 import { MatrimonyProfile } from '../../../utilities/types/Matrimony/IAdminMatrimonyView';
 import PackageBadge from '../Controls/PackageBadge';
 import { packageDetails } from '../../../constants/matrimony/matrimonyConstants';
@@ -35,8 +35,10 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ profile, isActi
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="col-span-1 flex flex-col items-center">
-                            {profile.picture ? (
-                                <img src={profile.picture.image_path} alt={profile.display_name} className="w-full max-w-xs rounded-lg shadow-md mb-4 object-cover" />
+                            {profile.profile_picture_url ? (
+                                <img src={profile.profile_picture_url} alt={profile.display_name} className="w-full max-w-xs rounded-lg shadow-md mb-4 object-cover" />
+                            ) : profile.profile_picture ? (
+                                <img src={profile.profile_picture} alt={profile.display_name} className="w-full max-w-xs rounded-lg shadow-md mb-4 object-cover" />
                             ) : (
                                 <div className="w-64 h-64 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
                                     <span className="text-6xl font-light text-yellow-600">{profile.display_name?.charAt(0)}</span>
@@ -169,29 +171,87 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ profile, isActi
                         </div>
                     </div>
 
-                    {profile.horoscope && profile.horoscope.birthdate && (
-                        <div className="mt-6 bg-gray-50 p-4 rounded-lg">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-3">Horoscope Details</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div>
-                                    <div className="text-sm text-gray-600 mb-1">Birth Date:</div>
-                                    <div className="text-sm">{profile.horoscope.birthdate}</div>
+                    {/* NIC Details Section - Replaces Horoscope */}
+                    {profile.nic_details && profile.nic_details.nic_number && (
+                        <div className="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <div className="flex items-center mb-3">
+                                <Shield className="text-blue-600 mr-2" size={20} />
+                                <h3 className="text-lg font-semibold text-gray-800">Identity Verification</h3>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div className="md:col-span-1">
+                                    <div className="text-sm text-gray-600 mb-1">NIC Number:</div>
+                                    <div className="text-sm font-mono bg-white px-2 py-1 rounded border">{profile.nic_details.nic_number}</div>
                                 </div>
-                                <div>
-                                    <div className="text-sm text-gray-600 mb-1">Birth Country:</div>
-                                    <div className="text-sm">{profile.horoscope.birth_country || 'Not specified'}</div>
+                                <div className="md:col-span-1">
+                                    <div className="text-sm text-gray-600 mb-1">Front Image Status:</div>
+                                    <div className="flex items-center">
+                                        {profile.nic_details.nic_front_image_url ? (
+                                            <div className="flex items-center text-green-600">
+                                                <CheckCircle size={16} className="mr-1" />
+                                                <span className="text-sm">Uploaded</span>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center text-red-600">
+                                                <XCircle size={16} className="mr-1" />
+                                                <span className="text-sm">Not Available</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                                <div>
-                                    <div className="text-sm text-gray-600 mb-1">Birth City:</div>
-                                    <div className="text-sm">{profile.horoscope.birth_city || 'Not specified'}</div>
+                                <div className="md:col-span-1">
+                                    <div className="text-sm text-gray-600 mb-1">Back Image Status:</div>
+                                    <div className="flex items-center">
+                                        {profile.nic_details.nic_back_image_url ? (
+                                            <div className="flex items-center text-green-600">
+                                                <CheckCircle size={16} className="mr-1" />
+                                                <span className="text-sm">Uploaded</span>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center text-red-600">
+                                                <XCircle size={16} className="mr-1" />
+                                                <span className="text-sm">Not Available</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                                <div>
-                                    <div className="text-sm text-gray-600 mb-1">Birth Time:</div>
-                                    <div className="text-sm">{profile.horoscope.birth_time || 'Not specified'}</div>
+                            </div>
+
+                            {/* NIC Images Display */}
+                            {(profile.nic_details.nic_front_image_url || profile.nic_details.nic_back_image_url) && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {profile.nic_details.nic_front_image_url && (
+                                        <div>
+                                            <h4 className="font-medium text-gray-800 mb-2">NIC Front Image</h4>
+                                            <div className="border rounded-lg overflow-hidden bg-white">
+                                                <img src={profile.nic_details.nic_front_image_url} alt="NIC Front" className="w-full h-32 object-contain bg-gray-50" />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {profile.nic_details.nic_back_image_url && (
+                                        <div>
+                                            <h4 className="font-medium text-gray-800 mb-2">NIC Back Image</h4>
+                                            <div className="border rounded-lg overflow-hidden bg-white">
+                                                <img src={profile.nic_details.nic_back_image_url} alt="NIC Back" className="w-full h-32 object-contain bg-gray-50" />
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                                <div>
-                                    <div className="text-sm text-gray-600 mb-1">Matching Required:</div>
-                                    <div className="text-sm">{profile.horoscope.horoscope_matching_required ? 'Yes' : 'No'}</div>
+                            )}
+
+                            {/* Verification Status */}
+                            <div className="mt-4 p-3 bg-white rounded border">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm font-medium text-gray-700">Verification Status:</span>
+                                    <span
+                                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                            profile.nic_details.nic_front_image_url && profile.nic_details.nic_back_image_url ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                        }`}
+                                    >
+                                        {profile.nic_details.nic_front_image_url && profile.nic_details.nic_back_image_url ? 'Complete' : 'Incomplete'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
