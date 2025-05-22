@@ -6,7 +6,7 @@ import { toggleSidebar } from '../../store/themeConfigSlice';
 import { IRootState } from '../../store';
 import { useState, useEffect } from 'react';
 import IconCaretsDown from '../Icon/IconCaretsDown';
-import { HeartHandshake } from 'lucide-react';
+import { HeartHandshake, Shield, CheckCircle2, FileCheck, Users, PlusCircle, BookOpen, Settings, BarChart3 } from 'lucide-react';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -15,6 +15,7 @@ const Sidebar = () => {
     const location = useLocation();
     const dispatch = useDispatch();
     const { t } = useTranslation();
+
     const toggleMenu = (value: string) => {
         setCurrentMenu((oldValue) => {
             return oldValue === value ? '' : value;
@@ -42,7 +43,6 @@ const Sidebar = () => {
         if (window.innerWidth < 1024 && themeConfig.sidebar) {
             dispatch(toggleSidebar());
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location]);
 
     return (
@@ -67,21 +67,75 @@ const Sidebar = () => {
                     </div>
                     <PerfectScrollbar className="h-[calc(100vh-80px)] relative">
                         <ul className="relative font-semibold space-y-0.5 p-4 py-0">
-                            <li className="nav-item">
-                                <ul>
-                                    <li className="nav-item">
-                                        <NavLink to="/admin/all-add" className="group">
+                            <li className="menu nav-item">
+                                <NavLink to="/admin/dashboard" className="group">
+                                    <div className="flex items-center">
+                                        <BarChart3 className="group-hover:!text-primary shrink-0" />
+                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Dashboard')}</span>
+                                    </div>
+                                </NavLink>
+                            </li>
+
+                            <li className="menu nav-item">
+                                <button type="button" className={`${currentMenu === 'profiles' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('profiles')}>
+                                    <div className="flex items-center">
+                                        <Users className="group-hover:!text-primary shrink-0" />
+                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Profile Management')}</span>
+                                    </div>
+                                    <div className={currentMenu === 'profiles' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                        <IconCaretsDown />
+                                    </div>
+                                </button>
+                                <ul className={`sub-menu text-gray-500 ${currentMenu === 'profiles' ? 'block' : 'hidden'}`}>
+                                    <li>
+                                        <NavLink to="/admin/profiles" className="group">
                                             <div className="flex items-center">
-                                                <HeartHandshake className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('ALL-ADD')}</span>
+                                                <Users className="group-hover:!text-primary shrink-0 w-4 h-4" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('All Profiles')}</span>
                                             </div>
                                         </NavLink>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li className="menu nav-item">
+                                <button type="button" className={`${currentMenu === 'verification' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('verification')}>
+                                    <div className="flex items-center">
+                                        <Shield className="group-hover:!text-primary shrink-0 text-blue-600" />
+                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark font-medium">{t('NIC Verification')}</span>
+                                    </div>
+                                    <div className={currentMenu === 'verification' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                        <IconCaretsDown />
+                                    </div>
+                                </button>
+                                <ul className={`sub-menu text-gray-500 ${currentMenu === 'verification' ? 'block' : 'hidden'}`}>
+                                    <li>
+                                        <NavLink to="/admin/nic-verification" className="group">
+                                            <div className="flex items-center">
+                                                <Shield className="group-hover:!text-primary shrink-0 w-4 h-4 text-blue-500" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('All NICs')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li className="menu nav-item">
+                                <button type="button" className={`${currentMenu === 'content' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('content')}>
+                                    <div className="flex items-center">
+                                        <BookOpen className="group-hover:!text-primary shrink-0" />
+                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Content Management')}</span>
+                                    </div>
+                                    <div className={currentMenu === 'content' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                        <IconCaretsDown />
+                                    </div>
+                                </button>
+                                <ul className={`sub-menu text-gray-500 ${currentMenu === 'content' ? 'block' : 'hidden'}`}>
+                                    <li>
                                         <NavLink to="/admin/all-blog" className="group">
                                             <div className="flex items-center">
-                                                <HeartHandshake className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                                                    {t('ALL-BLOG')} {/* You can replace this with your own translation key */}
-                                                </span>
+                                                <BookOpen className="group-hover:!text-primary shrink-0 w-4 h-4" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('ALL-BLOG')}</span>
                                             </div>
                                         </NavLink>
                                     </li>

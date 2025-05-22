@@ -42,36 +42,83 @@ const getStatusInfo = (isVerified: number) => {
             return { text: 'UNKNOWN', bgColor: 'bg-gray-100', textColor: 'text-gray-800' };
     }
 };
+
+// Authentication helper function
+const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        throw new Error('No authentication token found');
+    }
+    return {
+        Authorization: `Bearer ${token}`,
+    };
+};
+
+// Configure axios defaults
 axios.defaults.baseURL = apiConfig.baseURL;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
-// Add request interceptor for authentication if needed
-axios.interceptors.request.use(
-    (config) => {
-        // Add auth token if available
-        const token = localStorage.getItem('authToken');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+// API service functions with proper authentication
+const nicApiService = {
+    // Fetch all NIC data
+    fetchNicData: async () => {
+        try {
+            const response = await axios.get(apiConfig.endpoints.nic.list, {
+                headers: getAuthHeaders(),
+            });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 401) {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+                throw new Error('Authentication expired. Please login again.');
+            }
+            throw error;
         }
-        return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    },
-);
 
-// Add response interceptor for error handling
-axios.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            // Handle unauthorized access
-            localStorage.removeItem('authToken');
-            window.location.href = '/login';
+    // Verify/Approve NIC
+    verifyNic: async (nicNumber: string) => {
+        try {
+            const response = await axios.post(
+                apiConfig.endpoints.nic.verify(nicNumber),
+                {},
+                {
+                    headers: getAuthHeaders(),
+                },
+            );
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 401) {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+                throw new Error('Authentication expired. Please login again.');
+            }
+            throw error;
         }
-        return Promise.reject(error);
     },
-);
+
+    // Reject NIC
+    rejectNic: async (nicNumber: string) => {
+        try {
+            const response = await axios.post(
+                apiConfig.endpoints.nic.reject(nicNumber),
+                {},
+                {
+                    headers: getAuthHeaders(),
+                },
+            );
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 401) {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+                throw new Error('Authentication expired. Please login again.');
+            }
+            throw error;
+        }
+    },
+};
 
 // NIC Detail Modal Component
 const NicDetailModal: React.FC<NicDetailModalProps> = ({ nicData, onClose, onVerify, onUnverify, isActionLoading }) => {
@@ -253,37 +300,40 @@ const NicVerificationTable: React.FC = () => {
 
     const ITEMS_PER_PAGE = 10;
 
-    // Fetch NIC data using axios and API config
+    // Fetch NIC data using the API service
     const fetchNicData = async () => {
         setIsLoading(true);
         try {
-            const response = await axios.get(apiConfig.endpoints.nic.list);
-            console.log('API Response:', response.data); // Debug log
-            setNicData(response.data.data || response.data || []);
+            const response = await nicApiService.fetchNicData();
+            console.log('API Response:', response);
+            setNicData(response.data || response || []);
         } catch (error) {
             console.error('Error fetching NIC data:', error);
-            toast.error('Failed to fetch NIC data');
+            if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                toast.error('Failed to fetch NIC data');
+            }
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Verify NIC using axios and API config
+    // Verify NIC using the API service
     const handleVerify = async (nicNumber: string) => {
         setIsActionLoading(true);
         try {
-            const response = await axios.post(apiConfig.endpoints.nic.verify(nicNumber));
-
-            if (response.status === 200) {
-                toast.success('NIC approved successfully');
-                fetchNicData(); // Refresh data
-                if (selectedNic && selectedNic.nic_number === nicNumber) {
-                    setSelectedNic({ ...selectedNic, is_verified: 1 });
-                }
+            await nicApiService.verifyNic(nicNumber);
+            toast.success('NIC approved successfully');
+            fetchNicData(); // Refresh data
+            if (selectedNic && selectedNic.nic_number === nicNumber) {
+                setSelectedNic({ ...selectedNic, is_verified: 1 });
             }
         } catch (error) {
             console.error('Error verifying NIC:', error);
-            if (axios.isAxiosError(error)) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            } else if (axios.isAxiosError(error)) {
                 const errorMessage = error.response?.data?.message || 'Failed to verify NIC';
                 toast.error(errorMessage);
             } else {
@@ -294,26 +344,25 @@ const NicVerificationTable: React.FC = () => {
         }
     };
 
-    // Unverify NIC using axios and API config
+    // Reject NIC using the API service
     const handleUnverify = async (nicNumber: string) => {
         setIsActionLoading(true);
         try {
-            const response = await axios.post(apiConfig.endpoints.nic.reject(nicNumber));
-
-            if (response.status === 200) {
-                toast.success('NIC rejected successfully');
-                fetchNicData(); // Refresh data
-                if (selectedNic && selectedNic.nic_number === nicNumber) {
-                    setSelectedNic({ ...selectedNic, is_verified: 2 });
-                }
+            await nicApiService.rejectNic(nicNumber);
+            toast.success('NIC rejected successfully');
+            fetchNicData(); // Refresh data
+            if (selectedNic && selectedNic.nic_number === nicNumber) {
+                setSelectedNic({ ...selectedNic, is_verified: 2 });
             }
         } catch (error) {
-            console.error('Error unverifying NIC:', error);
-            if (axios.isAxiosError(error)) {
-                const errorMessage = error.response?.data?.message || 'Failed to unverify NIC';
+            console.error('Error rejecting NIC:', error);
+            if (error instanceof Error) {
+                toast.error(error.message);
+            } else if (axios.isAxiosError(error)) {
+                const errorMessage = error.response?.data?.message || 'Failed to reject NIC';
                 toast.error(errorMessage);
             } else {
-                toast.error('Failed to unverify NIC');
+                toast.error('Failed to reject NIC');
             }
         } finally {
             setIsActionLoading(false);
@@ -347,20 +396,26 @@ const NicVerificationTable: React.FC = () => {
     const totalPages = Math.ceil(filteredNicData.length / ITEMS_PER_PAGE);
 
     useEffect(() => {
-        fetchNicData();
+        // Check if token exists before fetching data
+        try {
+            getAuthHeaders();
+            fetchNicData();
+        } catch (error) {
+            console.error('Authentication error:', error);
+            toast.error('Please login to access this page');
+            // Optionally redirect to login
+            // window.location.href = '/login';
+        }
     }, []);
 
     return (
         <div className="container mx-auto font-sans">
             <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
 
-            <div className="bg-gradient-to-b from-blue-50 to-white p-6 rounded-lg shadow-md mb-6">
+            <div className="bg-gradient-to-b from-yellow-50 to-white p-6 rounded-lg shadow-md mb-6">
                 <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                     <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-                        <h1 className="text-2xl font-semibold text-gray-800 mb-3 md:mb-0 flex items-center">
-                            <Shield className="mr-2 text-blue-600" size={28} />
-                            NIC Verification Management
-                        </h1>
+                        <h1 className="text-2xl font-semibold text-gray-800 mb-3 md:mb-0">NIC Verification Management</h1>
 
                         <div className="flex items-center space-x-3">
                             <button

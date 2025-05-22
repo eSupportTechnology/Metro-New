@@ -88,7 +88,7 @@ const routes = [
         layout: 'default',
     },
     {
-        path: '/admin/all-add',
+        path: '/admin/profiles',
         element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={MatrimonyProfilesTable} />,
         layout: 'default',
     },

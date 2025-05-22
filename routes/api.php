@@ -40,8 +40,10 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
     Route::post('/blog-create', [BlogController::class, 'createBlog']);
     Route::post('/blog-update/{id}', [BlogController::class, 'updateBlog']);
     Route::delete('/blog-delete/{id}', [BlogController::class, 'deleteBlog']);
+
+    //NIC
+    Route::get('/nic-details', [NicController::class, 'getAllNic']);
+    Route::post('/nic-verification/{nicNumber}/verify', [NicController::class, 'verifyNic']);
+    Route::post('/nic-verification/{nicNumber}/reject', [NicController::class, 'rejectNic']);
+    Route::get('/nic-verification/{nicNumber}', [NicController::class, 'getNicDetail']);
 });
-Route::get('/nic-details', [NicController::class, 'getAllNic']);
-Route::post('/nic-verification/{nicNumber}/verify', [NicController::class, 'verifyNic']);
-Route::post('/nic-verification/{nicNumber}/reject', [NicController::class, 'rejectNic']);
-Route::get('/nic-verification/{nicNumber}', [NicController::class, 'getNicDetail']);
