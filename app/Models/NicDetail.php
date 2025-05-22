@@ -19,11 +19,13 @@ class NicDetail extends Model
         'nic_number',
         'nic_front_image',
         'nic_back_image',
+        'is_verified',
     ];
 
     protected $casts = [
         'id' => 'string',
         'user_id' => 'string',
+        'is_verified' => 'boolean',
     ];
 
     protected $appends = [

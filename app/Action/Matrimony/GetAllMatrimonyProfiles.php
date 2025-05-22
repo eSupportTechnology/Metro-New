@@ -30,6 +30,7 @@ class GetAllMatrimonyProfiles
                     'nic_details.nic_number',
                     'nic_details.nic_front_image',
                     'nic_details.nic_back_image',
+                    'nic_details.is_verified',
                     'pictures.image_path as profile_picture',
                     'matrimonies.created_at as matrimony_created_at',
                     'matrimonies.boot_post',
@@ -117,6 +118,7 @@ class GetAllMatrimonyProfiles
                     'nic_details' => [
                         'nic_number' => $profile->nic_number ?? '',
                         'nic_front_image' => $profile->nic_front_image ?? '',
+                        'is_verified' => $profile->is_verified ?? '',
                         'nic_back_image' => $profile->nic_back_image ?? '',
                         'nic_front_image_url' => $nicFrontImageData ? $this->getImageUrl($profile->nic_front_image) : null,
                         'nic_back_image_url' => $nicBackImageData ? $this->getImageUrl($profile->nic_back_image) : null,

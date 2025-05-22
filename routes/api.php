@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\MatrimonyController;
+use App\Http\Controllers\NicController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminUserCheckMiddleware;
 use App\Http\Middleware\FollowerUserCheckMiddleware;
@@ -30,6 +31,7 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
 
     //Matrimony
     Route::get('/get-matrimony', [MatrimonyController::class, 'getAllMatrimony']);
+    Route::get('/get-nic', [NicController::class, 'getAllNic']);
     Route::post('matrimony/{matrimonyId}/update-boot-post', [MatrimonyController::class, 'updateBootPost']);
     Route::post('matrimony/{matrimonyId}/update-package-number', [MatrimonyController::class, 'updatePackageNumber']);
     Route::post('matrimony/{id}/update-active-status', [MatrimonyController::class, 'updateActiveStatus']);
