@@ -31,7 +31,7 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
 
     //Matrimony
     Route::get('/get-matrimony', [MatrimonyController::class, 'getAllMatrimony']);
-    Route::get('/get-nic', [NicController::class, 'getAllNic']);
+
     Route::post('matrimony/{matrimonyId}/update-boot-post', [MatrimonyController::class, 'updateBootPost']);
     Route::post('matrimony/{matrimonyId}/update-package-number', [MatrimonyController::class, 'updatePackageNumber']);
     Route::post('matrimony/{id}/update-active-status', [MatrimonyController::class, 'updateActiveStatus']);
@@ -41,3 +41,4 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
     Route::post('/blog-update/{id}', [BlogController::class, 'updateBlog']);
     Route::delete('/blog-delete/{id}', [BlogController::class, 'deleteBlog']);
 });
+Route::get('/nic-details', [NicController::class, 'getAllNic']);
