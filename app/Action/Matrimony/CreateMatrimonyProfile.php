@@ -3,9 +3,9 @@
 namespace App\Action\Matrimony;
 
 use App\Models\Father;
-use App\Models\HoroscopeDetail;
 use App\Models\Matrimony;
 use App\Models\Mother;
+use App\Models\NicDetail;
 use App\Models\Picture;
 use App\Models\User;
 use App\Response\CommonResponse;
@@ -17,7 +17,7 @@ class CreateMatrimonyProfile
     public function __invoke(array $validatedData): array
     {
         try {
-            foreach (['father', 'mother', 'horoscope'] as $field) {
+            foreach (['father', 'mother'] as $field) {
                 if (isset($validatedData[$field])) {
                     if (is_string($validatedData[$field])) {
                         $decoded = json_decode($validatedData[$field], true);
@@ -47,9 +47,15 @@ class CreateMatrimonyProfile
             }
 
             $existingMatrimonyProfile = Matrimony::where('user_id', $user->id)->first();
-
             if ($existingMatrimonyProfile) {
                 return CommonResponse::sendBadRequestResponse('Matrimony profile already created');
+            }
+
+            $existingNic = NicDetail::where('nic_number', $validatedData['nic_number'])
+                ->where('user_id', '!=', $user->id)
+                ->first();
+            if ($existingNic) {
+                return CommonResponse::sendBadRequestResponse('This NIC number is already registered');
             }
 
             Matrimony::updateOrCreate(
@@ -79,9 +85,6 @@ class CreateMatrimonyProfile
             );
 
             $fatherData = is_array($validatedData['father']) ? $validatedData['father'] : [];
-            $motherData = is_array($validatedData['mother']) ? $validatedData['mother'] : [];
-            $horoscopeData = is_array($validatedData['horoscope']) ? $validatedData['horoscope'] : [];
-
             Father::updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -94,6 +97,7 @@ class CreateMatrimonyProfile
                 ]
             );
 
+            $motherData = is_array($validatedData['mother']) ? $validatedData['mother'] : [];
             Mother::updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -106,25 +110,33 @@ class CreateMatrimonyProfile
                 ]
             );
 
-            $horoscopeBirthdate = isset($horoscopeData['birthdate']) && $horoscopeData['birthdate']
-                ? $horoscopeData['birthdate']
-                : $validatedData['birthdate'];
+            $nicFrontPath = null;
+            $nicBackPath = null;
 
-            HoroscopeDetail::updateOrCreate(
+            if (isset($validatedData['nic_front_image'])) {
+                $nicFrontImage = $validatedData['nic_front_image'];
+                $nicFrontPath = $nicFrontImage->store("matrimony/{$user->id}/nic", 'public');
+            }
+
+            if (isset($validatedData['nic_back_image'])) {
+                $nicBackImage = $validatedData['nic_back_image'];
+                $nicBackPath = $nicBackImage->store("matrimony/{$user->id}/nic", 'public');
+            }
+
+            NicDetail::updateOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'birthdate' => $horoscopeBirthdate,
-                    'birth_country' => $horoscopeData['birth_country'] ?? '',
-                    'horoscope_matching_required' => $horoscopeData['horoscope_matching_required'] ?? false,
-                    'birth_city' => $horoscopeData['birth_city'] ?? '',
-                    'birth_time' => $horoscopeData['birth_time'] ?? '',
+                    'nic_number' => $validatedData['nic_number'],
+                    'nic_front_image' => $nicFrontPath,
+                    'nic_back_image' => $nicBackPath,
                 ]
             );
 
             if (isset($validatedData['image'])) {
                 $image = $validatedData['image'];
-                $path = $image->storeAs("public/matrimony/{$user->id}", $image->getClientOriginalName());
-                $publicPath = str_replace('public/', 'storage/', $path);
+                $profileImagePath = $image->store("matrimony/{$user->id}/profile", 'public');
+
+                $publicPath = "storage/" . $profileImagePath;
 
                 Picture::updateOrCreate(
                     ['user_id' => $user->id],

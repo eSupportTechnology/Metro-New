@@ -179,14 +179,6 @@ const Header = () => {
                     </div>
 
                     <div className="mt-8 pt-6 border-t border-gray-200">
-                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Language</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                            <button className="py-2 px-4 rounded-md bg-yellow-500 text-white font-medium hover:bg-yellow-600 transition-colors duration-200">English</button>
-                            <button className="py-2 px-4 rounded-md bg-white border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors duration-200">සිංහල</button>
-                        </div>
-                    </div>
-
-                    <div className="mt-8 pt-6 border-t border-gray-200">
                         <div className="flex items-center justify-between">
                             <Link to="/contact" className="text-yellow-600 text-sm hover:text-yellow-700 hover:underline">
                                 Need Help?
@@ -206,7 +198,7 @@ const Header = () => {
                             <img className="w-10 h-10 ltr:-ml-1 rtl:-mr-1" src="/assets/images/logo.svg" alt="Sri Lanka Matrimony Logo" />
                             <div className="ml-2">
                                 <span className="block text-xl font-bold text-gray-800">
-                                    ශ්‍රී ලංකාවේ<span className="text-yellow-600">මංගල යෝඡනා</span>
+                                    My<span className="text-yellow-600">WeddingSL</span>
                                 </span>
                             </div>
                         </Link>

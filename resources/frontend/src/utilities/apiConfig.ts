@@ -36,6 +36,12 @@ const apiConfig: ApiConfig = {
         profile: {
             get: (id) => `${baseURL}/get-profile/${id}`,
         },
+        nic: {
+            list: `${baseURL}/nic-details`,
+            verify: (nicNumber: string) => `${baseURL}/nic-verification/${nicNumber}/verify`,
+            reject: (nicNumber: string) => `${baseURL}/nic-verification/${nicNumber}/reject`,
+            detail: (nicNumber: string) => `${baseURL}/nic-verification/${nicNumber}`,
+        },
         homepageProfiles: `${baseURL}/get-homepage-profiles`,
         signIn: `${baseURL}/sign-in`,
         logout: `${baseURL}/logout`,

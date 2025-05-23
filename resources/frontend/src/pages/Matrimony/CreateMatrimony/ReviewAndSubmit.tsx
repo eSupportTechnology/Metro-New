@@ -1,7 +1,7 @@
 import React from 'react';
 import { ReviewAndSubmitProps } from '../../../utilities/types/Matrimony/MatrimonyTypes';
 
-export const renderReviewAndSubmitForm = ({ formData, previewUrl, isLoading, termsAccepted, setTermsAccepted, handleSubmit, errors }: ReviewAndSubmitProps) => {
+export const renderReviewAndSubmitForm = ({ formData, previewUrl, nicFrontPreviewUrl, nicBackPreviewUrl, isLoading, termsAccepted, setTermsAccepted, handleSubmit, errors }: ReviewAndSubmitProps) => {
     const hasErrors = Object.keys(errors).length > 0;
     const renderField = (label: string, value: string | undefined | null) => {
         return value ? (
@@ -51,6 +51,7 @@ export const renderReviewAndSubmitForm = ({ formData, previewUrl, isLoading, ter
                         {renderField('Email', formData.email)}
                         {renderField('Account Created By', formData.account_created_by)}
                         {renderField('Birth Date', formData.birthdate)}
+                        {renderField('NIC Number', formData.nic_number)}
                         {renderField('Gender', formData.gender)}
                         {renderField('Ethnicity', formData.ethnicity)}
                         {renderField('Religion', formData.religion)}
@@ -60,6 +61,7 @@ export const renderReviewAndSubmitForm = ({ formData, previewUrl, isLoading, ter
                         {renderField('Country of Residence', formData.country_of_residence)}
                         {renderField('State/District', formData.state_district)}
                         {renderField('City', formData.city)}
+
                         {previewUrl && (
                             <div className="mt-4">
                                 <p className="font-medium text-gray-700 mb-2">Profile Image:</p>
@@ -89,13 +91,24 @@ export const renderReviewAndSubmitForm = ({ formData, previewUrl, isLoading, ter
                         {renderField('Additional Info', formData.mother.additional_info)}
                     </div>
 
-                    <h4 className="text-lg font-semibold text-gray-700 mt-6 mb-3">Horoscope Information</h4>
+                    <h4 className="text-lg font-semibold text-gray-700 mt-6 mb-3">Identity Documents</h4>
                     <div className="bg-gray-50 p-4 rounded-md">
-                        {renderField('Horoscope Matching Required', formData.horoscope.horoscope_matching_required ? 'Yes' : 'No')}
-                        {renderField('Birth Date', formData.horoscope.birthdate)}
-                        {renderField('Birth Time', formData.horoscope.birth_time)}
-                        {renderField('Birth Country', formData.horoscope.birth_country)}
-                        {renderField('Birth City', formData.horoscope.birth_city)}
+                        {renderField('NIC Number', formData.nic_number)}
+
+                        <div className="mt-4 space-y-4">
+                            {nicFrontPreviewUrl && (
+                                <div>
+                                    <p className="font-medium text-gray-700 mb-2">NIC Front Image:</p>
+                                    <img src={nicFrontPreviewUrl} alt="NIC Front Preview" className="h-32 w-auto object-cover rounded-md border-2 border-gray-300" />
+                                </div>
+                            )}
+                            {nicBackPreviewUrl && (
+                                <div>
+                                    <p className="font-medium text-gray-700 mb-2">NIC Back Image:</p>
+                                    <img src={nicBackPreviewUrl} alt="NIC Back Preview" className="h-32 w-auto object-cover rounded-md border-2 border-gray-300" />
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

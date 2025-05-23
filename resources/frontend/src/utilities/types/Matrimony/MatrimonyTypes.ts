@@ -9,14 +9,6 @@ export interface ParentInfo {
     additional_info: string;
 }
 
-export interface Horoscope {
-    birthdate: string;
-    birth_country: string;
-    horoscope_matching_required: boolean;
-    birth_city: string;
-    birth_time: string;
-}
-
 export interface MatrimonyFormData {
     first_name: string;
     last_name: string;
@@ -40,10 +32,12 @@ export interface MatrimonyFormData {
     drinking: string;
     food_preference: string;
     smoking: string;
+    nic_number: string;
     father: ParentInfo;
     mother: ParentInfo;
-    horoscope: Horoscope;
     image: File | null;
+    nic_front_image: File | null;
+    nic_back_image: File | null;
 }
 
 export interface PackageSelectionProps {
@@ -69,11 +63,14 @@ export interface ValidationSchemaSection {
 export interface HoroscopeAndPreferencesProps {
     formData: MatrimonyFormData;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-    handleCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    nicFrontPreviewUrl: string | null;
+    nicBackPreviewUrl: string | null;
     errors: Record<string, string>;
     touched: Record<string, boolean>;
     handleBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
 }
+
 export interface ParentsInfoProps {
     formData: MatrimonyFormData;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
@@ -95,6 +92,8 @@ export interface PersonalInfoProps {
 export interface ReviewAndSubmitProps {
     formData: MatrimonyFormData;
     previewUrl: string | null;
+    nicFrontPreviewUrl: string | null;
+    nicBackPreviewUrl: string | null;
     isLoading: boolean;
     termsAccepted: boolean;
     setTermsAccepted: React.Dispatch<React.SetStateAction<boolean>>;

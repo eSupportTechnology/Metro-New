@@ -1,4 +1,4 @@
-import { CheckCircle, ChevronRight, Heart } from 'lucide-react';
+import { CheckCircle, ChevronRight, Heart, Users, Star } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import groomImage from '../../../assets/Image/Groom.svg';
@@ -14,98 +14,144 @@ const HeroSection = () => {
     };
 
     return (
-        <div>
-            <section className="relative pt-16 md:pt-24 pb-16 md:pb-32 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/10 to-yellow-900/10 z-0"></div>
-                <div className="absolute bottom-0 right-0 w-full h-full md:w-1/2 bg-yellow-50 z-0" style={{ clipPath: 'polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%)' }}></div>
+        <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10">
+                <div
+                    className="absolute inset-0"
+                    style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f59e0b' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                    }}
+                ></div>
+            </div>
 
-                <div className="absolute inset-0 z-0 opacity-30">
-                    <img src="https://blissfulplans.com/wp-content/uploads/2023/08/Sri-lanka.webp" alt="Wedding Background" className="w-full h-full object-cover" />
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+                <div className="text-center mb-16">
+                    <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-100 to-amber-100 border border-yellow-200 rounded-full text-yellow-800 text-sm font-medium mb-8 shadow-lg">
+                        <Star className="h-4 w-4 mr-2 fill-current" />
+                        Sri Lanka's #1 Matrimony Service
+                        <Star className="h-4 w-4 ml-2 fill-current" />
+                    </div>
+
+                    <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+                        My <span className="bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent">WeddingSL</span>
+                    </h1>
+
+                    <p className="text-xl md:text-2xl text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto">
+                        Join thousands who have found their perfect match on Sri Lanka's most trusted matrimony platform.
+                    </p>
                 </div>
 
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="flex flex-col md:flex-row items-center">
-                        <div className="w-full md:w-1/2 text-center md:text-left mb-12 md:mb-0">
-                            <div className="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium mb-6">Sri Lanka's #1 Matrimony Service</div>
+                <div className="grid lg:grid-cols-2 gap-16 items-center mb-16">
+                    <div className="order-2 lg:order-1">
+                        <div className="bg-white rounded-3xl shadow-2xl p-8 backdrop-blur-sm border border-yellow-100">
+                            <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">Find Your Perfect Match</h2>
 
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                                ශ්‍රී ලංකීය <span className="text-yellow-600">මංගල යෝඡනා</span>
-                            </h1>
+                            <div className="bg-gradient-to-r from-yellow-600 to-yellow-700 rounded-2xl p-6 shadow-xl mb-8">
+                                <h3 className="text-white text-xl text-center mb-6 font-semibold">I am Looking For a</h3>
 
-                            <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-lg mx-auto md:mx-0">
-                                Join thousands who have found their perfect match on Sri Lanka's most trusted matrimony platform.
-                            </p>
-
-                            <div className="bg-gradient-to-r from-yellow-600 to-yellow-700 rounded-2xl p-5 shadow-xl mb-8 max-w-sm mx-auto md:mx-0">
-                                <h2 className="text-white text-lg text-center mb-4">I am Looking For a</h2>
-
-                                <div className="flex justify-between gap-3">
+                                <div className="grid grid-cols-2 gap-6">
                                     <div
-                                        className={`flex-1 cursor-pointer transition-all duration-200 transform ${partnerType === 'groom' ? 'scale-105' : 'hover:scale-105'}`}
+                                        className={`cursor-pointer transition-all duration-300 transform group ${partnerType === 'groom' ? 'scale-105' : 'hover:scale-105'}`}
                                         onClick={() => handleNavigation('groom')}
                                     >
-                                        <div className={`rounded-lg p-1 ${partnerType === 'groom' ? 'bg-yellow-500 ring-2 ring-white' : 'bg-yellow-500/80'}`}>
-                                            <img src={groomImage} alt="Groom" className="w-full h-28 object-cover rounded" />
+                                        <div
+                                            className={`rounded-xl p-3 transition-all duration-300 ${
+                                                partnerType === 'groom' ? 'bg-yellow-500 ring-4 ring-white shadow-lg' : 'bg-yellow-500/80 group-hover:bg-yellow-500 group-hover:shadow-lg'
+                                            }`}
+                                        >
+                                            <img src={groomImage} alt="Groom" className="w-full h-32 object-cover rounded-lg" />
                                         </div>
-                                        <p className="text-white text-center mt-2 font-medium">Groom</p>
+                                        <p className="text-white text-center mt-3 font-semibold text-lg">Groom</p>
                                     </div>
 
                                     <div
-                                        className={`flex-1 cursor-pointer transition-all duration-200 transform ${partnerType === 'bride' ? 'scale-105' : 'hover:scale-105'}`}
+                                        className={`cursor-pointer transition-all duration-300 transform group ${partnerType === 'bride' ? 'scale-105' : 'hover:scale-105'}`}
                                         onClick={() => handleNavigation('bride')}
                                     >
-                                        <div className={`rounded-lg p-1 ${partnerType === 'bride' ? 'bg-yellow-500 ring-2 ring-white' : 'bg-yellow-500/80'}`}>
-                                            <img src={brideImage} alt="Bride" className="w-full h-28 object-cover rounded" />
+                                        <div
+                                            className={`rounded-xl p-3 transition-all duration-300 ${
+                                                partnerType === 'bride' ? 'bg-yellow-500 ring-4 ring-white shadow-lg' : 'bg-yellow-500/80 group-hover:bg-yellow-500 group-hover:shadow-lg'
+                                            }`}
+                                        >
+                                            <img src={brideImage} alt="Bride" className="w-full h-32 object-cover rounded-lg" />
                                         </div>
-                                        <p className="text-white text-center mt-2 font-medium">Bride</p>
+                                        <p className="text-white text-center mt-3 font-semibold text-lg">Bride</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">
+                            <div className="flex flex-col sm:flex-row gap-4">
                                 <Link
                                     to="/signin"
-                                    className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-md font-medium transition duration-300 shadow-md flex items-center justify-center"
+                                    className="flex-1 bg-gradient-to-r from-yellow-600 to-amber-600 hover:from-yellow-700 hover:to-amber-700 text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center group"
                                 >
                                     <span>Register Free</span>
-                                    <ChevronRight className="ml-1 h-5 w-5" />
+                                    <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                                 </Link>
                                 <Link
                                     to="/learn"
-                                    className="border border-yellow-600 text-yellow-600 hover:bg-yellow-50 px-6 py-3 rounded-md font-medium transition duration-300 flex items-center justify-center"
+                                    className="flex-1 border-2 border-yellow-600 text-yellow-600 hover:bg-yellow-600 hover:text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center"
                                 >
                                     <span>Learn More</span>
                                 </Link>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="w-full md:w-1/2">
-                            <div className="relative">
-                                <div className="absolute inset-0 bg-gradient-to-br from-yellow-200/50 to-yellow-600/50 rounded-xl transform rotate-3 scale-105"></div>
+                    <div className="order-1 lg:order-2">
+                        <div className="relative group">
+                            <div className="absolute -inset-6 bg-gradient-to-r from-yellow-600/20 to-amber-600/20 rounded-3xl transform rotate-3 group-hover:rotate-6 transition-all duration-500"></div>
+                            <div className="absolute -inset-3 bg-gradient-to-r from-amber-600/30 to-yellow-600/30 rounded-3xl transform -rotate-3 group-hover:-rotate-6 transition-all duration-500"></div>
+
+                            <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden">
                                 <img
                                     src="https://blissfulplans.com/wp-content/uploads/2023/08/Sri-lanka.webp"
                                     alt="Silhouette Love Moment"
-                                    className="rounded-xl shadow-2xl w-full max-w-lg mx-auto relative"
+                                    className="w-full h-96 lg:h-[500px] object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
-                                <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-lg shadow-xl hidden md:flex">
-                                    <div className="flex items-center">
-                                        <div className="bg-yellow-100 p-2 rounded-full mr-3">
-                                            <CheckCircle className="h-6 w-6 text-yellow-600" />
-                                        </div>
-                                        <div>
-                                            <p className="font-medium text-gray-800">1000+ Marriages</p>
-                                            <p className="text-sm text-gray-500">This Month</p>
-                                        </div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+                            </div>
+
+                            <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl animate-bounce">
+                                <div className="flex items-center">
+                                    <div className="bg-yellow-100 p-3 rounded-full mr-3">
+                                        <CheckCircle className="h-6 w-6 text-yellow-600" />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-gray-800">1000+ Marriages</p>
+                                        <p className="text-sm text-gray-500">This Month</p>
                                     </div>
                                 </div>
-                                <div className="absolute -top-4 -right-4 bg-white p-3 rounded-full shadow-xl hidden md:flex">
-                                    <Heart className="h-6 w-6 text-yellow-600" fill="#ca8a04" />
-                                </div>
+                            </div>
+
+                            <div className="absolute -top-4 -right-4 bg-white p-3 rounded-full shadow-xl">
+                                <Heart className="h-8 w-8 text-yellow-600" fill="#ca8a04" />
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-yellow-100">
+                    <div className="flex flex-wrap justify-center lg:justify-around items-center gap-8">
+                        <div className="text-center">
+                            <div className="text-4xl font-bold text-yellow-600 mb-2">50K+</div>
+                            <div className="text-gray-600 font-medium">Active Members</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-4xl font-bold text-yellow-600 mb-2">10K+</div>
+                            <div className="text-gray-600 font-medium">Success Stories</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-4xl font-bold text-yellow-600 mb-2">15+</div>
+                            <div className="text-gray-600 font-medium">Years Experience</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-4xl font-bold text-yellow-600 mb-2">100%</div>
+                            <div className="text-gray-600 font-medium">Verified Profiles</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

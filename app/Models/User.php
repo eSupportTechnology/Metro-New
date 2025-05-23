@@ -56,4 +56,8 @@ class User extends Authenticatable
     {
         return $this->morphMany(PersonalAccessToken::class, 'tokenable');
     }
+    public function nicDetail(): HasOne
+    {
+        return $this->hasOne(NicDetail::class);
+    }
 }

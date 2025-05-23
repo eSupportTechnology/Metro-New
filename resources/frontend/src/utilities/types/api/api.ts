@@ -22,6 +22,12 @@ export interface ApiConfig {
         profile: {
             get: (id: number | string) => string;
         };
+        nic: {
+            list: string;
+            verify: (nicNumber: string) => string;
+            reject: (nicNumber: string) => string;
+            detail: (nicNumber: string) => string;
+        };
         homepageProfiles: string;
         signIn: string;
         logout: string;

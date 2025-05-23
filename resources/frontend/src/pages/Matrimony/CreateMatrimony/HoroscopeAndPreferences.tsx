@@ -1,99 +1,102 @@
 import React from 'react';
 import { HoroscopeAndPreferencesProps } from '../../../utilities/types/Matrimony/MatrimonyTypes';
 
-export const renderHoroscopeAndPreferencesForm = ({ formData, handleInputChange, handleCheckboxChange, errors, touched, handleBlur }: HoroscopeAndPreferencesProps) => {
+export const renderHoroscopeAndPreferencesForm = ({
+    formData,
+    handleInputChange,
+    handleImageChange,
+    nicFrontPreviewUrl,
+    nicBackPreviewUrl,
+    errors,
+    touched,
+    handleBlur,
+}: HoroscopeAndPreferencesProps) => {
     const showError = (fieldName: string): boolean => {
         return !!(touched[fieldName] && errors[fieldName]);
     };
 
     return (
-        <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">Horoscope Information</h3>
-
+        <div className="space-y-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Personal Details & Documents</h3>
             <div>
-                <div className="flex items-center mb-4">
-                    <input
-                        type="checkbox"
-                        id="horoscope.horoscope_matching_required"
-                        name="horoscope.horoscope_matching_required"
-                        checked={formData.horoscope.horoscope_matching_required}
-                        onChange={handleCheckboxChange}
-                        className="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="horoscope.horoscope_matching_required" className="ml-2 block text-gray-700">
-                        Horoscope Matching Required
-                    </label>
-                </div>
+                <label htmlFor="nic_number" className="block text-gray-700 mb-1">
+                    NIC Number
+                </label>
+                <input
+                    type="text"
+                    id="nic_number"
+                    name="nic_number"
+                    value={formData.nic_number}
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    className={`w-full px-3 py-2 border ${showError('nic_number') ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                    placeholder="Enter your NIC number (e.g., 123456789V or 199012345678)"
+                    required
+                />
+                {showError('nic_number') && <p className="text-red-500 text-xs mt-1">{errors.nic_number}</p>}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label htmlFor="horoscope.birthdate" className="block text-gray-700 mb-1">
-                        Birth Date for Horoscope
+                    <label htmlFor="nic_front_image" className="block text-gray-700 mb-2">
+                        NIC Front Image
                     </label>
-                    <input
-                        type="date"
-                        id="horoscope.birthdate"
-                        name="horoscope.birthdate"
-                        value={formData.horoscope.birthdate}
-                        onChange={handleInputChange}
-                        onBlur={handleBlur}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                    />
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-yellow-400 transition-colors">
+                        <input type="file" id="nic_front_image" name="nic_front_image" onChange={handleImageChange} accept="image/*" className="hidden" required />
+                        <label htmlFor="nic_front_image" className="cursor-pointer">
+                            {nicFrontPreviewUrl ? (
+                                <div className="space-y-2">
+                                    <img src={nicFrontPreviewUrl} alt="NIC Front Preview" className="mx-auto h-32 w-auto object-cover rounded border" />
+                                    <p className="text-sm text-gray-600">Click to change NIC front image</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-2">
+                                    <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                        <path
+                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                            strokeWidth={2}
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                    </svg>
+                                    <p className="text-sm text-gray-600">Upload NIC front image</p>
+                                    <p className="text-xs text-gray-500">PNG, JPG up to 10MB</p>
+                                </div>
+                            )}
+                        </label>
+                    </div>
+                    {showError('nic_front_image') && <p className="text-red-500 text-xs mt-1">{errors.nic_front_image}</p>}
                 </div>
 
                 <div>
-                    <label htmlFor="horoscope.birth_time" className="block text-gray-700 mb-1">
-                        Birth Time
+                    <label htmlFor="nic_back_image" className="block text-gray-700 mb-2">
+                        NIC Back Image
                     </label>
-                    <input
-                        type="time"
-                        id="horoscope.birth_time"
-                        name="horoscope.birth_time"
-                        value={formData.horoscope.birth_time}
-                        onChange={handleInputChange}
-                        onBlur={handleBlur}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                    />
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label htmlFor="horoscope.birth_country" className="block text-gray-700 mb-1">
-                        Birth Country
-                    </label>
-                    <select
-                        id="horoscope.birth_country"
-                        name="horoscope.birth_country"
-                        value={formData.horoscope.birth_country}
-                        onChange={handleInputChange}
-                        onBlur={handleBlur}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                    >
-                        <option value="">Select Country</option>
-                        <option value="Sri Lanka">Sri Lanka</option>
-                        <option value="Australia">Australia</option>
-                        <option value="Canada">Canada</option>
-                        <option value="United Kingdom">United Kingdom</option>
-                        <option value="United States">United States</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label htmlFor="horoscope.birth_city" className="block text-gray-700 mb-1">
-                        Birth City
-                    </label>
-                    <input
-                        type="text"
-                        id="horoscope.birth_city"
-                        name="horoscope.birth_city"
-                        value={formData.horoscope.birth_city}
-                        onChange={handleInputChange}
-                        onBlur={handleBlur}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                    />
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-yellow-400 transition-colors">
+                        <input type="file" id="nic_back_image" name="nic_back_image" onChange={handleImageChange} accept="image/*" className="hidden" required />
+                        <label htmlFor="nic_back_image" className="cursor-pointer">
+                            {nicBackPreviewUrl ? (
+                                <div className="space-y-2">
+                                    <img src={nicBackPreviewUrl} alt="NIC Back Preview" className="mx-auto h-32 w-auto object-cover rounded border" />
+                                    <p className="text-sm text-gray-600">Click to change NIC back image</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-2">
+                                    <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                        <path
+                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                            strokeWidth={2}
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                    </svg>
+                                    <p className="text-sm text-gray-600">Upload NIC back image</p>
+                                    <p className="text-xs text-gray-500">PNG, JPG up to 10MB</p>
+                                </div>
+                            )}
+                        </label>
+                    </div>
+                    {showError('nic_back_image') && <p className="text-red-500 text-xs mt-1">{errors.nic_back_image}</p>}
                 </div>
             </div>
 
