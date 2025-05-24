@@ -28,6 +28,9 @@ export interface ApiConfig {
             reject: (nicNumber: string) => string;
             detail: (nicNumber: string) => string;
         };
+        matrimonyLogs: {
+            list: string;
+        };
         homepageProfiles: string;
         signIn: string;
         logout: string;

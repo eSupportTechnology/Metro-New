@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\MatrimonyController;
+use App\Http\Controllers\MatrimonyLogController;
 use App\Http\Controllers\NicController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminUserCheckMiddleware;
@@ -47,3 +48,4 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
     Route::post('/nic-verification/{nicNumber}/reject', [NicController::class, 'rejectNic']);
     Route::get('/nic-verification/{nicNumber}', [NicController::class, 'getNicDetail']);
 });
+Route::get('/matrimony-logs', [MatrimonyLogController::class, 'getAllLogs']);
