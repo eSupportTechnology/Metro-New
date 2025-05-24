@@ -128,9 +128,9 @@ const Footer = () => {
                     </div>
 
                     <div className="pt-6 mt-6 border-t border-gray-800 text-center text-gray-400 text-sm">
-                        <p>&copy; {new Date().getFullYear()} Sri Lanka Matrimony. All rights reserved.</p>
+                        <p>&copy; {new Date().getFullYear()} MyWeddingSL. All rights reserved.</p>
                         <p className="mt-2">
-                            Designed and developed with <Heart className="h-4 w-4 text-yellow-500 inline" fill="#eab308" /> in Sri Lanka
+                            Designed and developed with <Heart className="h-4 w-4 text-yellow-500 inline" fill="#eab308" /> in eSupport Technology
                         </p>
                     </div>
                 </div>
