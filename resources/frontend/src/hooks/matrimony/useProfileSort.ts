@@ -35,11 +35,20 @@ export const useProfileSort = (profiles: MatrimonyProfile[]) => {
                 const dateB = bValue ? new Date(bValue as string).getTime() : 0;
                 return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
             }
+            if (aValue == null && bValue == null) {
+                return 0;
+            }
+            if (aValue == null) {
+                return sortDirection === 'asc' ? -1 : 1;
+            }
+            if (bValue == null) {
+                return sortDirection === 'asc' ? 1 : -1;
+            }
 
             if (sortDirection === 'asc') {
-                return aValue > bValue ? 1 : -1;
+                return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
             } else {
-                return aValue < bValue ? 1 : -1;
+                return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
             }
         });
     }, [profiles, sortField, sortDirection]);
