@@ -14,7 +14,7 @@ class MatrimonyService
         3 => 3,
     ];
 
-    public function canSetBootPost(int $matrimonyId, int $packageNumber): bool
+    public function canSetBootPost(string $matrimonyId, int $packageNumber): bool
     {
         $limit = $this->weeklyBootPostLimits[$packageNumber] ?? 0;
 
@@ -33,7 +33,7 @@ class MatrimonyService
         return $count < $limit;
     }
 
-    public function setBootPost(int $matrimonyId, int $packageNumber): bool
+    public function setBootPost(string $matrimonyId, int $packageNumber): bool
     {
         if (!$this->canSetBootPost($matrimonyId, $packageNumber)) {
             return false;
@@ -64,6 +64,5 @@ class MatrimonyService
             if (mt_rand() / mt_getrandmax() <= $probability) {
                 $this->setBootPost($profile->id, $packageNumber);
             }
-        }
-    }
+        }}
 }

@@ -17,6 +17,7 @@ import AboutUs from '../pages/MainWeb/Component/AboutUs';
 import Help from '../pages/MainWeb/Component/Help';
 import PricingPage from '../pages/MainWeb/Component/PricingPage';
 import NicVerificationTable from '../pages/AdminWeb/NIC/NicVerificationTable';
+import MatrimonyLogsTable from '../pages/AdminWeb/Matrimony/MatrimonyLogsTable';
 const Index = lazy(() => import('../pages/Index'));
 
 const useAuth = () => useSelector((state: IRootState) => state.auth);
@@ -95,6 +96,11 @@ const routes = [
     {
         path: '/admin/nic-verification',
         element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={NicVerificationTable} />,
+        layout: 'default',
+    },
+    {
+        path: '/admin/matrimony-logs',
+        element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={MatrimonyLogsTable} />,
         layout: 'default',
     },
     {

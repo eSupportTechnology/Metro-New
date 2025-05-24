@@ -42,6 +42,9 @@ const apiConfig: ApiConfig = {
             reject: (nicNumber: string) => `${baseURL}/nic-verification/${nicNumber}/reject`,
             detail: (nicNumber: string) => `${baseURL}/nic-verification/${nicNumber}`,
         },
+        matrimonyLogs: {
+            list: `${baseURL}/matrimony-logs`,
+        },
         homepageProfiles: `${baseURL}/get-homepage-profiles`,
         signIn: `${baseURL}/sign-in`,
         logout: `${baseURL}/logout`,

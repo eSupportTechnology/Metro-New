@@ -1,0 +1,3 @@
+export const MATRIMONY_LOGS_CONSTANTS = {
+    ITEMS_PER_PAGE: 10,
+};
