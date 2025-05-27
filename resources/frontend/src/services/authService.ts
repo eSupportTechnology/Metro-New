@@ -1,5 +1,6 @@
 import axios from 'axios';
 import apiConfig from '../utilities/apiConfig';
+import { NavigateFunction } from 'react-router-dom';
 
 export const UserSignIn = async (email: string, password: string) => {
     try {
@@ -21,7 +22,7 @@ export const UserSignIn = async (email: string, password: string) => {
     }
 };
 
-export const logoutUser = async () => {
+export const logoutUser = async (navigate: NavigateFunction) => {
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -48,7 +49,7 @@ export const logoutUser = async () => {
             localStorage.removeItem('email');
             localStorage.removeItem('firstName');
             localStorage.removeItem('lastName');
-            window.location.href = '/signin';
+            navigate('/signin');
         }
     } catch (error) {
         console.error('Error logging out:', error);

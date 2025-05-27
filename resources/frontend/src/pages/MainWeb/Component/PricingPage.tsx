@@ -132,34 +132,9 @@ const PricingPage = () => {
                                             </div>
                                         ))}
                                     </div>
-
-                                    <div className="px-6 pb-6">
-                                        <button
-                                            onClick={() => handlePackageSelect(pkg.id)}
-                                            className={`w-full py-3 px-4 rounded-md font-semibold transition duration-300 ${
-                                                selectedPackage === pkg.id ? 'bg-yellow-500 text-white' : 'bg-yellow-100 hover:bg-yellow-200 text-gray-800'
-                                            }`}
-                                        >
-                                            {selectedPackage === pkg.id ? 'SELECTED' : 'SELECT PACKAGE'}
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         ))}
-                    </div>
-                    <div className="mt-12 text-center">
-                        <button
-                            onClick={handleSubscribe}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-10 py-4 rounded-md font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
-                        >
-                            Subscribe Now
-                        </button>
-                        <p className="mt-4 text-gray-600">
-                            Already registered?{' '}
-                            <Link to="/signin" className="text-yellow-600 hover:underline">
-                                Sign in here
-                            </Link>
-                        </p>
                     </div>
                     <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                         <div className="bg-white p-8 rounded-lg shadow-md">

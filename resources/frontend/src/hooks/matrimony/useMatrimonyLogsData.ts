@@ -3,6 +3,16 @@ import { toast } from 'react-toastify';
 import { MatrimonyLogData, UseMatrimonyLogsData } from '../../utilities/types/Matrimony/IMatrimonyLogs';
 import apiConfig from '../../utilities/apiConfig';
 
+const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        throw new Error('No authentication token found');
+    }
+    return {
+        Authorization: `Bearer ${token}`,
+    };
+};
+
 export const useMatrimonyLogsData = (): UseMatrimonyLogsData => {
     const [logsData, setLogsData] = useState<MatrimonyLogData[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -13,13 +23,14 @@ export const useMatrimonyLogsData = (): UseMatrimonyLogsData => {
             setIsLoading(true);
             setError(null);
 
-            const token = localStorage.getItem('authToken');
+            const headers = {
+                ...getAuthHeaders(),
+                'Content-Type': 'application/json',
+            };
+
             const response = await fetch(apiConfig.endpoints.matrimonyLogs.list, {
                 method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
+                headers,
             });
 
             if (!response.ok) {

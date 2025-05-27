@@ -47,5 +47,8 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
     Route::post('/nic-verification/{nicNumber}/verify', [NicController::class, 'verifyNic']);
     Route::post('/nic-verification/{nicNumber}/reject', [NicController::class, 'rejectNic']);
     Route::get('/nic-verification/{nicNumber}', [NicController::class, 'getNicDetail']);
+
+    //Log
+    Route::get('/matrimony-logs', [MatrimonyLogController::class, 'getAllLogs']);
+
 });
-Route::get('/matrimony-logs', [MatrimonyLogController::class, 'getAllLogs']);

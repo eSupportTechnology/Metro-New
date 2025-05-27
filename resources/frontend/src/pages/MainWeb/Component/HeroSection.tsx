@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import groomImage from '../../../assets/Image/Groom.svg';
 import brideImage from '../../../assets/Image/Bride.svg';
+import heroImage from '../../../assets/Image/hero.jpg';
 
 const HeroSection = () => {
     const [partnerType, setPartnerType] = useState<string | null>(null);
@@ -36,9 +37,7 @@ const HeroSection = () => {
                         My <span className="bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent">WeddingSL</span>
                     </h1>
 
-                    <p className="text-xl md:text-2xl text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto">
-                        Join thousands who have found their perfect match on Sri Lanka's most trusted matrimony platform.
-                    </p>
+                    <p className="text-xl md:text-2xl text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto">Welcome to MyWeddingSL.com - Sri Lanka's community-friendly matrimonial platform</p>
                 </div>
 
                 <div className="grid lg:grid-cols-2 gap-16 items-center mb-16">
@@ -89,7 +88,7 @@ const HeroSection = () => {
                                     <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                                 </Link>
                                 <Link
-                                    to="/learn"
+                                    to="/about-us"
                                     className="flex-1 border-2 border-yellow-600 text-yellow-600 hover:bg-yellow-600 hover:text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center"
                                 >
                                     <span>Learn More</span>
@@ -104,11 +103,7 @@ const HeroSection = () => {
                             <div className="absolute -inset-3 bg-gradient-to-r from-amber-600/30 to-yellow-600/30 rounded-3xl transform -rotate-3 group-hover:-rotate-6 transition-all duration-500"></div>
 
                             <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden">
-                                <img
-                                    src="https://blissfulplans.com/wp-content/uploads/2023/08/Sri-lanka.webp"
-                                    alt="Silhouette Love Moment"
-                                    className="w-full h-96 lg:h-[500px] object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
+                                <img src={heroImage} alt="Silhouette Love Moment" className="w-full h-96 lg:h-[500px] object-cover transition-transform duration-500 group-hover:scale-105" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
                             </div>
 

@@ -8,8 +8,8 @@ const Footer = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                         <div>
                             <div className="flex items-center mb-4">
-                                <Heart className="h-8 w-8 text-yellow-500" fill="#eab308" />
-                                <span className="ml-2 text-xl font-bold">ශ්‍රී ලංකාවේ මංගල යෝඡනා</span>
+                                <img className="w-10 h-10 ltr:-ml-1 rtl:-mr-1" src="/assets/images/logo.svg" alt="Sri Lanka Matrimony Logo" />
+                                <span className="ml-2 text-xl font-bold">MyWeddingSL</span>
                             </div>
                             <p className="text-gray-400 mb-4">Sri Lanka's most trusted matrimony service with thousands of success stories. Find your perfect match today.</p>
                             <div className="flex space-x-4">
@@ -29,7 +29,7 @@ const Footer = () => {
                             <h3 className="text-lg font-semibold mb-4 text-yellow-500">Quick Links</h3>
                             <ul className="space-y-2">
                                 <li>
-                                    <a href="#" className="text-gray-400 hover:text-yellow-500 transition-colors">
+                                    <a href="/" className="text-gray-400 hover:text-yellow-500 transition-colors">
                                         Home
                                     </a>
                                 </li>
@@ -102,15 +102,15 @@ const Footer = () => {
                             <ul className="space-y-3">
                                 <li className="flex items-start">
                                     <Phone className="h-5 w-5 text-yellow-500 mr-2 mt-0.5" />
-                                    <span className="text-gray-400">+94 11 234 5678</span>
+                                    <span className="text-gray-400">+94 74 237 2246</span>
                                 </li>
                                 <li className="flex items-start">
                                     <Mail className="h-5 w-5 text-yellow-500 mr-2 mt-0.5" />
-                                    <span className="text-gray-400">info@srilankamamatrimony.lk</span>
+                                    <span className="text-gray-400">support@myweddingsl.com</span>
                                 </li>
                                 <li className="flex items-start">
                                     <MapPin className="h-5 w-5 text-yellow-500 mr-2 mt-0.5" />
-                                    <span className="text-gray-400">42 Temple Road, Colombo 03, Sri Lanka</span>
+                                    <span className="text-gray-400">183/A, Peradeniya, Penideniya, Kandy</span>
                                 </li>
                             </ul>
                             <div className="mt-4 pt-4 border-t border-gray-800">
