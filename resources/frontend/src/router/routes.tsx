@@ -90,7 +90,7 @@ const routes = [
         layout: 'blank',
     },
     {
-        path: '/admin',
+        path: '/admin/dashboard',
         element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={Index} />,
         layout: 'default',
     },

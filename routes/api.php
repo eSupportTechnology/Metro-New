@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MatrimonyController;
 use App\Http\Controllers\MatrimonyLogController;
 use App\Http\Controllers\NicController;
@@ -64,3 +65,5 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
     Route::get('/matrimony-logs', [MatrimonyLogController::class, 'getAllLogs']);
 
 });
+Route::get('/dashboard/stats', [DashboardController::class, 'getDashboardStats']);
+Route::get('/dashboard/monthly-stats', [DashboardController::class, 'getMonthlyStats']);
