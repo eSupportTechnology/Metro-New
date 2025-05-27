@@ -31,8 +31,14 @@ export interface ApiConfig {
         matrimonyLogs: {
             list: string;
         };
+
         homepageProfiles: string;
         signIn: string;
         logout: string;
+        phone: {
+            sendOtp: string;
+            verifyOtp: string;
+            register: string;
+        };
     };
 }

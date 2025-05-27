@@ -1,4 +1,4 @@
-export type AuthState = {
+export interface AuthState {
     loading: boolean;
     userId: string;
     userRole: number;
@@ -6,9 +6,10 @@ export type AuthState = {
     firstName: string;
     lastName: string;
     email: string;
+    phone?: string;
     error: string | null;
     isAuthenticated: boolean;
-};
+}
 
 const storedUserId = localStorage.getItem('userId') || '';
 const storedUserRole = parseInt(localStorage.getItem('userRole') || '0', 10);

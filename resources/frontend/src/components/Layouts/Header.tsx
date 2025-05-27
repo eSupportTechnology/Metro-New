@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { IRootState } from '../../store';
 import { toggleRTL, toggleTheme, toggleSidebar } from '../../store/themeConfigSlice';
 import { useTranslation } from 'react-i18next';
@@ -17,10 +17,11 @@ const Header = () => {
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
     const isRtl = themeConfig.rtlClass === 'rtl';
     const [flag, setFlag] = useState(themeConfig.locale);
+    const navigate = useNavigate();
     const { t } = useTranslation();
 
-    const handleLogout = () => {
-        logoutUser();
+    const handleLogout = async () => {
+        await logoutUser(navigate);
     };
 
     const setLocale = (flag: string) => {

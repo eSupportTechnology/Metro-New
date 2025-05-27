@@ -1,16 +1,6 @@
 import { ApiConfig } from './types/api/api';
 
-const isDevelopment = process.env.NODE_ENV === 'development' || true;
-const isStaging = process.env.NODE_ENV === 'staging';
-const isProduction = process.env.NODE_ENV === 'production';
-
-let baseURL = 'http://127.0.0.1:8000/api';
-
-// if (isStaging) {
-//     baseURL = 'https://staging-api.yourdomain.com/api';
-// } else if (isProduction) {
-//     baseURL = 'https://api.yourdomain.com/api';
-// }
+const baseURL = 'https://weddingapi.navod24.com/api' || 'http://127.0.0.1:8000/api';
 
 const apiConfig: ApiConfig = {
     baseURL,
@@ -48,6 +38,11 @@ const apiConfig: ApiConfig = {
         homepageProfiles: `${baseURL}/get-homepage-profiles`,
         signIn: `${baseURL}/sign-in`,
         logout: `${baseURL}/logout`,
+        phone: {
+            sendOtp: `${baseURL}/phone/send-otp`,
+            verifyOtp: `${baseURL}/phone/verify-otp`,
+            register: `${baseURL}/phone/register`,
+        },
     },
 };
 

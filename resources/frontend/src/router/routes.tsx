@@ -18,6 +18,7 @@ import Help from '../pages/MainWeb/Component/Help';
 import PricingPage from '../pages/MainWeb/Component/PricingPage';
 import NicVerificationTable from '../pages/AdminWeb/NIC/NicVerificationTable';
 import MatrimonyLogsTable from '../pages/AdminWeb/Matrimony/MatrimonyLogsTable';
+import PhoneRegister from '../pages/MainWeb/Auth/PhoneRegister';
 const Index = lazy(() => import('../pages/Index'));
 
 const useAuth = () => useSelector((state: IRootState) => state.auth);
@@ -31,6 +32,11 @@ const routes = [
     {
         path: '/signin',
         element: <SignIn />,
+        layout: 'blank',
+    },
+    {
+        path: '/register',
+        element: <PhoneRegister />,
         layout: 'blank',
     },
     {

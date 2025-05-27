@@ -22,6 +22,78 @@ export const UserSignIn = async (email: string, password: string) => {
     }
 };
 
+export const sendOtp = async (phone: string, type: 'login' | 'register') => {
+    try {
+        const response = await axios.post(apiConfig.endpoints.phone.sendOtp, {
+            phone,
+            type,
+        });
+        return response.data;
+    } catch (error: any) {
+        if (error.response?.data?.message) {
+            throw new Error(error.response.data.message);
+        }
+        throw new Error('Failed to send OTP. Please try again.');
+    }
+};
+
+export const verifyOtp = async (phone: string, otp_code: string, type: 'login' | 'register') => {
+    try {
+        const response = await axios.post(apiConfig.endpoints.phone.verifyOtp, {
+            phone,
+            otp_code,
+            type,
+        });
+
+        if (type === 'login' && response.data.access_token) {
+            const authData = response.data;
+            localStorage.setItem('token', authData.access_token);
+            localStorage.setItem('userId', authData.user.id);
+            localStorage.setItem('userRole', authData.user.role_as.toString());
+            localStorage.setItem('firstName', authData.user.first_name);
+            localStorage.setItem('lastName', authData.user.last_name);
+            localStorage.setItem('email', authData.user.email);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${authData.access_token}`;
+        }
+
+        return response.data;
+    } catch (error: any) {
+        if (error.response?.data?.message) {
+            throw new Error(error.response.data.message);
+        }
+        throw new Error('Invalid or expired OTP code.');
+    }
+};
+
+export const phoneRegister = async (registrationData: { phone: string; otp_code: string; first_name: string; last_name: string; email: string; password: string; password_confirmation: string }) => {
+    try {
+        const response = await axios.post(apiConfig.endpoints.phone.register, registrationData);
+
+        if (response.data.access_token) {
+            const authData = response.data;
+            localStorage.setItem('token', authData.access_token);
+            localStorage.setItem('userId', authData.user.id);
+            localStorage.setItem('userRole', authData.user.role_as.toString());
+            localStorage.setItem('firstName', authData.user.first_name);
+            localStorage.setItem('lastName', authData.user.last_name);
+            localStorage.setItem('email', authData.user.email);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${authData.access_token}`;
+        }
+
+        return response.data;
+    } catch (error: any) {
+        if (error.response?.data?.message) {
+            throw new Error(error.response.data.message);
+        }
+        if (error.response?.data?.errors) {
+            const errors = error.response.data.errors;
+            const firstError = Object.values(errors)[0];
+            throw new Error(Array.isArray(firstError) ? firstError[0] : firstError);
+        }
+        throw new Error('Registration failed. Please try again.');
+    }
+};
+
 export const logoutUser = async (navigate: NavigateFunction) => {
     const token = localStorage.getItem('token');
 
