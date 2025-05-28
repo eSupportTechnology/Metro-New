@@ -130,11 +130,16 @@ const SignIn: React.FC = () => {
             firstName: data.firstName || data.user?.first_name || '',
             lastName: data.lastName || data.user?.last_name || '',
             email: data.email || data.user?.email || '',
+            religion: data.religion || data.user?.religion || '',
+            phone: data.phone || data.user?.phone || '',
         };
 
         localStorage.setItem('userId', authData.userId);
         localStorage.setItem('token', authData.token);
 
+        if (authData.religion) {
+            localStorage.setItem('religion', authData.religion);
+        }
         dispatch(setAuth(authData));
         if (authData.userRole === 1) {
             navigate('/admin/dashboard');

@@ -10,6 +10,10 @@ export const UserSignIn = async (email: string, password: string) => {
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('userId', response.data.userId);
             localStorage.setItem('userRole', response.data.userRole);
+            if (response.data.religion) {
+                localStorage.setItem('religion', response.data.religion);
+            }
+
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
         }
 
@@ -53,6 +57,11 @@ export const verifyOtp = async (phone: string, otp_code: string, type: 'login' |
             localStorage.setItem('firstName', authData.user.first_name);
             localStorage.setItem('lastName', authData.user.last_name);
             localStorage.setItem('email', authData.user.email);
+
+            if (authData.religion) {
+                localStorage.setItem('religion', authData.religion);
+            }
+
             axios.defaults.headers.common['Authorization'] = `Bearer ${authData.access_token}`;
         }
 
@@ -86,6 +95,12 @@ export const phoneRegister = async (registrationData: {
             localStorage.setItem('firstName', authData.user.first_name);
             localStorage.setItem('lastName', authData.user.last_name);
             localStorage.setItem('email', authData.user.email);
+            if (authData.religion) {
+                localStorage.setItem('religion', authData.religion);
+            } else if (registrationData.religion) {
+                localStorage.setItem('religion', registrationData.religion);
+            }
+
             axios.defaults.headers.common['Authorization'] = `Bearer ${authData.access_token}`;
         }
 
@@ -130,6 +145,8 @@ export const logoutUser = async (navigate: NavigateFunction) => {
             localStorage.removeItem('email');
             localStorage.removeItem('firstName');
             localStorage.removeItem('lastName');
+            localStorage.removeItem('phone');
+            localStorage.removeItem('religion');
             navigate('/signin');
         }
     } catch (error) {

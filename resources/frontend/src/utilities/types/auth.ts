@@ -5,6 +5,7 @@ export interface AuthState {
     userToken: string;
     firstName: string;
     lastName: string;
+    religion: string;
     email: string;
     phone?: string;
     error: string | null;
@@ -16,6 +17,7 @@ const storedUserRole = parseInt(localStorage.getItem('userRole') || '0', 10);
 const storedToken = localStorage.getItem('token') || '';
 const storedFirstName = localStorage.getItem('firstName') || '';
 const storedLastName = localStorage.getItem('lastName') || '';
+const storedReligion = localStorage.getItem('religion') || '';
 const storedEmail = localStorage.getItem('email') || '';
 const isAuthenticated = !!storedToken;
 
@@ -24,6 +26,7 @@ export const initialState: AuthState = {
     userId: storedUserId,
     userRole: storedUserRole,
     userToken: storedToken,
+    religion: storedReligion,
     firstName: storedFirstName,
     lastName: storedLastName,
     email: storedEmail,

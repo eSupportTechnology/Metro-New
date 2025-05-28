@@ -8,6 +8,7 @@ const storedFirstName = localStorage.getItem('firstName') || '';
 const storedLastName = localStorage.getItem('lastName') || '';
 const storedEmail = localStorage.getItem('email') || '';
 const storedPhone = localStorage.getItem('phone') || '';
+const storedReligion = localStorage.getItem('religion') || '';
 const isAuthenticated = !!storedToken;
 
 export const initialState: AuthState = {
@@ -19,6 +20,7 @@ export const initialState: AuthState = {
     lastName: storedLastName,
     email: storedEmail,
     phone: storedPhone,
+    religion: storedReligion,
     error: null,
     isAuthenticated,
 };
@@ -37,9 +39,10 @@ const authSlice = createSlice({
                 lastName: string;
                 email: string;
                 phone?: string;
+                religion?: string;
             }>,
         ) => {
-            const { userId, userRole, token, firstName, lastName, email, phone } = action.payload;
+            const { userId, userRole, token, firstName, lastName, email, phone, religion } = action.payload;
 
             state.userId = userId;
             state.userRole = userRole;
@@ -48,6 +51,7 @@ const authSlice = createSlice({
             state.lastName = lastName;
             state.email = email;
             state.phone = phone || '';
+            state.religion = religion || '';
             state.isAuthenticated = true;
 
             localStorage.setItem('userId', userId);
@@ -59,6 +63,9 @@ const authSlice = createSlice({
             if (phone) {
                 localStorage.setItem('phone', phone);
             }
+            if (religion) {
+                localStorage.setItem('religion', religion);
+            }
         },
         logout: (state) => {
             state.userId = '';
@@ -68,6 +75,7 @@ const authSlice = createSlice({
             state.lastName = '';
             state.email = '';
             state.phone = '';
+            state.religion = '';
             state.isAuthenticated = false;
 
             localStorage.removeItem('userId');
@@ -77,6 +85,7 @@ const authSlice = createSlice({
             localStorage.removeItem('lastName');
             localStorage.removeItem('email');
             localStorage.removeItem('phone');
+            localStorage.removeItem('religion');
         },
     },
 });
