@@ -20,6 +20,7 @@ class PhoneRegisterRequest extends FormRequest
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'religion' => ['required', 'string', 'max:255'],
         ];
     }
 
@@ -32,6 +33,9 @@ class PhoneRegisterRequest extends FormRequest
             'otp_code.size' => 'OTP code must be exactly 6 digits.',
             'email.unique' => 'This email address is already registered.',
             'password.confirmed' => 'Password confirmation does not match.',
+            'religion.required' => 'Religion is required.',
+            'religion.string' => 'Religion must be a string.',
+            'religion.max' => 'Religion must not exceed 255 characters.',
         ];
     }
 }

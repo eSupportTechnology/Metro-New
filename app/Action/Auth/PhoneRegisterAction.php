@@ -51,7 +51,8 @@ class PhoneRegisterAction
             'email' => $validatedData['email'],
             'phone' => $phone,
             'password' => Hash::make($validatedData['password']),
-            'role_as' => 2, // Regular user
+            'religion' => $validatedData['religion'],
+            'role_as' => 2,
         ]);
 
         $otp->delete();

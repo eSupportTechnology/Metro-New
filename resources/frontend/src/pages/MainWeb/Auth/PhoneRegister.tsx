@@ -9,21 +9,18 @@ import { sendOtp, verifyOtp, phoneRegister } from '../../../services/authService
 
 const PhoneRegister: React.FC = () => {
     const [registrationStep, setRegistrationStep] = useState<'phone' | 'otp' | 'details'>('phone');
-
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [countryCode, setCountryCode] = useState<string>('+94');
     const [otpCode, setOtpCode] = useState<string>('');
     const [otpTimer, setOtpTimer] = useState<number>(0);
-
+    const [religion, setReligion] = useState<string>('');
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
-
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
-
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -101,6 +98,7 @@ const PhoneRegister: React.FC = () => {
                 email: email,
                 password: password,
                 password_confirmation: confirmPassword,
+                religion: religion,
             });
 
             handleSuccessfulRegistration(data);
@@ -321,6 +319,27 @@ const PhoneRegister: React.FC = () => {
                                             required
                                         />
                                     </div>
+                                </div>
+
+                                <div className="mb-4">
+                                    <label htmlFor="religion" className="block text-gray-700 mb-2">
+                                        Religion
+                                    </label>
+                                    <select
+                                        id="religion"
+                                        name="religion"
+                                        value={religion}
+                                        onChange={(e) => setReligion(e.target.value)}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                        required
+                                    >
+                                        <option value="">Select Religion</option>
+                                        <option value="Buddhist">Buddhist</option>
+                                        <option value="Hindu">Hindu</option>
+                                        <option value="Islam">Islam</option>
+                                        <option value="Christian">Christian</option>
+                                        <option value="Other">Other</option>
+                                    </select>
                                 </div>
 
                                 <div className="mb-4">

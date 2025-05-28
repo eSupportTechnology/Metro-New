@@ -65,7 +65,16 @@ export const verifyOtp = async (phone: string, otp_code: string, type: 'login' |
     }
 };
 
-export const phoneRegister = async (registrationData: { phone: string; otp_code: string; first_name: string; last_name: string; email: string; password: string; password_confirmation: string }) => {
+export const phoneRegister = async (registrationData: {
+    phone: string;
+    otp_code: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+    religion: string;
+}) => {
     try {
         const response = await axios.post(apiConfig.endpoints.phone.register, registrationData);
 
