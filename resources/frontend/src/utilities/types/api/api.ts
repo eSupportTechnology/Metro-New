@@ -31,7 +31,10 @@ export interface ApiConfig {
         matrimonyLogs: {
             list: string;
         };
-
+        dashboard: {
+            stats: string;
+            monthlyStats: string;
+        };
         homepageProfiles: string;
         signIn: string;
         logout: string;

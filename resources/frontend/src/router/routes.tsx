@@ -19,7 +19,7 @@ import PricingPage from '../pages/MainWeb/Component/PricingPage';
 import NicVerificationTable from '../pages/AdminWeb/NIC/NicVerificationTable';
 import MatrimonyLogsTable from '../pages/AdminWeb/Matrimony/MatrimonyLogsTable';
 import PhoneRegister from '../pages/MainWeb/Auth/PhoneRegister';
-const Index = lazy(() => import('../pages/Index'));
+import Dashboard from '../pages/AdminWeb/Dashboard/Dashboard';
 
 const useAuth = () => useSelector((state: IRootState) => state.auth);
 
@@ -91,7 +91,7 @@ const routes = [
     },
     {
         path: '/admin/dashboard',
-        element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={Index} />,
+        element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={Dashboard} />,
         layout: 'default',
     },
     {

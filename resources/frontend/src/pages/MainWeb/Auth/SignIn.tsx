@@ -137,7 +137,7 @@ const SignIn: React.FC = () => {
 
         dispatch(setAuth(authData));
         if (authData.userRole === 1) {
-            navigate('/admin');
+            navigate('/admin/dashboard');
         } else if (authData.userRole === 2) {
             navigate(`/my-profile/${authData.userId}`);
         } else {

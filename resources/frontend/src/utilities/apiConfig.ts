@@ -1,6 +1,6 @@
 import { ApiConfig } from './types/api/api';
 
-const baseURL = 'https://weddingapi.navod24.com/api' || 'http://127.0.0.1:8000/api';
+const baseURL = 'http://127.0.0.1:8000/api';
 
 const apiConfig: ApiConfig = {
     baseURL,
@@ -34,6 +34,10 @@ const apiConfig: ApiConfig = {
         },
         matrimonyLogs: {
             list: `${baseURL}/matrimony-logs`,
+        },
+        dashboard: {
+            stats: `${baseURL}/dashboard/stats`,
+            monthlyStats: `${baseURL}/dashboard/monthly-stats`,
         },
         homepageProfiles: `${baseURL}/get-homepage-profiles`,
         signIn: `${baseURL}/sign-in`,

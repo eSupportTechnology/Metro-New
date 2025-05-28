@@ -64,6 +64,8 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
     //Log
     Route::get('/matrimony-logs', [MatrimonyLogController::class, 'getAllLogs']);
 
+    //dashboard
+    Route::get('/dashboard/stats', [DashboardController::class, 'getDashboardStats']);
+    Route::get('/dashboard/monthly-stats', [DashboardController::class, 'getMonthlyStats']);
 });
-Route::get('/dashboard/stats', [DashboardController::class, 'getDashboardStats']);
-Route::get('/dashboard/monthly-stats', [DashboardController::class, 'getMonthlyStats']);
+
