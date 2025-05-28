@@ -1,8 +1,12 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CronTriggerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MatrimonyController;
+use App\Http\Controllers\MatrimonyLogController;
 use App\Http\Controllers\NicController;
+use App\Http\Controllers\TestSmsController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminUserCheckMiddleware;
 use App\Http\Middleware\FollowerUserCheckMiddleware;
@@ -10,6 +14,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('sign-in', [UserController::class, 'userSignIn']);
 Route::post('logout', [UserController::class, 'userLogout'])->middleware('auth:sanctum');
+
+Route::prefix('phone')->group(function () {
+    Route::post('send-otp', [UserController::class, 'sendOtp']);
+    Route::post('verify-otp', [UserController::class, 'verifyOtp']);
+    Route::post('register', [UserController::class, 'phoneRegister']);
+});
+
+Route::prefix('test-sms')->group(function () {
+    Route::get('status', [TestSmsController::class, 'checkStatus']);
+    Route::post('send', [TestSmsController::class, 'testSms']);
+});
 
 Route::get('/get-active-matrimony', [MatrimonyController::class, 'getActiveMatrimony']);
 Route::get('/get-homepage-profiles', [MatrimonyController::class, 'getHomepageProfiles']);
@@ -46,4 +61,13 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
     Route::post('/nic-verification/{nicNumber}/verify', [NicController::class, 'verifyNic']);
     Route::post('/nic-verification/{nicNumber}/reject', [NicController::class, 'rejectNic']);
     Route::get('/nic-verification/{nicNumber}', [NicController::class, 'getNicDetail']);
+
+    //Log
+    Route::get('/matrimony-logs', [MatrimonyLogController::class, 'getAllLogs']);
+
+    //dashboard
+    Route::get('/dashboard/stats', [DashboardController::class, 'getDashboardStats']);
+    Route::get('/dashboard/monthly-stats', [DashboardController::class, 'getMonthlyStats']);
 });
+
+Route::get('/run-matrimony-commands', [CronTriggerController::class, 'runAllCommands']);

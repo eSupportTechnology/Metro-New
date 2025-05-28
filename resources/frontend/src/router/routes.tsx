@@ -17,7 +17,9 @@ import AboutUs from '../pages/MainWeb/Component/AboutUs';
 import Help from '../pages/MainWeb/Component/Help';
 import PricingPage from '../pages/MainWeb/Component/PricingPage';
 import NicVerificationTable from '../pages/AdminWeb/NIC/NicVerificationTable';
-const Index = lazy(() => import('../pages/Index'));
+import MatrimonyLogsTable from '../pages/AdminWeb/Matrimony/MatrimonyLogsTable';
+import PhoneRegister from '../pages/MainWeb/Auth/PhoneRegister';
+import Dashboard from '../pages/AdminWeb/Dashboard/Dashboard';
 
 const useAuth = () => useSelector((state: IRootState) => state.auth);
 
@@ -30,6 +32,11 @@ const routes = [
     {
         path: '/signin',
         element: <SignIn />,
+        layout: 'blank',
+    },
+    {
+        path: '/register',
+        element: <PhoneRegister />,
         layout: 'blank',
     },
     {
@@ -83,8 +90,8 @@ const routes = [
         layout: 'blank',
     },
     {
-        path: '/admin',
-        element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={Index} />,
+        path: '/admin/dashboard',
+        element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={Dashboard} />,
         layout: 'default',
     },
     {
@@ -95,6 +102,11 @@ const routes = [
     {
         path: '/admin/nic-verification',
         element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={NicVerificationTable} />,
+        layout: 'default',
+    },
+    {
+        path: '/admin/matrimony-logs',
+        element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={MatrimonyLogsTable} />,
         layout: 'default',
     },
     {

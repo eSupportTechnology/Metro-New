@@ -6,7 +6,7 @@ import { toggleSidebar } from '../../store/themeConfigSlice';
 import { IRootState } from '../../store';
 import { useState, useEffect } from 'react';
 import IconCaretsDown from '../Icon/IconCaretsDown';
-import { HeartHandshake, Shield, CheckCircle2, FileCheck, Users, PlusCircle, BookOpen, Settings, BarChart3 } from 'lucide-react';
+import { Shield, Users, BookOpen, BarChart3, Activity, Clock } from 'lucide-react';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -54,7 +54,7 @@ const Sidebar = () => {
                     <div className="flex justify-between items-center px-4 py-3">
                         <NavLink to="/" className="main-logo flex items-center shrink-0">
                             <img className="w-8 ml-[5px] flex-none" src="/assets/images/logo.svg" alt="logo" />
-                            <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light">{t('MATRIMONY')}</span>
+                            <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light">{t('MyWeddingSL')}</span>
                         </NavLink>
 
                         <button
@@ -114,6 +114,28 @@ const Sidebar = () => {
                                             <div className="flex items-center">
                                                 <Shield className="group-hover:!text-primary shrink-0 w-4 h-4 text-blue-500" />
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('All NICs')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li className="menu nav-item">
+                                <button type="button" className={`${currentMenu === 'logs' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('logs')}>
+                                    <div className="flex items-center">
+                                        <Activity className="group-hover:!text-primary shrink-0 text-green-600" />
+                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark font-medium">{t('Activity Logs')}</span>
+                                    </div>
+                                    <div className={currentMenu === 'logs' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                        <IconCaretsDown />
+                                    </div>
+                                </button>
+                                <ul className={`sub-menu text-gray-500 ${currentMenu === 'logs' ? 'block' : 'hidden'}`}>
+                                    <li>
+                                        <NavLink to="/admin/matrimony-logs" className="group">
+                                            <div className="flex items-center">
+                                                <Clock className="group-hover:!text-primary shrink-0 w-4 h-4 text-green-500" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Matrimony Logs')}</span>
                                             </div>
                                         </NavLink>
                                     </li>

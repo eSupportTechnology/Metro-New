@@ -121,10 +121,10 @@ const Profile = (): JSX.Element => {
                                         {profile.matrimony?.profession || profile.display_name},{profile.matrimony?.city || profile.city}
                                     </p>
 
-                                    <a href={`/profile/${profile.user_id}`} className="text-yellow-600 text-sm font-medium hover:text-yellow-700 flex items-center">
+                                    <Link to={`/profile/${profile.user_id}`} className="text-yellow-600 text-sm font-medium hover:text-yellow-700 flex items-center">
                                         View Profile
                                         <ChevronRight className="h-4 w-4 ml-1" />
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         ))}

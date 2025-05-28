@@ -2,10 +2,12 @@ import { Menu, X, User, Phone, HelpCircle, DollarSign, FileText, BookOpen, Bookm
 import { useEffect, useState, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { logoutUser } from '../../../services/authService';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const navigate = useNavigate();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const location = useLocation();
@@ -16,8 +18,8 @@ const Header = () => {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
 
-    const handleLogout = () => {
-        logoutUser();
+    const handleLogout = async () => {
+        await logoutUser(navigate);
     };
 
     useEffect(() => {
@@ -99,7 +101,7 @@ const Header = () => {
                                         <span className="text-center text-sm text-gray-700 group-hover:text-yellow-700">Sign In</span>
                                     </div>
                                 </Link>
-                                <Link to="/register" className="group">
+                                <Link to="/signin" className="group">
                                     <div className="border border-gray-200 rounded-lg p-4 flex flex-col items-center justify-center hover:bg-yellow-50 hover:border-yellow-300 transition-all duration-200">
                                         <UserCircle className="h-6 w-6 mb-2 text-gray-500 group-hover:text-yellow-600 transition-colors" />
                                         <span className="text-center text-sm text-gray-700 group-hover:text-yellow-700">Register</span>
@@ -167,11 +169,6 @@ const Header = () => {
                             <span>Blog</span>
                         </Link>
 
-                        <Link to="/reviews" className="flex items-center px-3 py-2.5 rounded-lg text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition-colors duration-200">
-                            <Star className="h-5 w-5 mr-3 text-gray-500" />
-                            <span>Reviews and Ratings</span>
-                        </Link>
-
                         <Link to="/contact" className="flex items-center px-3 py-2.5 rounded-lg text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition-colors duration-200">
                             <Phone className="h-5 w-5 mr-3 text-gray-500" />
                             <span>Contact Us</span>
@@ -213,14 +210,6 @@ const Header = () => {
                                 Home
                             </Link>
                             <Link
-                                to="/success-stories"
-                                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                                    location.pathname === '/success-stories' ? 'text-yellow-700 bg-yellow-50' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
-                                }`}
-                            >
-                                Success Stories
-                            </Link>
-                            <Link
                                 to="/about-us"
                                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                                     location.pathname === '/about-us' ? 'text-yellow-700 bg-yellow-50' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
@@ -257,9 +246,6 @@ const Header = () => {
                                         </Link>
                                         <Link to="/pricing" className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700">
                                             Pricing
-                                        </Link>
-                                        <Link to="/reviews" className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700">
-                                            Reviews
                                         </Link>
                                     </div>
                                 )}

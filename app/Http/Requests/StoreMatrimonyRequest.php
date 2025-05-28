@@ -56,6 +56,7 @@ class StoreMatrimonyRequest extends FormRequest
             'mother.country_of_residence' => 'nullable|string',
             'mother.profession' => 'nullable|string',
             'mother.additional_info' => 'nullable|string',
+            'religion_visible' => 'nullable|boolean',
 
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:10240',
 

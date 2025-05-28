@@ -5,56 +5,111 @@ import { useDispatch } from 'react-redux';
 import { setAuth } from '../../../store/authSlice';
 import Header from '../NavBar/Header';
 import Footer from '../Footer/Footer';
-import { UserSignIn } from '../../../services/authService';
+import { UserSignIn, sendOtp, verifyOtp } from '../../../services/authService';
 
 const SignIn: React.FC = () => {
-    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
+    const [authStep, setAuthStep] = useState<'phone' | 'otp' | 'email'>('phone');
+
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [countryCode, setCountryCode] = useState<string>('+94');
+    const [otpCode, setOtpCode] = useState<string>('');
+    const [otpSent, setOtpSent] = useState<boolean>(false);
+    const [otpTimer, setOtpTimer] = useState<number>(0);
+
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    React.useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (otpTimer > 0) {
+            interval = setInterval(() => {
+                setOtpTimer(otpTimer - 1);
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [otpTimer]);
+
     const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/[^0-9]/g, '');
         setPhoneNumber(value);
     };
 
-    const togglePasswordLogin = () => {
-        setShowPassword(!showPassword);
-        setError('');
+    const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 6);
+        setOtpCode(value);
     };
 
-    const handleContinue = async (e: React.FormEvent) => {
+    const switchAuthMethod = (method: 'phone' | 'email') => {
+        setAuthMethod(method);
+        setAuthStep(method);
+        setError('');
+        setOtpSent(false);
+        setOtpTimer(0);
+    };
+
+    const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setError('');
 
         try {
-            setShowPassword(true);
+            const fullPhoneNumber = countryCode + phoneNumber;
+            await sendOtp(fullPhoneNumber, 'login');
+            setOtpSent(true);
+            setAuthStep('otp');
+            setOtpTimer(300);
         } catch (err: any) {
-            setError('An error occurred. Please try again later.');
+            setError(err.message || 'Failed to send OTP. Please try again.');
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handlePasswordLogin = async (e: React.FormEvent) => {
+    const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setError('');
 
         try {
-            let data;
-            if (!showPassword) {
-                data = await UserSignIn(`${countryCode}${phoneNumber}`, password);
-            } else {
-                data = await UserSignIn(email, password);
-            }
+            const fullPhoneNumber = countryCode + phoneNumber;
+            const data = await verifyOtp(fullPhoneNumber, otpCode, 'login');
+            handleSuccessfulLogin(data);
+        } catch (err: any) {
+            setError(err.message || 'Invalid OTP. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleResendOtp = async () => {
+        setIsLoading(true);
+        setError('');
+
+        try {
+            const fullPhoneNumber = countryCode + phoneNumber;
+            await sendOtp(fullPhoneNumber, 'login');
+            setOtpTimer(300);
+        } catch (err: any) {
+            setError(err.message || 'Failed to resend OTP.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleEmailLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+
+        try {
+            const data = await UserSignIn(email, password);
             handleSuccessfulLogin(data);
         } catch (err: any) {
             if (err.message === 'Unauthorized') {
@@ -70,24 +125,35 @@ const SignIn: React.FC = () => {
     const handleSuccessfulLogin = (data: any) => {
         const authData = {
             userId: data.userId || data.user?.id || '',
-            userRole: data.userRole || data.user?.role || 0,
-            token: data.token || '',
+            userRole: data.userRole || data.user?.role_as || 0,
+            token: data.token || data.access_token || '',
             firstName: data.firstName || data.user?.first_name || '',
             lastName: data.lastName || data.user?.last_name || '',
             email: data.email || data.user?.email || '',
+            religion: data.religion || data.user?.religion || '',
+            phone: data.phone || data.user?.phone || '',
         };
 
         localStorage.setItem('userId', authData.userId);
         localStorage.setItem('token', authData.token);
 
+        if (authData.religion) {
+            localStorage.setItem('religion', authData.religion);
+        }
         dispatch(setAuth(authData));
         if (authData.userRole === 1) {
-            navigate('/admin');
+            navigate('/admin/dashboard');
         } else if (authData.userRole === 2) {
             navigate(`/my-profile/${authData.userId}`);
         } else {
             navigate('/');
         }
+    };
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
     return (
@@ -98,12 +164,15 @@ const SignIn: React.FC = () => {
                 <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8">
                     <div className="w-full max-w-md mx-auto">
                         <div className="bg-white rounded-lg shadow-md p-8">
-                            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">{!showPassword ? 'Continue with Phone' : 'Sign In with Password'}</h2>
+                            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
+                                {authStep === 'phone' && 'Continue with Phone'}
+                                {authStep === 'otp' && 'Enter Verification Code'}
+                                {authStep === 'email' && 'Sign In with Email'}
+                            </h2>
 
                             {error && <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md text-sm">{error}</div>}
-
-                            {!showPassword ? (
-                                <form onSubmit={handleContinue}>
+                            {authStep === 'phone' && (
+                                <form onSubmit={handleSendOtp}>
                                     <div className="mb-4">
                                         <label htmlFor="phone" className="block text-gray-700 mb-2">
                                             Phone Number
@@ -129,7 +198,7 @@ const SignIn: React.FC = () => {
                                     <button
                                         type="submit"
                                         className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium py-2 px-4 rounded-md transition duration-300 mb-4 flex justify-center items-center"
-                                        disabled={isLoading}
+                                        disabled={isLoading || phoneNumber.length < 9}
                                     >
                                         {isLoading ? (
                                             <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -141,17 +210,71 @@ const SignIn: React.FC = () => {
                                                 ></path>
                                             </svg>
                                         ) : null}
-                                        Continue
+                                        Send OTP
                                     </button>
 
                                     <div className="text-center mb-4">
-                                        <button type="button" className="text-gray-600 text-sm hover:text-gray-800 hover:underline" onClick={togglePasswordLogin}>
+                                        <button type="button" className="text-gray-600 text-sm hover:text-gray-800 hover:underline" onClick={() => switchAuthMethod('email')}>
                                             Login with email instead
                                         </button>
                                     </div>
                                 </form>
-                            ) : (
-                                <form onSubmit={handlePasswordLogin}>
+                            )}
+
+                            {authStep === 'otp' && (
+                                <form onSubmit={handleVerifyOtp}>
+                                    <div className="mb-4">
+                                        <label htmlFor="otp" className="block text-gray-700 mb-2">
+                                            Enter 6-digit code sent to {countryCode}
+                                            {phoneNumber}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="otp"
+                                            value={otpCode}
+                                            onChange={handleOtpChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-center text-2xl tracking-widest"
+                                            placeholder="000000"
+                                            maxLength={6}
+                                            required
+                                        />
+                                    </div>
+
+                                    {otpTimer > 0 && <div className="mb-4 text-center text-sm text-gray-600">Resend OTP in {formatTime(otpTimer)}</div>}
+
+                                    <button
+                                        type="submit"
+                                        className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium py-2 px-4 rounded-md transition duration-300 mb-4 flex justify-center items-center"
+                                        disabled={isLoading || otpCode.length !== 6}
+                                    >
+                                        {isLoading ? (
+                                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path
+                                                    className="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                ></path>
+                                            </svg>
+                                        ) : null}
+                                        Verify & Sign In
+                                    </button>
+
+                                    <div className="flex justify-between text-center text-sm">
+                                        <button type="button" className="text-gray-600 hover:text-gray-800 hover:underline" onClick={() => setAuthStep('phone')}>
+                                            Change phone number
+                                        </button>
+                                        {otpTimer === 0 && (
+                                            <button type="button" className="text-yellow-600 hover:text-yellow-700 hover:underline" onClick={handleResendOtp} disabled={isLoading}>
+                                                Resend OTP
+                                            </button>
+                                        )}
+                                    </div>
+                                </form>
+                            )}
+
+                            {authStep === 'email' && (
+                                <form onSubmit={handleEmailLogin}>
                                     <div className="mb-4">
                                         <label htmlFor="email" className="block text-gray-700 mb-2">
                                             Email
@@ -206,7 +329,7 @@ const SignIn: React.FC = () => {
                                     </button>
 
                                     <div className="text-center mb-4">
-                                        <button type="button" className="text-gray-600 text-sm hover:text-gray-800 hover:underline" onClick={togglePasswordLogin}>
+                                        <button type="button" className="text-gray-600 text-sm hover:text-gray-800 hover:underline" onClick={() => switchAuthMethod('phone')}>
                                             Login with phone number
                                         </button>
                                     </div>
@@ -221,7 +344,7 @@ const SignIn: React.FC = () => {
 
                             <div className="mt-6 flex items-center justify-center border border-gray-300 rounded-md p-3">
                                 <Phone className="mr-2 h-5 w-5 text-gray-600" />
-                                <span className="font-medium">+94 11 234 5678</span>
+                                <span className="font-medium">+94 74 237 2246</span>
                             </div>
                         </div>
 

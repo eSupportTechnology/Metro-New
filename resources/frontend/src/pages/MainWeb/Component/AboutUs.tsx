@@ -98,9 +98,9 @@ const AboutUs: React.FC = () => {
                                     <div className="bg-yellow-100 p-2 rounded-md mr-3">
                                         <Shield className="h-6 w-6 text-yellow-600" />
                                     </div>
-                                    <h3 className="font-medium text-gray-800">Trust & Safety</h3>
+                                    <h3 className="font-medium text-gray-800">Respect for All Communities</h3>
                                 </div>
-                                <p className="text-sm text-gray-600">We verify every profile and maintain strict privacy controls to create a safe environment for our members.</p>
+                                <p className="text-sm text-gray-600">We honor cultural and religious diversity across Sri Lanka.</p>
                             </div>
 
                             <div className="p-4 rounded-md bg-green-50 border-l-4 border-green-400">
@@ -108,9 +108,9 @@ const AboutUs: React.FC = () => {
                                     <div className="bg-green-100 p-2 rounded-md mr-3">
                                         <Heart className="h-6 w-6 text-green-600" />
                                     </div>
-                                    <h3 className="font-medium text-gray-800">Meaningful Connections</h3>
+                                    <h3 className="font-medium text-gray-800">Authenticity & Trust</h3>
                                 </div>
-                                <p className="text-sm text-gray-600">We focus on compatibility beyond superficial factors, helping members find partners who share their values and life goals.</p>
+                                <p className="text-sm text-gray-600">We promote genuine connections through verified profiles and transparency.</p>
                             </div>
 
                             <div className="p-4 rounded-md bg-blue-50 border-l-4 border-blue-400">
@@ -118,9 +118,9 @@ const AboutUs: React.FC = () => {
                                     <div className="bg-blue-100 p-2 rounded-md mr-3">
                                         <Users className="h-6 w-6 text-blue-600" />
                                     </div>
-                                    <h3 className="font-medium text-gray-800">Inclusive Community</h3>
+                                    <h3 className="font-medium text-gray-800">Privacy & Security</h3>
                                 </div>
-                                <p className="text-sm text-gray-600">We welcome people of all backgrounds, religions, and communities across Sri Lanka, creating an inclusive space for everyone.</p>
+                                <p className="text-sm text-gray-600">We safeguard user data and ensure a safe platform experience.</p>
                             </div>
 
                             <div className="p-4 rounded-md bg-purple-50 border-l-4 border-purple-400">
@@ -128,9 +128,9 @@ const AboutUs: React.FC = () => {
                                     <div className="bg-purple-100 p-2 rounded-md mr-3">
                                         <CheckCircle className="h-6 w-6 text-purple-600" />
                                     </div>
-                                    <h3 className="font-medium text-gray-800">Quality Service</h3>
+                                    <h3 className="font-medium text-gray-800">User-Centered Service</h3>
                                 </div>
-                                <p className="text-sm text-gray-600">We maintain high standards in our platform, customer support, and matchmaking services to provide the best experience.</p>
+                                <p className="text-sm text-gray-600">We prioritize user needs with friendly, responsive, and respectful support.</p>
                             </div>
 
                             <div className="p-4 rounded-md bg-red-50 border-l-4 border-red-400">
@@ -138,9 +138,9 @@ const AboutUs: React.FC = () => {
                                     <div className="bg-red-100 p-2 rounded-md mr-3">
                                         <Gift className="h-6 w-6 text-red-600" />
                                     </div>
-                                    <h3 className="font-medium text-gray-800">Respect for Tradition</h3>
+                                    <h3 className="font-medium text-gray-800">Inclusivity</h3>
                                 </div>
-                                <p className="text-sm text-gray-600">We honor cultural traditions while providing modern tools and approaches to finding a life partner.</p>
+                                <p className="text-sm text-gray-600">We welcome individuals from all walks of life and backgrounds.</p>
                             </div>
 
                             <div className="p-4 rounded-md bg-indigo-50 border-l-4 border-indigo-400">
@@ -150,7 +150,7 @@ const AboutUs: React.FC = () => {
                                     </div>
                                     <h3 className="font-medium text-gray-800">Continuous Improvement</h3>
                                 </div>
-                                <p className="text-sm text-gray-600">We constantly refine our matching algorithms and services based on feedback and success patterns.</p>
+                                <p className="text-sm text-gray-600">We listen, learn, and evolve to better serve our users.</p>
                             </div>
                         </div>
                     </div>
@@ -221,7 +221,7 @@ const AboutUs: React.FC = () => {
                             Join thousands of couples who found their life partners through our platform. Register today and start your journey to a meaningful relationship.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <button onClick={() => navigate('/register')} className="bg-white text-yellow-600 hover:bg-gray-100 font-medium py-3 px-6 rounded-md transition duration-300">
+                            <button onClick={() => navigate('/signin')} className="bg-white text-yellow-600 hover:bg-gray-100 font-medium py-3 px-6 rounded-md transition duration-300">
                                 Register Free
                             </button>
                             <button

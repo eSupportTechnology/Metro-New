@@ -28,8 +28,20 @@ export interface ApiConfig {
             reject: (nicNumber: string) => string;
             detail: (nicNumber: string) => string;
         };
+        matrimonyLogs: {
+            list: string;
+        };
+        dashboard: {
+            stats: string;
+            monthlyStats: string;
+        };
         homepageProfiles: string;
         signIn: string;
         logout: string;
+        phone: {
+            sendOtp: string;
+            verifyOtp: string;
+            register: string;
+        };
     };
 }

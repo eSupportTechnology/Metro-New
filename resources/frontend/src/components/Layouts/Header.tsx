@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { IRootState } from '../../store';
 import { toggleRTL, toggleTheme, toggleSidebar } from '../../store/themeConfigSlice';
 import { useTranslation } from 'react-i18next';
@@ -17,10 +17,11 @@ const Header = () => {
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
     const isRtl = themeConfig.rtlClass === 'rtl';
     const [flag, setFlag] = useState(themeConfig.locale);
+    const navigate = useNavigate();
     const { t } = useTranslation();
 
-    const handleLogout = () => {
-        logoutUser();
+    const handleLogout = async () => {
+        await logoutUser(navigate);
     };
 
     const setLocale = (flag: string) => {
@@ -35,7 +36,7 @@ const Header = () => {
                     <div className="horizontal-logo flex lg:hidden justify-between items-center ltr:mr-2 rtl:ml-2">
                         <Link to="/" className="main-logo flex items-center shrink-0">
                             <img className="w-8 ltr:-ml-1 rtl:-mr-1 inline" src="/assets/images/logo.svg" alt="logo" />
-                            <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold hidden md:inline dark:text-white-light transition-all duration-300">MATRIMONY</span>
+                            <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold hidden md:inline dark:text-white-light transition-all duration-300">MyWeddingSL</span>
                         </Link>
                         <button
                             type="button"

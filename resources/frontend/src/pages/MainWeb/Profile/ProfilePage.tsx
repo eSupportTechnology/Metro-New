@@ -253,43 +253,6 @@ const ProfilePage = () => {
                                     </div>
                                 </div>
                             </div>
-
-                            <div className="bg-white rounded-xl shadow-lg p-6">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-6">Horoscope Information</h2>
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="text-sm text-gray-500">Birth Date</label>
-                                        <p className="text-gray-900 font-medium">
-                                            {profile.horoscope.birthdate
-                                                ? new Date(profile.horoscope.birthdate).toLocaleDateString('en-US', {
-                                                      year: 'numeric',
-                                                      month: 'long',
-                                                      day: 'numeric',
-                                                  })
-                                                : 'Not specified'}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <label className="text-sm text-gray-500">Birth Time</label>
-                                        <p className="text-gray-900 font-medium">{profile.horoscope.birth_time || 'Not specified'}</p>
-                                    </div>
-                                    <div>
-                                        <label className="text-sm text-gray-500">Birth City</label>
-                                        <p className="text-gray-900 font-medium">{profile.horoscope.birth_city || 'Not specified'}</p>
-                                    </div>
-                                    <div>
-                                        <label className="text-sm text-gray-500">Birth Country</label>
-                                        <p className="text-gray-900 font-medium">{profile.horoscope.birth_country || 'Not specified'}</p>
-                                    </div>
-                                    <div className="md:col-span-2">
-                                        <label className="text-sm text-gray-500">Horoscope Matching Required</label>
-                                        <div className="flex items-center mt-1">
-                                            {profile.horoscope.horoscope_matching_required ? <Check className="h-5 w-5 text-green-500 mr-2" /> : <X className="h-5 w-5 text-gray-400 mr-2" />}
-                                            <p className="text-gray-900 font-medium">{profile.horoscope.horoscope_matching_required ? 'Yes' : 'No'}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

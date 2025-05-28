@@ -50,45 +50,26 @@ const ContactUs: React.FC = () => {
         {
             icon: Phone,
             title: 'Phone',
-            content: '+94 11 234 5678',
-            link: 'tel:+94112345678',
+            content: '+94 74 237 2246',
+            link: 'tel:+94742372246',
         },
         {
             icon: Mail,
             title: 'Email',
-            content: 'support@matrimony.lk',
-            link: 'mailto:support@matrimony.lk',
+            content: 'support@myweddingsl.com',
+            link: 'mailto:support@myweddingsl.com',
         },
         {
             icon: MapPin,
             title: 'Address',
-            content: '123 Galle Road, Colombo 03, Sri Lanka',
-            link: 'https://maps.google.com',
+            content: '183/A, Peradeniya, Penideniya, Kandy',
+            link: 'https://www.google.com/maps/search/183%2FA,+Peradeniya,+Penideniya,+Kandy/@7.2542464,80.585779,17z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI1MDUyMS4wIKXMDSoJLDEwMjExNDU1SAFQAw%3D%3D',
         },
         {
             icon: Clock,
             title: 'Business Hours',
-            content: 'Mon - Fri: 9:00 AM - 6:00 PM',
+            content: 'Monday to Saturday: 9:00 AM - 6:00 PM Sunday: 9:00 AM - 1:00 PM\n',
             link: null,
-        },
-    ];
-
-    const faqs = [
-        {
-            question: 'How do I create an account?',
-            answer: 'Click on the "Register" button and fill out the required information.',
-        },
-        {
-            question: 'Is my information secure?',
-            answer: 'Yes, we use industry-standard encryption to protect your data.',
-        },
-        {
-            question: 'What are the subscription plans?',
-            answer: 'We offer various plans starting from Rs. 2,500 per month.',
-        },
-        {
-            question: 'How can I report a fake profile?',
-            answer: 'Use the report button on any profile or contact our support team.',
         },
     ];
 
@@ -264,53 +245,6 @@ const ContactUs: React.FC = () => {
                                         )}
                                     </button>
                                 </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white rounded-lg shadow-md p-8">
-                        <div className="flex items-center mb-6">
-                            <MessageSquare className="h-6 w-6 text-yellow-600 mr-3" />
-                            <h2 className="text-2xl font-semibold text-gray-800">Frequently Asked Questions</h2>
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-6">
-                            {faqs.map((faq, index) => (
-                                <div key={index} className="border-l-4 border-yellow-400 pl-4">
-                                    <h3 className="font-medium text-gray-800 mb-2">{faq.question}</h3>
-                                    <p className="text-sm text-gray-600">{faq.answer}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="mt-8 bg-white rounded-lg shadow-md overflow-hidden">
-                        <div className="relative h-64">
-                            <img
-                                src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=60"
-                                alt="Office location"
-                                className="w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                                <div className="p-6 text-white">
-                                    <h3 className="text-xl font-bold mb-2">Visit Our Office</h3>
-                                    <p className="text-sm opacity-90">Our friendly team is always ready to assist you in person</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-gray-700 font-medium">123 Galle Road, Colombo 03</p>
-                                    <p className="text-sm text-gray-600">Near the Old Town Hall</p>
-                                </div>
-                                <a
-                                    href="https://maps.google.com"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium py-2 px-4 rounded-md transition duration-300"
-                                >
-                                    Get Directions
-                                </a>
                             </div>
                         </div>
                     </div>

@@ -34,5 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+    'notify_lk' => [
+        'user_id' => env('NOTIFY_LK_USER_ID'),
+        'api_key' => env('NOTIFY_LK_API_KEY'),
+        'sender_id' => env('NOTIFY_LK_SENDER_ID', 'NotifyDEMO'),
+    ],
 ];

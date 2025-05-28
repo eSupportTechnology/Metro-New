@@ -20,6 +20,7 @@ class GetSingleMatrimonyProfile
                 ->leftJoin('pictures', 'matrimonies.user_id', '=', 'pictures.user_id')
                 ->select(
                     'matrimonies.*',
+                    'matrimonies.religion_visible',
                     'users.first_name', 'users.last_name', 'users.email',
                     'fathers.ethnicity as father_ethnicity', 'fathers.religion as father_religion',
                     'fathers.caste as father_caste', 'fathers.country_of_residence as father_country_of_residence',
@@ -61,6 +62,7 @@ class GetSingleMatrimonyProfile
                     'ethnicity' => $profile->ethnicity,
                     'religion' => $profile->religion,
                     'caste' => $profile->caste,
+                    'religion_visible' => $profile->religion_visible ?? 1,
                     'height' => $profile->height,
                     'civil_status' => $profile->civil_status,
                     'country_of_residence' => $profile->country_of_residence,

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronRight, ChevronDown, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface FaqItem {
     question: string;
@@ -105,10 +106,10 @@ const Faq: React.FC = () => {
 
                             {filteredFaqs.length > 0 && searchQuery === '' && (
                                 <div className="text-center mt-8">
-                                    <a href="#" className="inline-flex items-center text-yellow-600 font-medium hover:text-yellow-700">
+                                    <Link to="/help" className="inline-flex items-center text-yellow-600 font-medium hover:text-yellow-700">
                                         <span>View All FAQs</span>
                                         <ChevronRight className="ml-1 h-5 w-5" />
-                                    </a>
+                                    </Link>
                                 </div>
                             )}
                         </div>
@@ -122,9 +123,11 @@ const Faq: React.FC = () => {
                                     <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-lg">
                                         <h3 className="text-xl font-semibold text-gray-900">Still have questions?</h3>
                                         <p className="mt-2 text-gray-600">Our support team is here to help you 24/7</p>
-                                        <button className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-                                            Contact Support
-                                        </button>
+                                        <Link to="/contact">
+                                            <button className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                                Contact Support
+                                            </button>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
