@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { User, MapPin, Search, Mail, Star, ChevronLeft, AlertCircle, X } from 'lucide-react';
+import { User, MapPin, Search, Mail, ChevronLeft, AlertCircle, X, Lock } from 'lucide-react';
 import Footer from '../MainWeb/Footer/Footer';
 import Header from '../MainWeb/NavBar/Header';
 import { ProfileData, RouteParams } from '../../utilities/types/Matrimony/IProfileDetailsPage';
@@ -17,6 +17,8 @@ const ProfileDetailsPage = () => {
     const [activeTab, setActiveTab] = useState<string>('personal');
     const [contactMessage, setContactMessage] = useState<string>('');
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false);
+    const [religionMismatch, setReligionMismatch] = useState<boolean>(false);
+    const loggedUserReligion = localStorage.getItem('religion') || '';
 
     useEffect(() => {
         const fetchProfileDetails = async () => {
@@ -37,7 +39,14 @@ const ProfileDetailsPage = () => {
                 });
 
                 if (response.data && response.data.status === 'success') {
-                    setProfile(response.data.data);
+                    const profileData = response.data.data;
+                    setProfile(profileData);
+                    if (profileData.matrimony.religion_visible === 1) {
+                        const profileReligion = profileData.matrimony.religion || '';
+                        if (loggedUserReligion !== profileReligion) {
+                            setReligionMismatch(true);
+                        }
+                    }
                 } else {
                     setError('Profile not found');
                 }
@@ -49,7 +58,7 @@ const ProfileDetailsPage = () => {
         };
 
         fetchProfileDetails();
-    }, [profileId]);
+    }, [profileId, loggedUserReligion]);
 
     const handleContactMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setContactMessage(e.target.value);
@@ -130,6 +139,41 @@ const ProfileDetailsPage = () => {
         </div>
     );
 
+    const ReligionMismatchError = () => (
+        <div className="font-sans bg-gradient-to-b from-yellow-50 to-white min-h-screen">
+            <Header />
+            <div className="max-w-7xl mx-auto mt-14 pt-6 px-4">
+                <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+                    <div className="flex flex-col md:flex-row justify-between items-center">
+                        <div className="flex items-center mb-3 md:mb-0">
+                            <button onClick={() => window.history.back()} className="flex items-center text-gray-500 hover:text-yellow-600 transition-colors" aria-label="Go back">
+                                <ChevronLeft className="h-6 w-6 mr-2" />
+                                <span className="text-xl font-semibold text-yellow-600">FindYourMatch</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto pt-6 px-4">
+                <div className="bg-orange-50 p-8 rounded-lg shadow-md text-orange-800 flex flex-col items-center mx-auto max-w-2xl mt-20">
+                    <Lock className="h-16 w-16 text-orange-500 mb-4" />
+                    <h2 className="text-2xl font-semibold mb-2">Religion Preference Restriction</h2>
+                    <p className="text-center mb-4">
+                        This profile is only visible to users of the same religion. Your religion ({loggedUserReligion || 'Not specified'}) does not match the profile holder's religion preference.
+                    </p>
+                    <div className="flex justify-center">
+                        <button onClick={() => window.history.back()} className="px-6 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 flex items-center">
+                            <ChevronLeft className="h-4 w-4 mr-2" />
+                            Back to Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <Footer />
+        </div>
+    );
+
     if (isLoading) {
         return (
             <div className="flex flex-col justify-center items-center h-screen bg-gray-50">
@@ -165,6 +209,9 @@ const ProfileDetailsPage = () => {
                 </button>
             </div>
         );
+    }
+    if (religionMismatch) {
+        return <ReligionMismatchError />;
     }
 
     const matrimony = profile.matrimony;
@@ -265,12 +312,6 @@ const ProfileDetailsPage = () => {
                             className={`flex-1 py-3 text-center font-medium text-sm ${activeTab === 'family' ? 'text-yellow-600 border-b-2 border-yellow-600' : 'text-gray-500 hover:text-gray-700'}`}
                         >
                             Family Background
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('horoscope')}
-                            className={`flex-1 py-3 text-center font-medium text-sm ${activeTab === 'horoscope' ? 'text-yellow-600 border-b-2 border-yellow-600' : 'text-gray-500 hover:text-gray-700'}`}
-                        >
-                            Horoscope
                         </button>
                     </div>
 
@@ -433,51 +474,6 @@ const ProfileDetailsPage = () => {
                                         <div className="flex">
                                             <div className="w-40 text-gray-500">Additional Info</div>
                                             <div>{profile.mother.additional_info}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {activeTab === 'horoscope' && (
-                            <div className="space-y-6">
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Horoscope Details</h3>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className="flex">
-                                            <div className="w-40 text-gray-500">Birthdate</div>
-                                            <div>{profile.horoscope.birthdate}</div>
-                                        </div>
-                                        <div className="flex">
-                                            <div className="w-40 text-gray-500">Birth Time</div>
-                                            <div>{profile.horoscope.birth_time}</div>
-                                        </div>
-                                        <div className="flex">
-                                            <div className="w-40 text-gray-500">Birth Country</div>
-                                            <div>{profile.horoscope.birth_country}</div>
-                                        </div>
-                                        <div className="flex">
-                                            <div className="w-40 text-gray-500">Birth City</div>
-                                            <div>{profile.horoscope.birth_city}</div>
-                                        </div>
-                                        <div className="flex">
-                                            <div className="w-40 text-gray-500">Matching Required</div>
-                                            <div>{profile.horoscope.horoscope_matching_required ? 'Yes' : 'No'}</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="border-t pt-6">
-                                    <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                                        <div className="flex items-start">
-                                            <Star className="h-5 w-5 text-yellow-500 mr-2 mt-0.5" />
-                                            <div>
-                                                <h4 className="font-medium text-yellow-800">Horoscope Matching Service</h4>
-                                                <p className="text-sm text-yellow-700 mt-1">Our astrologers can provide a detailed compatibility analysis for a small fee.</p>
-                                                <button className="mt-3 bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-4 py-2 text-sm rounded-md transition duration-300">
-                                                    Request Horoscope Matching
-                                                </button>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
