@@ -17,6 +17,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, handleInp
     const showError = (fieldName: string): boolean => {
         return !!(touched[fieldName] && errors[fieldName]);
     };
+
     useEffect(() => {
         if (firstName && !formData.first_name) {
             const event = {
@@ -227,6 +228,31 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, handleInp
                         <option value="Other">Other</option>
                     </select>
                     {showError('religion') && <p className="text-red-500 text-xs mt-1">{errors.religion}</p>}
+
+                    {/* Fixed Switch - Now using handleCheckboxChange */}
+                    <div className="mt-2 flex items-center space-x-3">
+                        <label htmlFor="religion_visible" className="text-gray-700 font-medium">
+                            Show Religion?
+                        </label>
+                        <input
+                            type="checkbox"
+                            id="religion_visible"
+                            name="religion_visible"
+                            checked={formData.religion_visible === 1}
+                            onChange={(e) => {
+                                const syntheticEvent = {
+                                    ...e,
+                                    target: {
+                                        ...e.target,
+                                        name: 'religion_visible',
+                                        value: e.target.checked ? 1 : 0,
+                                    },
+                                } as any;
+                                handleInputChange(syntheticEvent);
+                            }}
+                            className="h-5 w-5 text-yellow-500 focus:ring-yellow-400 border-gray-300 rounded"
+                        />
+                    </div>
                 </div>
             </div>
 

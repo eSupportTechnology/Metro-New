@@ -43,6 +43,7 @@ const MatrimonyCreate: React.FC = () => {
         gender: 'Male',
         ethnicity: '',
         religion: '',
+        religion_visible: 0,
         caste: '',
         height: '',
         civil_status: 'Never Married',

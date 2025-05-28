@@ -19,6 +19,7 @@ export interface MatrimonyFormData {
     gender: string;
     ethnicity: string;
     religion: string;
+    religion_visible: number;
     caste: string;
     height: string;
     civil_status: string;

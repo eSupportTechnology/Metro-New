@@ -66,6 +66,7 @@ class CreateMatrimonyProfile
                     'birthdate' => $validatedData['birthdate'],
                     'gender' => $validatedData['gender'],
                     'ethnicity' => $validatedData['ethnicity'],
+                    'religion_visible' => $validatedData['religion_visible'] ?? 1,
                     'religion' => $validatedData['religion'],
                     'caste' => $validatedData['caste'] ?? '',
                     'height' => $validatedData['height'] ?? '',

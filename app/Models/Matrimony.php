@@ -34,6 +34,7 @@ class Matrimony extends Model
         'profession',
         'drinking',
         'food_preference',
+        'religion_visible',
         'smoking',
         'package_number',
         'boot_post',
