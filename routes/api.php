@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CronTriggerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MatrimonyController;
 use App\Http\Controllers\MatrimonyLogController;
@@ -69,3 +70,4 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
     Route::get('/dashboard/monthly-stats', [DashboardController::class, 'getMonthlyStats']);
 });
 
+Route::get('/run-matrimony-commands', [CronTriggerController::class, 'runAllCommands']);

@@ -9,9 +9,9 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('matrimony:reset-boot-post')->dailyAt('00:01');
-        $schedule->command('matrimony:random-boot-post')->dailyAt('00:10');
-        $schedule->command('matrimony:deactivate-old')->dailyAt('00:05');
+        $schedule->command('matrimony:reset-boot-post');
+        $schedule->command('matrimony:random-boot-post');
+        $schedule->command('matrimony:deactivate-old');
     }
 
     protected function commands(): void
