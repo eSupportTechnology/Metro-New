@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('sign-in', [UserController::class, 'userSignIn']);
 Route::post('logout', [UserController::class, 'userLogout'])->middleware('auth:sanctum');
 
+Route::post('forgot-password/send-otp', [UserController::class, 'sendForgotPasswordOtp']);
+Route::post('forgot-password/verify-otp', [UserController::class, 'verifyForgotPasswordOtp']);
+Route::post('forgot-password/reset', [UserController::class, 'resetPassword']);
+
 Route::prefix('phone')->group(function () {
     Route::post('send-otp', [UserController::class, 'sendOtp']);
     Route::post('verify-otp', [UserController::class, 'verifyOtp']);

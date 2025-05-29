@@ -118,6 +118,67 @@ export const phoneRegister = async (registrationData: {
     }
 };
 
+export const sendForgotPasswordOtp = async (phone: string) => {
+    const response = await fetch(apiConfig.endpoints.forgotPassword.sendOtp, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to send OTP');
+    }
+
+    return data;
+};
+
+export const verifyForgotPasswordOtp = async (phone: string, otpCode: string) => {
+    const response = await fetch(apiConfig.endpoints.forgotPassword.verifyOtp, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            phone,
+            otp_code: otpCode,
+        }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to verify OTP');
+    }
+
+    return data;
+};
+
+export const resetForgotPassword = async (phone: string, otpCode: string, password: string, passwordConfirmation: string) => {
+    const response = await fetch(apiConfig.endpoints.forgotPassword.reset, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            phone,
+            otp_code: otpCode,
+            password,
+            password_confirmation: passwordConfirmation,
+        }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to reset password');
+    }
+
+    return data;
+};
 export const logoutUser = async (navigate: NavigateFunction) => {
     const token = localStorage.getItem('token');
 

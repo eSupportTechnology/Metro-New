@@ -232,7 +232,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, handleInp
                     {/* Fixed Switch - Now using handleCheckboxChange */}
                     <div className="mt-2 flex items-center space-x-3">
                         <label htmlFor="religion_visible" className="text-gray-700 font-medium">
-                            Show Religion?
+                            Only view my religion
                         </label>
                         <input
                             type="checkbox"

@@ -47,6 +47,11 @@ const apiConfig: ApiConfig = {
             verifyOtp: `${baseURL}/phone/verify-otp`,
             register: `${baseURL}/phone/register`,
         },
+        forgotPassword: {
+            sendOtp: `${baseURL}/forgot-password/send-otp`,
+            verifyOtp: `${baseURL}/forgot-password/verify-otp`,
+            reset: `${baseURL}/forgot-password/reset`,
+        },
     },
 };
 

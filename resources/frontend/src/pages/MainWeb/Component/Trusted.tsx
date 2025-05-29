@@ -7,7 +7,7 @@ const Trusted = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-10">
                         <h2 className="text-3xl font-bold text-gray-900">
-                            Trusted By <span className="text-yellow-600">Thousands</span> Of Happy Customers
+                            Happy <span className="text-yellow-600">Customers</span>
                         </h2>
                         <p className="mt-3 text-lg text-gray-600 max-w-2xl mx-auto">See what our users have to say about their experience</p>
                     </div>

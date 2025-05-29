@@ -491,7 +491,7 @@ const MatrimonyCreate: React.FC = () => {
         }
     };
 
-    const SuccessOverlay = () => (
+    const SuccessOverlay = ({ redirectCountdown }) => (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
                 <div className="text-center">
@@ -504,6 +504,10 @@ const MatrimonyCreate: React.FC = () => {
                     </div>
                     <h2 className="mt-4 text-2xl font-bold text-gray-800">Profile Created Successfully!</h2>
                     <p className="mt-2 text-gray-600">Your matrimony profile has been created and will be reviewed shortly.</p>
+
+                    {/* New message about activation */}
+                    <p className="mt-2 text-gray-600 font-semibold">Please note: Your account will be activated after 24 hours.</p>
+
                     <div className="mt-6">
                         <div className="relative">
                             <div className="h-2 bg-green-200 rounded-full">

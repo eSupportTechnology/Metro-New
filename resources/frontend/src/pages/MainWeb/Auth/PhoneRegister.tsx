@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { ChevronDown, ArrowLeft, User, Mail, Lock, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { setAuth } from '../../../store/authSlice';
 import Header from '../NavBar/Header';
 import Footer from '../Footer/Footer';
@@ -20,7 +22,6 @@ const PhoneRegister: React.FC = () => {
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string>('');
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -47,15 +48,29 @@ const PhoneRegister: React.FC = () => {
     const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        setError('');
 
         try {
             const fullPhoneNumber = countryCode + phoneNumber;
             await sendOtp(fullPhoneNumber, 'register');
             setRegistrationStep('otp');
             setOtpTimer(300);
+            toast.success('Verification code sent successfully!', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
         } catch (err: any) {
-            setError(err.message || 'Failed to send OTP. Please try again.');
+            toast.error(err.message || 'Failed to send OTP. Please try again.', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
         } finally {
             setIsLoading(false);
         }
@@ -64,14 +79,28 @@ const PhoneRegister: React.FC = () => {
     const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        setError('');
 
         try {
             const fullPhoneNumber = countryCode + phoneNumber;
             await verifyOtp(fullPhoneNumber, otpCode, 'register');
             setRegistrationStep('details');
+            toast.success('Phone number verified successfully!', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
         } catch (err: any) {
-            setError(err.message || 'Invalid OTP. Please try again.');
+            toast.error(err.message || 'Invalid OTP. Please try again.', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
         } finally {
             setIsLoading(false);
         }
@@ -80,10 +109,16 @@ const PhoneRegister: React.FC = () => {
     const handleCompleteRegistration = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        setError('');
 
         if (password !== confirmPassword) {
-            setError('Passwords do not match.');
+            toast.error('Passwords do not match.', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
             setIsLoading(false);
             return;
         }
@@ -103,7 +138,14 @@ const PhoneRegister: React.FC = () => {
 
             handleSuccessfulRegistration(data);
         } catch (err: any) {
-            setError(err.message || 'Registration failed. Please try again.');
+            toast.error(err.message || 'Registration failed. Please try again.', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
         } finally {
             setIsLoading(false);
         }
@@ -111,14 +153,28 @@ const PhoneRegister: React.FC = () => {
 
     const handleResendOtp = async () => {
         setIsLoading(true);
-        setError('');
 
         try {
             const fullPhoneNumber = countryCode + phoneNumber;
             await sendOtp(fullPhoneNumber, 'register');
             setOtpTimer(300);
+            toast.success('OTP resent successfully!', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
         } catch (err: any) {
-            setError(err.message || 'Failed to resend OTP.');
+            toast.error(err.message || 'Failed to resend OTP.', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
         } finally {
             setIsLoading(false);
         }
@@ -138,7 +194,19 @@ const PhoneRegister: React.FC = () => {
         localStorage.setItem('token', authData.token);
 
         dispatch(setAuth(authData));
-        navigate(`/signin`);
+
+        toast.success('Account created successfully! Redirecting to sign in...', {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
+
+        setTimeout(() => {
+            navigate('/signin');
+        }, 2000);
     };
 
     const formatTime = (seconds: number) => {
@@ -187,8 +255,6 @@ const PhoneRegister: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-
-                        {error && <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md text-sm">{error}</div>}
 
                         {registrationStep === 'phone' && (
                             <form onSubmit={handleSendOtp}>
@@ -430,6 +496,8 @@ const PhoneRegister: React.FC = () => {
             </main>
 
             <Footer />
+
+            <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" />
         </div>
     );
 };

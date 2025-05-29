@@ -21,7 +21,7 @@ class GetSingleMatrimonyProfile
                 ->select(
                     'matrimonies.*',
                     'matrimonies.religion_visible',
-                    'users.first_name', 'users.last_name', 'users.email',
+                    'users.first_name', 'users.last_name', 'users.email', 'users.phone',
                     'fathers.ethnicity as father_ethnicity', 'fathers.religion as father_religion',
                     'fathers.caste as father_caste', 'fathers.country_of_residence as father_country_of_residence',
                     'fathers.profession as father_profession', 'fathers.additional_info as father_additional_info',
@@ -54,6 +54,7 @@ class GetSingleMatrimonyProfile
                 'first_name' => $profile->first_name,
                 'last_name' => $profile->last_name,
                 'email' => $profile->email,
+                'phone' => $profile->phone,
                 'matrimony' => [
                     'display_name' => $profile->display_name,
                     'account_created_by' => $profile->account_created_by,

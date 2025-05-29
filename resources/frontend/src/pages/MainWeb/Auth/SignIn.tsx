@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { ChevronDown, ArrowLeft, Phone, Shield, UserCheck, DollarSign, Headphones, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { setAuth } from '../../../store/authSlice';
 import Header from '../NavBar/Header';
 import Footer from '../Footer/Footer';
-import { UserSignIn, sendOtp, verifyOtp } from '../../../services/authService';
+import { UserSignIn, sendOtp, verifyOtp, sendForgotPasswordOtp, verifyForgotPasswordOtp, resetForgotPassword } from '../../../services/authService';
 
 const SignIn: React.FC = () => {
     const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
-    const [authStep, setAuthStep] = useState<'phone' | 'otp' | 'email'>('phone');
+    const [authStep, setAuthStep] = useState<'phone' | 'otp' | 'email' | 'forgot-password' | 'forgot-otp' | 'reset-password'>('phone');
 
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [countryCode, setCountryCode] = useState<string>('+94');
@@ -20,8 +22,14 @@ const SignIn: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
+    // Forgot password states
+    const [forgotPhoneNumber, setForgotPhoneNumber] = useState<string>('');
+    const [forgotOtpCode, setForgotOtpCode] = useState<string>('');
+    const [newPassword, setNewPassword] = useState<string>('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState<string>('');
+    const [forgotOtpTimer, setForgotOtpTimer] = useState<number>(0);
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string>('');
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -36,9 +44,24 @@ const SignIn: React.FC = () => {
         return () => clearInterval(interval);
     }, [otpTimer]);
 
+    React.useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (forgotOtpTimer > 0) {
+            interval = setInterval(() => {
+                setForgotOtpTimer(forgotOtpTimer - 1);
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [forgotOtpTimer]);
+
     const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/[^0-9]/g, '');
         setPhoneNumber(value);
+    };
+
+    const handleForgotPhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/[^0-9]/g, '');
+        setForgotPhoneNumber(value);
     };
 
     const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,10 +69,14 @@ const SignIn: React.FC = () => {
         setOtpCode(value);
     };
 
+    const handleForgotOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 6);
+        setForgotOtpCode(value);
+    };
+
     const switchAuthMethod = (method: 'phone' | 'email') => {
         setAuthMethod(method);
         setAuthStep(method);
-        setError('');
         setOtpSent(false);
         setOtpTimer(0);
     };
@@ -57,7 +84,6 @@ const SignIn: React.FC = () => {
     const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        setError('');
 
         try {
             const fullPhoneNumber = countryCode + phoneNumber;
@@ -65,8 +91,15 @@ const SignIn: React.FC = () => {
             setOtpSent(true);
             setAuthStep('otp');
             setOtpTimer(300);
+            toast.success('OTP sent successfully to your phone!', {
+                position: 'top-right',
+                autoClose: 3000,
+            });
         } catch (err: any) {
-            setError(err.message || 'Failed to send OTP. Please try again.');
+            toast.error(err.message || 'Failed to send OTP. Please try again.', {
+                position: 'top-right',
+                autoClose: 5000,
+            });
         } finally {
             setIsLoading(false);
         }
@@ -75,14 +108,16 @@ const SignIn: React.FC = () => {
     const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        setError('');
 
         try {
             const fullPhoneNumber = countryCode + phoneNumber;
             const data = await verifyOtp(fullPhoneNumber, otpCode, 'login');
             handleSuccessfulLogin(data);
         } catch (err: any) {
-            setError(err.message || 'Invalid OTP. Please try again.');
+            toast.error(err.message || 'Invalid OTP. Please try again.', {
+                position: 'top-right',
+                autoClose: 5000,
+            });
         } finally {
             setIsLoading(false);
         }
@@ -90,14 +125,20 @@ const SignIn: React.FC = () => {
 
     const handleResendOtp = async () => {
         setIsLoading(true);
-        setError('');
 
         try {
             const fullPhoneNumber = countryCode + phoneNumber;
             await sendOtp(fullPhoneNumber, 'login');
             setOtpTimer(300);
+            toast.success('OTP resent successfully!', {
+                position: 'top-right',
+                autoClose: 3000,
+            });
         } catch (err: any) {
-            setError(err.message || 'Failed to resend OTP.');
+            toast.error(err.message || 'Failed to resend OTP.', {
+                position: 'top-right',
+                autoClose: 5000,
+            });
         } finally {
             setIsLoading(false);
         }
@@ -106,17 +147,129 @@ const SignIn: React.FC = () => {
     const handleEmailLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        setError('');
 
         try {
             const data = await UserSignIn(email, password);
             handleSuccessfulLogin(data);
         } catch (err: any) {
             if (err.message === 'Unauthorized') {
-                setError('Invalid credentials. Please check your details and try again.');
+                toast.error('Invalid credentials. Please check your details and try again.', {
+                    position: 'top-right',
+                    autoClose: 5000,
+                });
             } else {
-                setError('An error occurred. Please try again later.');
+                toast.error('An error occurred. Please try again later.', {
+                    position: 'top-right',
+                    autoClose: 5000,
+                });
             }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSendForgotPasswordOtp = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        try {
+            const fullPhoneNumber = countryCode + forgotPhoneNumber;
+            const data = await sendForgotPasswordOtp(fullPhoneNumber);
+
+            setAuthStep('forgot-otp');
+            setForgotOtpTimer(300);
+            toast.success(data.message, {
+                position: 'top-right',
+                autoClose: 3000,
+            });
+        } catch (err: any) {
+            toast.error(err.message || 'Failed to send OTP. Please try again.', {
+                position: 'top-right',
+                autoClose: 5000,
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleVerifyForgotPasswordOtp = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        try {
+            const fullPhoneNumber = countryCode + forgotPhoneNumber;
+            const data = await verifyForgotPasswordOtp(fullPhoneNumber, forgotOtpCode);
+
+            setAuthStep('reset-password');
+            toast.success(data.message, {
+                position: 'top-right',
+                autoClose: 3000,
+            });
+        } catch (err: any) {
+            toast.error(err.message || 'Failed to verify OTP. Please try again.', {
+                position: 'top-right',
+                autoClose: 5000,
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleResetPassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        if (newPassword !== confirmNewPassword) {
+            toast.error('Passwords do not match.', {
+                position: 'top-right',
+                autoClose: 5000,
+            });
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            const fullPhoneNumber = countryCode + forgotPhoneNumber;
+            const data = await resetForgotPassword(fullPhoneNumber, forgotOtpCode, newPassword, confirmNewPassword);
+
+            toast.success(data.message, {
+                position: 'top-right',
+                autoClose: 3000,
+            });
+
+            setAuthStep('email');
+            setAuthMethod('email');
+            setForgotPhoneNumber('');
+            setForgotOtpCode('');
+            setNewPassword('');
+            setConfirmNewPassword('');
+        } catch (err: any) {
+            toast.error(err.message || 'Failed to reset password. Please try again.', {
+                position: 'top-right',
+                autoClose: 5000,
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleResendForgotPasswordOtp = async () => {
+        setIsLoading(true);
+
+        try {
+            const fullPhoneNumber = countryCode + forgotPhoneNumber;
+            const data = await sendForgotPasswordOtp(fullPhoneNumber);
+
+            setForgotOtpTimer(300);
+            toast.success('OTP resent successfully!', {
+                position: 'top-right',
+                autoClose: 3000,
+            });
+        } catch (err: any) {
+            toast.error(err.message || 'Failed to resend OTP.', {
+                position: 'top-right',
+                autoClose: 5000,
+            });
         } finally {
             setIsLoading(false);
         }
@@ -140,20 +293,43 @@ const SignIn: React.FC = () => {
         if (authData.religion) {
             localStorage.setItem('religion', authData.religion);
         }
+
         dispatch(setAuth(authData));
-        if (authData.userRole === 1) {
-            navigate('/admin/dashboard');
-        } else if (authData.userRole === 2) {
-            navigate(`/my-profile/${authData.userId}`);
-        } else {
-            navigate('/');
-        }
+
+        toast.success('Sign in successful! Welcome back!', {
+            position: 'top-right',
+            autoClose: 2000,
+        });
+
+        setTimeout(() => {
+            if (authData.userRole === 1) {
+                navigate('/admin/dashboard');
+            } else if (authData.userRole === 2) {
+                navigate(`/my-profile/${authData.userId}`);
+            } else {
+                navigate('/');
+            }
+        }, 2000);
     };
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const showForgotPassword = () => {
+        setAuthStep('forgot-password');
+    };
+
+    const backToLogin = () => {
+        setAuthStep('email');
+        setAuthMethod('email');
+        setForgotPhoneNumber('');
+        setForgotOtpCode('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+        setForgotOtpTimer(0);
     };
 
     return (
@@ -168,9 +344,11 @@ const SignIn: React.FC = () => {
                                 {authStep === 'phone' && 'Continue with Phone'}
                                 {authStep === 'otp' && 'Enter Verification Code'}
                                 {authStep === 'email' && 'Sign In with Email'}
+                                {authStep === 'forgot-password' && 'Forgot Password'}
+                                {authStep === 'forgot-otp' && 'Verify Phone Number'}
+                                {authStep === 'reset-password' && 'Reset Password'}
                             </h2>
 
-                            {error && <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md text-sm">{error}</div>}
                             {authStep === 'phone' && (
                                 <form onSubmit={handleSendOtp}>
                                     <div className="mb-4">
@@ -304,9 +482,9 @@ const SignIn: React.FC = () => {
                                             required
                                         />
                                         <div className="mt-1 text-right">
-                                            <a href="#" className="text-xs text-yellow-600 hover:text-yellow-700">
+                                            <button type="button" className="text-xs text-yellow-600 hover:text-yellow-700 hover:underline" onClick={showForgotPassword}>
                                                 Forgot Password?
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
 
@@ -331,6 +509,169 @@ const SignIn: React.FC = () => {
                                     <div className="text-center mb-4">
                                         <button type="button" className="text-gray-600 text-sm hover:text-gray-800 hover:underline" onClick={() => switchAuthMethod('phone')}>
                                             Login with phone number
+                                        </button>
+                                    </div>
+                                </form>
+                            )}
+
+                            {authStep === 'forgot-password' && (
+                                <form onSubmit={handleSendForgotPasswordOtp}>
+                                    <div className="mb-4">
+                                        <label htmlFor="forgot-phone" className="block text-gray-700 mb-2">
+                                            Phone Number
+                                        </label>
+                                        <div className="flex">
+                                            <div className="relative">
+                                                <button type="button" className="h-full px-3 py-2 inline-flex items-center border border-gray-300 bg-gray-100 text-gray-700 rounded-l-md">
+                                                    {countryCode} <ChevronDown className="ml-1 h-4 w-4" />
+                                                </button>
+                                            </div>
+                                            <input
+                                                type="tel"
+                                                id="forgot-phone"
+                                                value={forgotPhoneNumber}
+                                                onChange={handleForgotPhoneNumberChange}
+                                                className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                                placeholder="Enter your phone number"
+                                                required
+                                            />
+                                        </div>
+                                        <p className="text-sm text-gray-600 mt-2">Enter the phone number associated with your account to receive a verification code.</p>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium py-2 px-4 rounded-md transition duration-300 mb-4 flex justify-center items-center"
+                                        disabled={isLoading || forgotPhoneNumber.length < 9}
+                                    >
+                                        {isLoading ? (
+                                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path
+                                                    className="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                ></path>
+                                            </svg>
+                                        ) : null}
+                                        Send Verification Code
+                                    </button>
+
+                                    <div className="text-center">
+                                        <button type="button" className="text-gray-600 text-sm hover:text-gray-800 hover:underline" onClick={backToLogin}>
+                                            Back to Sign In
+                                        </button>
+                                    </div>
+                                </form>
+                            )}
+
+                            {authStep === 'forgot-otp' && (
+                                <form onSubmit={handleVerifyForgotPasswordOtp}>
+                                    <div className="mb-4">
+                                        <label htmlFor="forgot-otp" className="block text-gray-700 mb-2">
+                                            Enter 6-digit code sent to {countryCode}
+                                            {forgotPhoneNumber}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="forgot-otp"
+                                            value={forgotOtpCode}
+                                            onChange={handleForgotOtpChange}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-center text-2xl tracking-widest"
+                                            placeholder="000000"
+                                            maxLength={6}
+                                            required
+                                        />
+                                    </div>
+
+                                    {forgotOtpTimer > 0 && <div className="mb-4 text-center text-sm text-gray-600">Resend OTP in {formatTime(forgotOtpTimer)}</div>}
+
+                                    <button
+                                        type="submit"
+                                        className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium py-2 px-4 rounded-md transition duration-300 mb-4 flex justify-center items-center"
+                                        disabled={isLoading || forgotOtpCode.length !== 6}
+                                    >
+                                        {isLoading ? (
+                                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path
+                                                    className="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                ></path>
+                                            </svg>
+                                        ) : null}
+                                        Verify Code
+                                    </button>
+
+                                    <div className="flex justify-between text-center text-sm">
+                                        <button type="button" className="text-gray-600 hover:text-gray-800 hover:underline" onClick={() => setAuthStep('forgot-password')}>
+                                            Change phone number
+                                        </button>
+                                        {forgotOtpTimer === 0 && (
+                                            <button type="button" className="text-yellow-600 hover:text-yellow-700 hover:underline" onClick={handleResendForgotPasswordOtp} disabled={isLoading}>
+                                                Resend OTP
+                                            </button>
+                                        )}
+                                    </div>
+                                </form>
+                            )}
+
+                            {authStep === 'reset-password' && (
+                                <form onSubmit={handleResetPassword}>
+                                    <div className="mb-4">
+                                        <label htmlFor="new-password" className="block text-gray-700 mb-2">
+                                            New Password
+                                        </label>
+                                        <input
+                                            type="password"
+                                            id="new-password"
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                            placeholder="Enter new password"
+                                            minLength={8}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="mb-6">
+                                        <label htmlFor="confirm-new-password" className="block text-gray-700 mb-2">
+                                            Confirm New Password
+                                        </label>
+                                        <input
+                                            type="password"
+                                            id="confirm-new-password"
+                                            value={confirmNewPassword}
+                                            onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                            placeholder="Confirm new password"
+                                            minLength={8}
+                                            required
+                                        />
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium py-2 px-4 rounded-md transition duration-300 mb-4 flex justify-center items-center"
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? (
+                                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path
+                                                    className="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                ></path>
+                                            </svg>
+                                        ) : null}
+                                        Reset Password
+                                    </button>
+
+                                    <div className="text-center">
+                                        <button type="button" className="text-gray-600 text-sm hover:text-gray-800 hover:underline" onClick={backToLogin}>
+                                            Cancel & Back to Sign In
                                         </button>
                                     </div>
                                 </form>
@@ -456,6 +797,7 @@ const SignIn: React.FC = () => {
             </main>
 
             <Footer />
+            <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" />
         </div>
     );
 };
