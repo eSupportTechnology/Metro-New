@@ -43,6 +43,7 @@ Route::middleware(['auth:sanctum', FollowerUserCheckMiddleware::class])->group(f
 
     //Matrimony
     Route::post('/matrimony-create', [MatrimonyController::class, 'Create']);
+    Route::put('/matrimony-update/{id}', [MatrimonyController::class, 'update']);
     Route::delete('/delete-matrimony-profile/{userId}', [MatrimonyController::class, 'deleteMatrimonyProfile']);
 });
 

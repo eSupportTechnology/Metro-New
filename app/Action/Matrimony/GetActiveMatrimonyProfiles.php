@@ -16,7 +16,7 @@ class GetActiveMatrimonyProfiles
                 ->leftJoin('users', 'matrimonies.user_id', '=', 'users.id')
                 ->leftJoin('fathers', 'matrimonies.user_id', '=', 'fathers.user_id')
                 ->leftJoin('mothers', 'matrimonies.user_id', '=', 'mothers.user_id')
-                ->leftJoin('horoscope_details', 'matrimonies.user_id', '=', 'horoscope_details.user_id')
+                ->leftJoin('nic_details', 'matrimonies.user_id', '=', 'nic_details.user_id')
                 ->leftJoin('pictures', 'matrimonies.user_id', '=', 'pictures.user_id')
                 ->select(
                     'matrimonies.*',
@@ -27,24 +27,25 @@ class GetActiveMatrimonyProfiles
                     'mothers.ethnicity as mother_ethnicity', 'mothers.religion as mother_religion',
                     'mothers.caste as mother_caste', 'mothers.country_of_residence as mother_country_of_residence',
                     'mothers.profession as mother_profession', 'mothers.additional_info as mother_additional_info',
-                    'horoscope_details.birthdate as horoscope_birthdate',
-                    'horoscope_details.birth_country as horoscope_birth_country',
-                    'horoscope_details.horoscope_matching_required as horoscope_matching_required',
-                    'horoscope_details.birth_city as horoscope_birth_city',
-                    'horoscope_details.birth_time as horoscope_birth_time',
+                    'nic_details.nic_number',
+                    'nic_details.nic_front_image',
+                    'nic_details.nic_back_image',
+                    'nic_details.is_verified',
                     'pictures.image_path as profile_picture',
                     'matrimonies.created_at as matrimony_created_at',
                     'matrimonies.boot_post',
+                    'matrimonies.package_number',
+                    'matrimonies.is_active'
                 )
                 ->where('matrimonies.is_active', 1)
                 ->get();
 
             $groupedProfiles = $this->groupProfiles($profiles);
 
-            return CommonResponse::sendSuccessResponseWithData('Active Matrimony Profiles', $groupedProfiles);
+            return CommonResponse::sendSuccessResponseWithData('Matrimony Profiles', $groupedProfiles);
         } catch (\Exception $e) {
-            Log::error('GetActiveMatrimonyProfiles Error: ' . $e->getMessage());
-            return CommonResponse::sendBadRequestResponse('Failed to retrieve active matrimony profiles: ' . $e->getMessage());
+            Log::error('GetAllMatrimonyProfiles Error: ' . $e->getMessage());
+            return CommonResponse::sendBadRequestResponse('Failed to retrieve matrimony profiles: ' . $e->getMessage());
         }
     }
 
@@ -59,6 +60,15 @@ class GetActiveMatrimonyProfiles
                 $profilePictureData = null;
                 if ($profile->profile_picture) {
                     $profilePictureData = $this->getImageData($profile->profile_picture);
+                }
+
+                $nicFrontImageData = null;
+                $nicBackImageData = null;
+                if ($profile->nic_front_image) {
+                    $nicFrontImageData = $this->getNicImageData($profile->nic_front_image);
+                }
+                if ($profile->nic_back_image) {
+                    $nicBackImageData = $this->getNicImageData($profile->nic_back_image);
                 }
 
                 $groupedProfiles[$userId] = [
@@ -87,6 +97,8 @@ class GetActiveMatrimonyProfiles
                         'smoking' => $profile->smoking,
                         'created_at' => $profile->matrimony_created_at,
                         'boot_post' => $profile->boot_post,
+                        'package_number' => $profile->package_number ?? 1,
+                        'is_active' => $profile->is_active ?? true
                     ],
                     'father' => [
                         'ethnicity' => $profile->father_ethnicity ?? '',
@@ -104,15 +116,19 @@ class GetActiveMatrimonyProfiles
                         'profession' => $profile->mother_profession ?? '',
                         'additional_info' => $profile->mother_additional_info ?? '',
                     ],
-                    'horoscope' => [
-                        'birthdate' => $profile->horoscope_birthdate ?? '',
-                        'birth_country' => $profile->horoscope_birth_country ?? '',
-                        'horoscope_matching_required' => $profile->horoscope_matching_required ?? false,
-                        'birth_city' => $profile->horoscope_birth_city ?? '',
-                        'birth_time' => $profile->horoscope_birth_time ?? '',
+                    'nic_details' => [
+                        'nic_number' => $profile->nic_number ?? '',
+                        'nic_front_image' => $profile->nic_front_image ?? '',
+                        'is_verified' => $profile->is_verified ?? '',
+                        'nic_back_image' => $profile->nic_back_image ?? '',
+                        'nic_front_image_url' => $nicFrontImageData ? $this->getImageUrl($profile->nic_front_image) : null,
+                        'nic_back_image_url' => $nicBackImageData ? $this->getImageUrl($profile->nic_back_image) : null,
+                        'nic_front_image_data' => $nicFrontImageData,
+                        'nic_back_image_data' => $nicBackImageData,
                     ],
                     'profile_picture' => $profilePictureData,
-                    'is_active' => $profile->is_active
+                    'profile_picture_url' => $profile->profile_picture ? $this->getImageUrl($profile->profile_picture) : null,
+                    'is_active' => $profile->is_active ?? true
                 ];
             }
         }
@@ -127,7 +143,6 @@ class GetActiveMatrimonyProfiles
 
             if (Storage::exists($storagePath)) {
                 $binaryData = Storage::get($storagePath);
-
                 $mimeType = Storage::mimeType($storagePath);
                 return 'data:' . $mimeType . ';base64,' . base64_encode($binaryData);
             }
@@ -135,13 +150,56 @@ class GetActiveMatrimonyProfiles
             if (Storage::disk('public')->exists($imagePath)) {
                 $binaryData = Storage::disk('public')->get($imagePath);
                 $mimeType = Storage::disk('public')->mimeType($imagePath);
-
                 return 'data:' . $mimeType . ';base64,' . base64_encode($binaryData);
             }
-            Log::warning("Image not found: {$imagePath} or {$storagePath}");
+
+            $directPath = str_replace('storage/', '', $imagePath);
+            if (Storage::disk('public')->exists($directPath)) {
+                $binaryData = Storage::disk('public')->get($directPath);
+                $mimeType = Storage::disk('public')->mimeType($directPath);
+                return 'data:' . $mimeType . ';base64,' . base64_encode($binaryData);
+            }
+
+            Log::warning("Image not found: {$imagePath} or {$storagePath} or {$directPath}");
             return null;
         } catch (\Exception $e) {
             Log::error('Error getting image data: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    private function getNicImageData(string $imagePath): ?string
+    {
+        try {
+            if (Storage::disk('public')->exists($imagePath)) {
+                $binaryData = Storage::disk('public')->get($imagePath);
+                $mimeType = Storage::disk('public')->mimeType($imagePath);
+                return 'data:' . $mimeType . ';base64,' . base64_encode($binaryData);
+            }
+
+            Log::warning("NIC image not found: {$imagePath}");
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Error getting NIC image data: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    private function getImageUrl(string $imagePath): ?string
+    {
+        try {
+            if (str_starts_with($imagePath, 'storage/')) {
+                return asset($imagePath);
+            }
+
+            if (Storage::disk('public')->exists($imagePath)) {
+                return asset('storage/' . $imagePath);
+            }
+
+            Log::warning("Cannot generate URL for image: {$imagePath}");
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Error generating image URL: ' . $e->getMessage());
             return null;
         }
     }

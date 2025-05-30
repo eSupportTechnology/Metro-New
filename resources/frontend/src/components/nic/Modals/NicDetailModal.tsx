@@ -113,14 +113,16 @@ const NicDetailModal: React.FC<NicDetailModalProps> = ({ nicData, onClose, onVer
                                         <CreditCard className="mr-2" size={16} />
                                         Front Side
                                     </h4>
-                                    {nicData.nic_front_image_url || nicData.nic_front_image_data ? (
+                                    {nicData.nic_front_image_data ? (
                                         <div className="relative group">
                                             <img
-                                                src={nicData.nic_front_image_url || nicData.nic_front_image_data || ''}
+                                                src={nicData.nic_front_image_data}
                                                 alt="NIC Front"
                                                 className="w-full h-56 object-contain bg-white border-2 border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                                                 onClick={() => {
-                                                    window.open(nicData.nic_front_image_url || nicData.nic_front_image_data || '', '_blank');
+                                                    if (nicData.nic_front_image_data) {
+                                                        window.open(nicData.nic_front_image_data, '_blank');
+                                                    }
                                                 }}
                                             />
                                             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-lg flex items-center justify-center">
@@ -142,14 +144,16 @@ const NicDetailModal: React.FC<NicDetailModalProps> = ({ nicData, onClose, onVer
                                         <CreditCard className="mr-2" size={16} />
                                         Back Side
                                     </h4>
-                                    {nicData.nic_back_image_url || nicData.nic_back_image_data ? (
+                                    {nicData.nic_back_image_data ? (
                                         <div className="relative group">
                                             <img
-                                                src={nicData.nic_back_image_url || nicData.nic_back_image_data || ''}
+                                                src={nicData.nic_back_image_data}
                                                 alt="NIC Back"
                                                 className="w-full h-56 object-contain bg-white border-2 border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                                                 onClick={() => {
-                                                    window.open(nicData.nic_back_image_url || nicData.nic_back_image_data || '', '_blank');
+                                                    if (nicData.nic_back_image_data) {
+                                                        window.open(nicData.nic_back_image_data, '_blank');
+                                                    }
                                                 }}
                                             />
                                             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-lg flex items-center justify-center">

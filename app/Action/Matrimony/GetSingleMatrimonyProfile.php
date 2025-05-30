@@ -102,7 +102,9 @@ class GetSingleMatrimonyProfile
                     'birth_time' => $profile->horoscope_birth_time ?? '',
                 ],
                 'profile_picture' => $profilePictureData,
+                'profile_picture_url' => $profile->profile_picture ? $this->getImageUrl($profile->profile_picture) : null,
             ];
+
 
             return CommonResponse::sendSuccessResponseWithData('Matrimony Profile', $groupedProfile);
         } catch (\Exception $e) {
@@ -114,26 +116,37 @@ class GetSingleMatrimonyProfile
     private function getImageData(string $imagePath): ?string
     {
         try {
-            $storagePath = str_replace('storage/', 'public/', $imagePath);
-
-            if (Storage::exists($storagePath)) {
-                $binaryData = Storage::get($storagePath);
-
-                $mimeType = Storage::mimeType($storagePath);
+            $cleanPath = str_replace('storage/', '', $imagePath);
+            if (Storage::disk('public')->exists($cleanPath)) {
+                $binaryData = Storage::disk('public')->get($cleanPath);
+                $mimeType = Storage::disk('public')->mimeType($cleanPath);
                 return 'data:' . $mimeType . ';base64,' . base64_encode($binaryData);
             }
 
-            if (Storage::disk('public')->exists($imagePath)) {
-                $binaryData = Storage::disk('public')->get($imagePath);
-                $mimeType = Storage::disk('public')->mimeType($imagePath);
-
-                return 'data:' . $mimeType . ';base64,' . base64_encode($binaryData);
-            }
-            Log::warning("Image not found: {$imagePath} or {$storagePath}");
+            Log::warning("Image not found in public disk: {$cleanPath}");
             return null;
         } catch (\Exception $e) {
             Log::error('Error getting image data: ' . $e->getMessage());
             return null;
         }
     }
+    private function getImageUrl(string $imagePath): ?string
+    {
+        try {
+            if (str_starts_with($imagePath, 'storage/')) {
+                return asset($imagePath);
+            }
+
+            if (Storage::disk('public')->exists($imagePath)) {
+                return asset('storage/' . $imagePath);
+            }
+
+            Log::warning("Cannot generate URL for image: {$imagePath}");
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Error generating image URL: ' . $e->getMessage());
+            return null;
+        }
+    }
+
 }

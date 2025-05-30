@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Target, Shield, Users, Award, CheckCircle, Star, Bookmark, Gift, TrendingUp } from 'lucide-react';
+import { Heart, Target, Shield, Users, Award, CheckCircle, Star, Bookmark, Gift, TrendingUp, Eye, UserCheck, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../NavBar/Header';
 import Footer from '../Footer/Footer';
@@ -7,37 +7,39 @@ import Footer from '../Footer/Footer';
 const AboutUs: React.FC = () => {
     const navigate = useNavigate();
 
-    const teamMembers = [
+    const whatMakesUsDifferent = [
         {
-            name: 'Sarah Perera',
-            position: 'Founder & CEO',
-            image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
-            bio: 'With over 15 years of experience in matchmaking, Sarah founded the company with a vision to help Sri Lankans find their perfect match.',
+            icon: Eye,
+            title: 'Community-Specific Viewing Options',
+            description: 'You can choose to view and be seen by members of your own community only, ensuring privacy and cultural compatibility.',
+            color: 'blue',
         },
         {
-            name: 'Amal Fernando',
-            position: 'Chief Technology Officer',
-            image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
-            bio: 'Amal leads our technology team, ensuring a seamless and secure platform for all users.',
+            icon: Gift,
+            title: 'Completely Free at Launch',
+            description: 'We offer a 100% free platform at the beginning to help everyone connect without barriers.',
+            color: 'green',
         },
         {
-            name: 'Priya Mendis',
-            position: 'Head of Matchmaking',
-            image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
-            bio: 'Priya and her team of matchmaking specialists have helped thousands of couples find their perfect match.',
+            icon: Globe,
+            title: 'Sri Lankan-Focused',
+            description: 'Built by Sri Lankans, for Sri Lankans. We understand your values, traditions, and expectations.',
+            color: 'yellow',
         },
         {
-            name: 'Ravi Jayawardena',
-            position: 'Customer Success Manager',
-            image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
-            bio: 'Ravi ensures that all our members receive the support they need throughout their journey.',
+            icon: UserCheck,
+            title: 'Genuine Matches Only',
+            description: 'We verify each profile before approval to maintain a safe and respectful environment.',
+            color: 'purple',
         },
     ];
-    const stats = [
-        { label: 'Years of Service', value: '10+' },
-        { label: 'Happy Couples', value: '10,000+' },
-        { label: 'Success Rate', value: '87%' },
-        { label: 'Verified Profiles', value: '100,000+' },
+
+    const communities = [
+        { name: 'Sinhala', color: 'bg-red-100 text-red-800' },
+        { name: 'Tamil', color: 'bg-orange-100 text-orange-800' },
+        { name: 'Muslim', color: 'bg-green-100 text-green-800' },
+        { name: 'Burgher', color: 'bg-blue-100 text-blue-800' },
+        { name: 'Others', color: 'bg-purple-100 text-purple-800' },
     ];
 
     return (
@@ -47,11 +49,29 @@ const AboutUs: React.FC = () => {
             <main className="pt-24 pb-16 px-4">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
-                        <h1 className="text-4xl font-bold text-gray-800 mb-4">About Our Matchmaking Service</h1>
-                        <p className="text-gray-600 max-w-3xl mx-auto">
-                            Founded in 2015, we've become Sri Lanka's premier matrimonial platform, connecting thousands of compatible individuals and creating lifelong partnerships.
+                        <h1 className="text-4xl font-bold text-gray-800 mb-4">About MyWeddingSL.com</h1>
+                        <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-6">Sri Lanka's Trusted Matrimonial Platform for All Communities</p>
+                        <p className="text-gray-600 max-w-4xl mx-auto">
+                            At MyWeddingSL.com, we believe that marriage is a sacred bond built on love, trust, and shared values. Our mission is to bring together individuals and families from across
+                            Sri Lanka who are searching for meaningful, lifelong relationships.
                         </p>
                     </div>
+
+                    <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg shadow-md p-10 mb-16 text-white text-center">
+                        <h2 className="text-2xl font-semibold mb-4">Proudly Inclusive</h2>
+                        <p className="max-w-4xl mx-auto mb-6">
+                            Unlike many other matrimonial websites that serve only specific ethnic or religious groups, MyWeddingSL.com is proudly inclusive. We offer a platform where people from all
+                            communities can find partners who truly match their expectations and cultural preferences.
+                        </p>
+                        <div className="flex flex-wrap justify-center gap-3">
+                            {communities.map((community, index) => (
+                                <span key={index} className={`px-4 py-2 rounded-full text-sm font-medium ${community.color}`}>
+                                    {community.name}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
                     <div className="grid md:grid-cols-2 gap-8 mb-16">
                         <div className="bg-white rounded-lg shadow-md p-8 relative overflow-hidden">
                             <div className="absolute right-0 top-0 w-32 h-32 bg-yellow-100 rounded-bl-full opacity-70"></div>
@@ -61,13 +81,10 @@ const AboutUs: React.FC = () => {
                                     Our Mission
                                 </h2>
                                 <p className="text-gray-600 mb-4">
-                                    We are committed to helping Sri Lankans find meaningful, lasting relationships based on compatibility, shared values, and cultural understanding. Our mission is to
-                                    create a safe, respectful, and effective platform that honors both tradition and modernity in the matchmaking process.
+                                    To create a trusted and inclusive matrimonial platform that connects individuals and families from all Sri Lankan communities, fostering meaningful and lasting
+                                    relationships through transparency, cultural understanding, and user-focused innovation.
                                 </p>
-                                <p className="text-gray-600">
-                                    We believe that finding the right life partner is one of life's most important decisions, and we're dedicated to making that journey smoother, safer, and more
-                                    successful for our members.
-                                </p>
+                                <p className="text-gray-600">We believe in bridging cultural gaps while giving each user the choice to search within their community if they wish.</p>
                             </div>
                         </div>
 
@@ -79,13 +96,84 @@ const AboutUs: React.FC = () => {
                                     Our Story
                                 </h2>
                                 <p className="text-gray-600 mb-4">
-                                    Our journey began in 2015 when our founder, Sarah Perera, recognized the need for a trusted, modern approach to matchmaking that respected Sri Lankan traditions
-                                    while embracing technology.
+                                    MyWeddingSL.com was born out of a simple yet powerful realization - Sri Lanka needed a matrimonial platform that truly welcomes everyone, regardless of ethnicity or
+                                    religion. Most existing sites focused on specific communities, leaving many people without a space to find a life partner who aligns with their values, culture, and
+                                    dreams.
                                 </p>
                                 <p className="text-gray-600">
-                                    What started as a small community-based service in Colombo has grown into the country's leading matrimonial platform, with success stories spanning across Sri Lanka
-                                    and its diaspora worldwide. Our commitment to authenticity, privacy, and personalized matching has remained at the heart of everything we do.
+                                    What began as a small idea rooted in inclusivity and trust has now grown into a mission to help people across Sri Lanka find love and companionship. At
+                                    MyWeddingSL.com, every love story matters - and we're honored to be part of yours.
                                 </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow-md p-8 mb-16">
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-8 text-center">What Makes Us Different?</h2>
+                        <div className="grid md:grid-cols-2 gap-6">
+                            {whatMakesUsDifferent.map((item, index) => {
+                                const Icon = item.icon;
+                                const colorClasses = {
+                                    blue: 'bg-blue-50 border-l-4 border-blue-400',
+                                    green: 'bg-green-50 border-l-4 border-green-400',
+                                    yellow: 'bg-yellow-50 border-l-4 border-yellow-400',
+                                    purple: 'bg-purple-50 border-l-4 border-purple-400',
+                                };
+                                const iconColors = {
+                                    blue: 'bg-blue-100 text-blue-600',
+                                    green: 'bg-green-100 text-green-600',
+                                    yellow: 'bg-yellow-100 text-yellow-600',
+                                    purple: 'bg-purple-100 text-purple-600',
+                                };
+
+                                return (
+                                    <div key={index} className={`p-6 rounded-md ${colorClasses[item.color as keyof typeof colorClasses]}`}>
+                                        <div className="flex items-start mb-4">
+                                            <div className={`p-3 rounded-md mr-4 ${iconColors[item.color as keyof typeof iconColors]}`}>
+                                                <Icon className="h-6 w-6" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-gray-800 mb-2">{item.title}</h3>
+                                                <p className="text-sm text-gray-600">{item.description}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow-md p-8 mb-16">
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-8 text-center">Our Commitment</h2>
+                        <div className="grid md:grid-cols-3 gap-6">
+                            <div className="p-4 rounded-md bg-red-50 border-l-4 border-red-400">
+                                <div className="flex items-center mb-3">
+                                    <div className="bg-red-100 p-2 rounded-md mr-3">
+                                        <Heart className="h-6 w-6 text-red-600" />
+                                    </div>
+                                    <h3 className="font-medium text-gray-800">Honesty & Respect</h3>
+                                </div>
+                                <p className="text-sm text-gray-600">To maintain honesty, privacy, and respect in every connection.</p>
+                            </div>
+
+                            <div className="p-4 rounded-md bg-blue-50 border-l-4 border-blue-400">
+                                <div className="flex items-center mb-3">
+                                    <div className="bg-blue-100 p-2 rounded-md mr-3">
+                                        <Users className="h-6 w-6 text-blue-600" />
+                                    </div>
+                                    <h3 className="font-medium text-gray-800">Customer Support</h3>
+                                </div>
+                                <p className="text-sm text-gray-600">To provide friendly and helpful customer support to guide you through the process.</p>
+                            </div>
+
+                            <div className="p-4 rounded-md bg-green-50 border-l-4 border-green-400">
+                                <div className="flex items-center mb-3">
+                                    <div className="bg-green-100 p-2 rounded-md mr-3">
+                                        <TrendingUp className="h-6 w-6 text-green-600" />
+                                    </div>
+                                    <h3 className="font-medium text-gray-800">Continuous Improvement</h3>
+                                </div>
+                                <p className="text-sm text-gray-600">To continuously improve based on your feedback and needs.</p>
                             </div>
                         </div>
                     </div>
@@ -96,137 +184,69 @@ const AboutUs: React.FC = () => {
                             <div className="p-4 rounded-md bg-yellow-50 border-l-4 border-yellow-400">
                                 <div className="flex items-center mb-3">
                                     <div className="bg-yellow-100 p-2 rounded-md mr-3">
-                                        <Shield className="h-6 w-6 text-yellow-600" />
+                                        <Globe className="h-6 w-6 text-yellow-600" />
                                     </div>
-                                    <h3 className="font-medium text-gray-800">Respect for All Communities</h3>
+                                    <h3 className="font-medium text-gray-800">Cultural Understanding</h3>
                                 </div>
-                                <p className="text-sm text-gray-600">We honor cultural and religious diversity across Sri Lanka.</p>
-                            </div>
-
-                            <div className="p-4 rounded-md bg-green-50 border-l-4 border-green-400">
-                                <div className="flex items-center mb-3">
-                                    <div className="bg-green-100 p-2 rounded-md mr-3">
-                                        <Heart className="h-6 w-6 text-green-600" />
-                                    </div>
-                                    <h3 className="font-medium text-gray-800">Authenticity & Trust</h3>
-                                </div>
-                                <p className="text-sm text-gray-600">We promote genuine connections through verified profiles and transparency.</p>
-                            </div>
-
-                            <div className="p-4 rounded-md bg-blue-50 border-l-4 border-blue-400">
-                                <div className="flex items-center mb-3">
-                                    <div className="bg-blue-100 p-2 rounded-md mr-3">
-                                        <Users className="h-6 w-6 text-blue-600" />
-                                    </div>
-                                    <h3 className="font-medium text-gray-800">Privacy & Security</h3>
-                                </div>
-                                <p className="text-sm text-gray-600">We safeguard user data and ensure a safe platform experience.</p>
+                                <p className="text-sm text-gray-600">We honor and understand Sri Lankan values, traditions, and expectations across all communities.</p>
                             </div>
 
                             <div className="p-4 rounded-md bg-purple-50 border-l-4 border-purple-400">
                                 <div className="flex items-center mb-3">
                                     <div className="bg-purple-100 p-2 rounded-md mr-3">
-                                        <CheckCircle className="h-6 w-6 text-purple-600" />
+                                        <Shield className="h-6 w-6 text-purple-600" />
                                     </div>
-                                    <h3 className="font-medium text-gray-800">User-Centered Service</h3>
+                                    <h3 className="font-medium text-gray-800">Safety & Verification</h3>
                                 </div>
-                                <p className="text-sm text-gray-600">We prioritize user needs with friendly, responsive, and respectful support.</p>
-                            </div>
-
-                            <div className="p-4 rounded-md bg-red-50 border-l-4 border-red-400">
-                                <div className="flex items-center mb-3">
-                                    <div className="bg-red-100 p-2 rounded-md mr-3">
-                                        <Gift className="h-6 w-6 text-red-600" />
-                                    </div>
-                                    <h3 className="font-medium text-gray-800">Inclusivity</h3>
-                                </div>
-                                <p className="text-sm text-gray-600">We welcome individuals from all walks of life and backgrounds.</p>
+                                <p className="text-sm text-gray-600">Every profile is manually verified before approval to maintain a safe and respectful environment.</p>
                             </div>
 
                             <div className="p-4 rounded-md bg-indigo-50 border-l-4 border-indigo-400">
                                 <div className="flex items-center mb-3">
                                     <div className="bg-indigo-100 p-2 rounded-md mr-3">
-                                        <TrendingUp className="h-6 w-6 text-indigo-600" />
+                                        <CheckCircle className="h-6 w-6 text-indigo-600" />
                                     </div>
-                                    <h3 className="font-medium text-gray-800">Continuous Improvement</h3>
+                                    <h3 className="font-medium text-gray-800">Transparency</h3>
                                 </div>
-                                <p className="text-sm text-gray-600">We listen, learn, and evolve to better serve our users.</p>
+                                <p className="text-sm text-gray-600">We believe in clear communication and transparent processes throughout your journey.</p>
                             </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg shadow-md p-10 mb-16 text-white">
-                        <h2 className="text-2xl font-semibold mb-8 text-center">Our Impact</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            {stats.map((stat, index) => (
-                                <div key={index} className="text-center">
-                                    <div className="text-4xl font-bold mb-2">{stat.value}</div>
-                                    <div className="text-sm opacity-90">{stat.label}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="mb-16">
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-8 text-center">Meet Our Team</h2>
-                        <div className="grid md:grid-cols-4 gap-6">
-                            {teamMembers.map((member, index) => (
-                                <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
-                                    <div className="h-48 relative">
-                                        <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
-                                    </div>
-                                    <div className="p-6">
-                                        <h3 className="font-bold text-gray-800">{member.name}</h3>
-                                        <p className="text-yellow-600 text-sm mb-3">{member.position}</p>
-                                        <p className="text-gray-600 text-sm">{member.bio}</p>
-                                    </div>
-                                </div>
-                            ))}
                         </div>
                     </div>
 
                     <div className="bg-white rounded-lg shadow-md p-8 mb-16">
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Our Certifications</h2>
-                        <div className="flex flex-wrap justify-center gap-8 items-center">
-                            <div className="text-center p-4">
-                                <div className="bg-gray-100 rounded-lg p-4 mb-2 inline-block">
-                                    <Award className="h-10 w-10 text-gray-700" />
-                                </div>
-                                <p className="text-sm font-medium text-gray-800">ISO 27001 Certified</p>
+                        <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Why Choose MyWeddingSL.com?</h2>
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">For Everyone</h3>
+                                <p className="text-gray-600 mb-4">
+                                    Whether you are looking for love, a life partner, or someone who shares your dreams and values - MyWeddingSL.com is here to help. We welcome individuals from all
+                                    walks of life and backgrounds.
+                                </p>
                             </div>
-                            <div className="text-center p-4">
-                                <div className="bg-gray-100 rounded-lg p-4 mb-2 inline-block">
-                                    <Shield className="h-10 w-10 text-gray-700" />
-                                </div>
-                                <p className="text-sm font-medium text-gray-800">Data Privacy Compliant</p>
-                            </div>
-                            <div className="text-center p-4">
-                                <div className="bg-gray-100 rounded-lg p-4 mb-2 inline-block">
-                                    <Users className="h-10 w-10 text-gray-700" />
-                                </div>
-                                <p className="text-sm font-medium text-gray-800">Licensed Matchmaking Service</p>
-                            </div>
-                            <div className="text-center p-4">
-                                <div className="bg-gray-100 rounded-lg p-4 mb-2 inline-block">
-                                    <Star className="h-10 w-10 text-gray-700" />
-                                </div>
-                                <p className="text-sm font-medium text-gray-800">Best Service Award 2024</p>
+                            <div>
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Your Privacy Matters</h3>
+                                <p className="text-gray-600 mb-4">
+                                    With our community-specific viewing options, you have complete control over who can see your profile, ensuring your privacy while maintaining cultural
+                                    compatibility.
+                                </p>
                             </div>
                         </div>
                     </div>
 
                     <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg shadow-md p-10 text-center text-white">
-                        <h2 className="text-2xl font-semibold mb-4">Ready to Find Your Perfect Match?</h2>
-                        <p className="max-w-2xl mx-auto mb-8">
-                            Join thousands of couples who found their life partners through our platform. Register today and start your journey to a meaningful relationship.
+                        <h2 className="text-2xl font-semibold mb-4">Let's Begin Your Journey</h2>
+                        <p className="max-w-3xl mx-auto mb-6">
+                            We invite you to join our growing community and take the first step towards a beautiful future together. Start your journey to find meaningful connections that honor your
+                            values and cultural preferences.
                         </p>
+                        <p className="max-w-2xl mx-auto mb-8 text-sm opacity-90">At MyWeddingSL.com, every love story matters - and we're honored to be part of yours.</p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <button onClick={() => navigate('/signin')} className="bg-white text-yellow-600 hover:bg-gray-100 font-medium py-3 px-6 rounded-md transition duration-300">
-                                Register Free
+                            <button onClick={() => navigate('/register')} className="bg-white text-yellow-600 hover:bg-gray-100 font-medium py-3 px-8 rounded-md transition duration-300">
+                                Join Free Today
                             </button>
                             <button
                                 onClick={() => navigate('/contact')}
-                                className="bg-transparent border border-white text-white hover:bg-white/10 font-medium py-3 px-6 rounded-md transition duration-300"
+                                className="bg-transparent border border-white text-white hover:bg-white/10 font-medium py-3 px-8 rounded-md transition duration-300"
                             >
                                 Contact Us
                             </button>

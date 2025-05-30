@@ -25,19 +25,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, index }) => {
                 <div className="flex items-start">
                     <div className="relative mr-4">
                         <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
-                            {profile.profile_picture || (profile.picture && profile.picture.image_path) ? (
+                            {profile.profile_picture && profile.profile_picture.startsWith('data:') ? (
                                 <img
-                                    src={
-                                        profile.profile_picture?.startsWith('data:')
-                                            ? profile.profile_picture
-                                            : profile.picture?.image_path?.startsWith('data:')
-                                              ? profile.picture.image_path
-                                              : profile.profile_picture
-                                                ? `${profile.profile_picture}`
-                                                : profile.picture?.image_path
-                                                  ? `${profile.picture.image_path}`
-                                                  : '/api/placeholder/80/80'
-                                    }
+                                    src={profile.profile_picture}
                                     alt={displayData.display_name || 'Profile'}
                                     className="w-20 h-20 rounded-full object-cover"
                                     onError={(e) => {
@@ -50,6 +40,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, index }) => {
                                 <User className="h-12 w-12 text-gray-400" />
                             )}
                         </div>
+
                         {isVerified && (
                             <div className="absolute -right-1 -bottom-1 bg-blue-500 text-white rounded-full p-1">
                                 <Check className="h-3 w-3" />
