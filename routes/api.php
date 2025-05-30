@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CronTriggerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MatrimonyController;
@@ -76,3 +77,6 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
 });
 
 Route::get('/run-matrimony-commands', [CronTriggerController::class, 'runAllCommands']);
+
+Route::get('/contacts', [ContactController::class, 'listContacts']);
+Route::post('/contact-update/{id}', [ContactController::class, 'updateContact']);
