@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MatrimonyController;
 use App\Http\Controllers\MatrimonyLogController;
 use App\Http\Controllers\NicController;
+use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TestSmsController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminUserCheckMiddleware;
@@ -80,3 +81,7 @@ Route::get('/run-matrimony-commands', [CronTriggerController::class, 'runAllComm
 
 Route::get('/contacts', [ContactController::class, 'listContacts']);
 Route::post('/contact-update/{id}', [ContactController::class, 'updateContact']);
+
+
+Route::get('/socials', [SocialController::class, 'listSocials']);
+Route::post('/social-update/{id}', [SocialController::class, 'updateSocial']);
