@@ -48,5 +48,13 @@ export interface ApiConfig {
             verifyOtp: string;
             reset: string;
         };
+        contacts: {
+            list: string;
+            update: (id: string) => string;
+        };
+        socials: {
+            list: string;
+            update: (id: string) => string;
+        };
     };
 }

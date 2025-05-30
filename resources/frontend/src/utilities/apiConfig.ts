@@ -52,6 +52,14 @@ const apiConfig: ApiConfig = {
             verifyOtp: `${baseURL}/forgot-password/verify-otp`,
             reset: `${baseURL}/forgot-password/reset`,
         },
+        contacts: {
+            list: `${baseURL}/contacts`,
+            update: (id: string) => `${baseURL}/contact-update/${id}`,
+        },
+        socials: {
+            list: `${baseURL}/socials`,
+            update: (id: string) => `${baseURL}/social-update/${id}`,
+        },
     },
 };
 

@@ -6,7 +6,7 @@ import { toggleSidebar } from '../../store/themeConfigSlice';
 import { IRootState } from '../../store';
 import { useState, useEffect } from 'react';
 import IconCaretsDown from '../Icon/IconCaretsDown';
-import { Shield, Users, BookOpen, BarChart3, Activity, Clock } from 'lucide-react';
+import { Shield, Users, BookOpen, BarChart3, Activity, Clock, Phone } from 'lucide-react';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -158,6 +158,14 @@ const Sidebar = () => {
                                             <div className="flex items-center">
                                                 <BookOpen className="group-hover:!text-primary shrink-0 w-4 h-4" />
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('ALL-BLOG')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li>
+                                        <NavLink to="/admin/contacts-socials" className="group">
+                                            <div className="flex items-center">
+                                                <Phone className="group-hover:!text-primary shrink-0 w-4 h-4 text-yellow-600" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Contacts & Socials')}</span>
                                             </div>
                                         </NavLink>
                                     </li>
