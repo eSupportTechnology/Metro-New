@@ -4,7 +4,7 @@ import Footer from './Footer/Footer';
 import Profile from './Component/Profile';
 import Benefits from './Component/Benefits';
 import Trusted from './Component/Trusted';
-import FAQ from './Component/FAQ';
+// import FAQ from './Component/FAQ';
 
 const Home = () => {
     return (
@@ -15,7 +15,7 @@ const Home = () => {
                 <Profile />
                 <Benefits />
                 <Trusted />
-                <FAQ />
+                {/*<FAQ />*/}
             </main>
             <Footer />
         </div>

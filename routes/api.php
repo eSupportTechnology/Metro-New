@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CronTriggerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MatrimonyController;
 use App\Http\Controllers\MatrimonyLogController;
 use App\Http\Controllers\NicController;
+use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TestSmsController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminUserCheckMiddleware;
@@ -14,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('sign-in', [UserController::class, 'userSignIn']);
 Route::post('logout', [UserController::class, 'userLogout'])->middleware('auth:sanctum');
+
+Route::post('forgot-password/send-otp', [UserController::class, 'sendForgotPasswordOtp']);
+Route::post('forgot-password/verify-otp', [UserController::class, 'verifyForgotPasswordOtp']);
+Route::post('forgot-password/reset', [UserController::class, 'resetPassword']);
 
 Route::prefix('phone')->group(function () {
     Route::post('send-otp', [UserController::class, 'sendOtp']);
@@ -39,6 +45,7 @@ Route::middleware(['auth:sanctum', FollowerUserCheckMiddleware::class])->group(f
 
     //Matrimony
     Route::post('/matrimony-create', [MatrimonyController::class, 'Create']);
+    Route::put('/matrimony-update/{id}', [MatrimonyController::class, 'update']);
     Route::delete('/delete-matrimony-profile/{userId}', [MatrimonyController::class, 'deleteMatrimonyProfile']);
 });
 
@@ -71,3 +78,10 @@ Route::middleware(['auth:sanctum', AdminUserCheckMiddleware::class])->group(func
 });
 
 Route::get('/run-matrimony-commands', [CronTriggerController::class, 'runAllCommands']);
+
+Route::get('/contacts', [ContactController::class, 'listContacts']);
+Route::post('/contact-update/{id}', [ContactController::class, 'updateContact']);
+
+
+Route::get('/socials', [SocialController::class, 'listSocials']);
+Route::post('/social-update/{id}', [SocialController::class, 'updateSocial']);

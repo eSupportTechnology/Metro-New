@@ -35,9 +35,7 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ profile, isActi
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="col-span-1 flex flex-col items-center">
-                            {profile.profile_picture_url ? (
-                                <img src={profile.profile_picture_url} alt={profile.display_name} className="w-full max-w-xs rounded-lg shadow-md mb-4 object-cover" />
-                            ) : profile.profile_picture ? (
+                            {profile.profile_picture && profile.profile_picture.startsWith('data:image') ? (
                                 <img src={profile.profile_picture} alt={profile.display_name} className="w-full max-w-xs rounded-lg shadow-md mb-4 object-cover" />
                             ) : (
                                 <div className="w-64 h-64 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
@@ -186,7 +184,7 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ profile, isActi
                                 <div className="md:col-span-1">
                                     <div className="text-sm text-gray-600 mb-1">Front Image Status:</div>
                                     <div className="flex items-center">
-                                        {profile.nic_details.nic_front_image_url ? (
+                                        {profile.nic_details.nic_front_image_data ? (
                                             <div className="flex items-center text-green-600">
                                                 <CheckCircle size={16} className="mr-1" />
                                                 <span className="text-sm">Uploaded</span>
@@ -202,7 +200,7 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ profile, isActi
                                 <div className="md:col-span-1">
                                     <div className="text-sm text-gray-600 mb-1">Back Image Status:</div>
                                     <div className="flex items-center">
-                                        {profile.nic_details.nic_back_image_url ? (
+                                        {profile.nic_details.nic_back_image_data ? (
                                             <div className="flex items-center text-green-600">
                                                 <CheckCircle size={16} className="mr-1" />
                                                 <span className="text-sm">Uploaded</span>
@@ -217,22 +215,22 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ profile, isActi
                                 </div>
                             </div>
 
-                            {(profile.nic_details.nic_front_image_url || profile.nic_details.nic_back_image_url) && (
+                            {(profile.nic_details.nic_front_image_data || profile.nic_details.nic_back_image_data) && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {profile.nic_details.nic_front_image_url && (
+                                    {profile.nic_details.nic_front_image_data && (
                                         <div>
                                             <h4 className="font-medium text-gray-800 mb-2">NIC Front Image</h4>
                                             <div className="border rounded-lg overflow-hidden bg-white">
-                                                <img src={profile.nic_details.nic_front_image_url} alt="NIC Front" className="w-full h-32 object-contain bg-gray-50" />
+                                                <img src={profile.nic_details.nic_front_image_data} alt="NIC Front" className="w-full h-32 object-contain bg-gray-50" />
                                             </div>
                                         </div>
                                     )}
 
-                                    {profile.nic_details.nic_back_image_url && (
+                                    {profile.nic_details.nic_back_image_data && (
                                         <div>
                                             <h4 className="font-medium text-gray-800 mb-2">NIC Back Image</h4>
                                             <div className="border rounded-lg overflow-hidden bg-white">
-                                                <img src={profile.nic_details.nic_back_image_url} alt="NIC Back" className="w-full h-32 object-contain bg-gray-50" />
+                                                <img src={profile.nic_details.nic_back_image_data} alt="NIC Back" className="w-full h-32 object-contain bg-gray-50" />
                                             </div>
                                         </div>
                                     )}
@@ -244,10 +242,10 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ profile, isActi
                                     <span className="text-sm font-medium text-gray-700">Verification Status:</span>
                                     <span
                                         className={`px-2 py-1 text-xs font-medium rounded-full ${
-                                            profile.nic_details.nic_front_image_url && profile.nic_details.nic_back_image_url ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                            profile.nic_details.nic_front_image_data && profile.nic_details.nic_back_image_data ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                                         }`}
                                     >
-                                        {profile.nic_details.nic_front_image_url && profile.nic_details.nic_back_image_url ? 'Complete' : 'Incomplete'}
+                                        {profile.nic_details.nic_front_image_data && profile.nic_details.nic_back_image_data ? 'Complete' : 'Incomplete'}
                                     </span>
                                 </div>
                             </div>

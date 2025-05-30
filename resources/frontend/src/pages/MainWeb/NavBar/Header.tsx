@@ -195,7 +195,7 @@ const Header = () => {
                             <img className="w-10 h-10 ltr:-ml-1 rtl:-mr-1" src="/assets/images/logo.svg" alt="Sri Lanka Matrimony Logo" />
                             <div className="ml-2">
                                 <span className="block text-xl font-bold text-gray-800">
-                                    My<span className="text-yellow-600">WeddingSL</span>
+                                    My<span className="text-yellow-600">WeddingSL.com</span>
                                 </span>
                             </div>
                         </Link>

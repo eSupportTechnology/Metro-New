@@ -10,6 +10,7 @@ use App\Action\Matrimony\GetSingleMatrimonyProfile;
 use App\Action\Matrimony\MatrimonyDelete;
 use App\Action\Matrimony\UpdateActiveStatus;
 use App\Action\Matrimony\UpdateBootPost;
+use App\Action\Matrimony\UpdateMatrimonyProfile;
 use App\Action\Matrimony\UpdatePackageNumber;
 use App\Http\Requests\StoreMatrimonyRequest;
 use Illuminate\Http\JsonResponse;
@@ -23,6 +24,11 @@ class MatrimonyController extends Controller
     {
         $validatedData = $request->validated();
         return response()->json($action($validatedData));
+    }
+    public function update(int $id, StoreMatrimonyRequest $request, UpdateMatrimonyProfile $action): JsonResponse
+    {
+        $validatedData = $request->validated();
+        return response()->json($action($id, $validatedData));
     }
     public function getAllMatrimony(GetAllMatrimonyProfiles $getAllMatrimonyProfiles): JsonResponse
     {

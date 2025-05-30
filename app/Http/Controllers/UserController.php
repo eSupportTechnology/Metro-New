@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Action\Auth\CheckUserAuthentication;
+use App\Action\Auth\ForgotPasswordAction;
 use App\Action\Auth\GetUserDetails;
 use App\Action\Auth\SendOtpAction;
 use App\Action\Auth\VerifyOtpAction;
 use App\Action\Auth\PhoneRegisterAction;
+use App\Http\Requests\ForgotPasswordResetRequest;
+use App\Http\Requests\ForgotPasswordSendOtpRequest;
+use App\Http\Requests\ForgotPasswordVerifyOtpRequest;
 use App\Http\Requests\GetUserDetailsRequest;
 use App\Http\Requests\UserSignInValidationRequest;
 use App\Http\Requests\SendOtpRequest;
@@ -95,5 +99,34 @@ class UserController extends Controller
         }
 
         return response()->json($response, $response['status'] === 'success' ? 201 : 400);
+    }
+    public function sendForgotPasswordOtp(
+        ForgotPasswordSendOtpRequest $request,
+        ForgotPasswordAction $forgotPasswordAction
+    ): JsonResponse {
+        $validatedData = $request->validated();
+        $response = $forgotPasswordAction->sendOtp($validatedData);
+
+        return response()->json($response, $response['status'] === 'success' ? 200 : 400);
+    }
+
+    public function verifyForgotPasswordOtp(
+        ForgotPasswordVerifyOtpRequest $request,
+        ForgotPasswordAction $forgotPasswordAction
+    ): JsonResponse {
+        $validatedData = $request->validated();
+        $response = $forgotPasswordAction->verifyOtp($validatedData);
+
+        return response()->json($response, $response['status'] === 'success' ? 200 : 400);
+    }
+
+    public function resetPassword(
+        ForgotPasswordResetRequest $request,
+        ForgotPasswordAction $forgotPasswordAction
+    ): JsonResponse {
+        $validatedData = $request->validated();
+        $response = $forgotPasswordAction->resetPassword($validatedData);
+
+        return response()->json($response, $response['status'] === 'success' ? 200 : 400);
     }
 }

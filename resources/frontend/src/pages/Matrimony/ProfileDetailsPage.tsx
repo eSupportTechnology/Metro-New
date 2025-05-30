@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { User, MapPin, Search, Mail, ChevronLeft, AlertCircle, X, Lock } from 'lucide-react';
+import { User, MapPin, Search, Mail, ChevronLeft, AlertCircle, X, Lock, Phone } from 'lucide-react';
 import Footer from '../MainWeb/Footer/Footer';
 import Header from '../MainWeb/NavBar/Header';
 import { ProfileData, RouteParams } from '../../utilities/types/Matrimony/IProfileDetailsPage';
@@ -93,41 +93,15 @@ const ProfileDetailsPage = () => {
                         </div>
                     </div>
                 </div>
-
-                <form onSubmit={handleSendMessage} className="mt-4">
-                    <div className="mb-4">
-                        <label htmlFor="message" className="block text-gray-700 mb-2">
-                            Send a Message
-                        </label>
-                        <textarea
-                            id="message"
-                            value={contactMessage}
-                            onChange={handleContactMessageChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                            placeholder="Write your message here..."
-                            rows={3}
-                            required
-                        />
+                <div className="space-y-4 mt-2">
+                    <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <Phone className="h-5 w-5 text-yellow-500 mr-3" />
+                        <div>
+                            <p className="text-sm text-gray-500">Phone</p>
+                            <p className="font-medium">{profile?.phone}</p>
+                        </div>
                     </div>
-
-                    <button
-                        type="submit"
-                        className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium py-2 px-4 rounded-md transition duration-300 mb-4 flex justify-center items-center"
-                        disabled={isSendingMessage}
-                    >
-                        {isSendingMessage ? (
-                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                            </svg>
-                        ) : null}
-                        Send Message
-                    </button>
-                </form>
+                </div>
 
                 <div className="mt-4 text-center">
                     <p className="text-sm text-gray-500">Contact details are only shared with verified users. Please use discretion when contacting.</p>

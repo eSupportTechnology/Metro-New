@@ -20,6 +20,7 @@ import NicVerificationTable from '../pages/AdminWeb/NIC/NicVerificationTable';
 import MatrimonyLogsTable from '../pages/AdminWeb/Matrimony/MatrimonyLogsTable';
 import PhoneRegister from '../pages/MainWeb/Auth/PhoneRegister';
 import Dashboard from '../pages/AdminWeb/Dashboard/Dashboard';
+import ContactsSocialsManagement from '../components/ContactsSocials/ContactsSocialsManagement';
 
 const useAuth = () => useSelector((state: IRootState) => state.auth);
 
@@ -112,6 +113,11 @@ const routes = [
     {
         path: '/admin/all-blog',
         element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={Blog} />,
+        layout: 'default',
+    },
+    {
+        path: '/admin/contacts-socials',
+        element: <PrivateRoute requiredRole={1} redirectPath="/signin" component={ContactsSocialsManagement} />,
         layout: 'default',
     },
 ];
